@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Latex formulas with Sphinx</title>
+<meta content="programming, python, latex, sphinx" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Is it worth writing about something which took me 15 minutes to find out and others 15 to try?
+And it will be another 10 to write it down... I wonder! Anyway, I was looking for a way to
+add formulas in my python documentation. 
+</p>
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+First, it requires Latex (or <a href="http://miktex.org/">Miktex</a> on Windows). The basic
+installation is enough. Second, the file <i>conf.py</i> which configurates the 
+documentation generation must contains the following lines:
+</p>
+
+<pre class="brush: py">
+extensions = [  # ... something
+                'sphinx.ext.pngmath', 
+                # ... something 
+                ]
+               
+# the documentation of the two following binaries
+# those paths works on Windows
+pngmath_latex=r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64\latex.exe"
+pngmath_dvipng=r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64\dvipng.exe"
+</pre>
+
+<p>
+After, it become simple to add a formula:
+</p>
+
+<p>
+However, you should avoid writing too many formulas without compiling in between.
+The way <tt>sphinx</tt> reports about error is buggy (no message). The syntax to use
+is described <a href="http://sphinx-doc.org/latest/ext/math.html">Math support in Sphinx</a>.
+Some examples:
+</p>
+
+<pre class="prettyprint">
+.. math::
+
+   (a + b)^2  &amp;=  (a + b)(a + b) \\
+              &amp;=  a^2 + 2ab + b^2
+              
+.. math::
+   :nowrap:
+
+   \begin{eqnarray}
+      y    &amp; = &amp; ax^2 + bx + c \\
+      f(x) &amp; = &amp; x^2 + 2xy + y^2
+   \end{eqnarray}
+   
+.. math:: e^{i\pi} + 1 = 0
+   :label: euler
+
+Euler's identity, equation :eq:`euler`, was elected one of the most
+beautiful mathematical formulas.   
+</pre>
+
+<p>
+Inline:
+</p>
+
+<pre class="prettyprint">
+Since Pythagoras, we know that :math:`a^2 + b^2 = c^2`.
+</pre>
+
+
+
+</body>
+</html>

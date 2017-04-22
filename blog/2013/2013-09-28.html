@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Utiliser l'API Linkedin</title>
+<meta content="python, linkedin" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+J'ai utilisé l'API Linkedin pour voir s'il était 
+possible de récupérer mes contacts et de les mettre dans un fichier 
+Excel. Tout d'abord il faut récupérer une clé d'identification
+en suivant les instructions décrites 
+<a href="http://developer.linkedin.com/rest">REST</a>.
+Cette clé vous donne la possibilité de consulter votre profil,
+d'effectuer des recherches, de récupérer la liste des contacts,
+de faire tout ce que votre compte vous permet de faire excepté que vous
+pouvez le faire jusqu'à un certain point. Par exemple, je peux récupérer
+l'intégralité de mes contacts, mais je ne peux effectuer 
+qu'une dizaine de recherches et récupérer
+pour chacune d'entre elles les 110 premiers résultats. La limite de 110 
+dépend de votre compte (le mien est un compte gratuit), le nombre de 
+résultats de recherche dépend de votre compte développeur 
+(<a href="http://developer.linkedin.com/documents/throttle-limits">throttle limits</a>).
+Il est possible d'étendre cette limite mais il faut devenir <i>Partner</i>
+(<a href="http://developer.linkedin.com/themes/linkedin-home/form-api.html">Request for Partnering with LinkedIn</a>) 
+mais je ne suis pas allé jusque là. Cela dit, les compteurs sont remis à
+zéro tous les jours.
+</p>
+<p>
+Après avoir effectué quelques essais, on s'aperçoit qu'il est impossible
+d'accaparer des données auxquels votre compte ne vous donne pas accès.
+D'un point de vue utilisateur, c'est l'assurance qu'un programmeur
+n'aura pas accès à d'autres informations que celles dévoilées
+par votre profil public. Elles le seront simplement sous une autre forme
+(un second site web, uune feuille Excel...)
+</p>
+<p>
+La clé que j'ai requise est une clé développeur. Elle permet de développer
+(un site web par exemple) mais ne permet pas de passer à l'échelle.
+Pour d'autres usages, il faut regarder le site
+<a href="http://developer.linkedin.com/">Linkedin Developers</a>.
+</p>
+<p>
+Le code que j'ai utilisé est écrit en Python et accessible 
+<a href="https://github.com/sdpython/pyensae/blob/master/src/pyensae/datasource/linkedin_access.py">ici</a>, 
+<a href="http://www.xavierdupre.fr/app/pyensae/helpsphinx/pyensae/datasource/linkedin_access.html">documentation</a>.
+Pour des pages, il est préférable d'utiliser les outils javascripts
+développés par Linkedin.
+</p>
+
+</body>
+</html>

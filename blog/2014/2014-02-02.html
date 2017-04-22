@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Détecter des visages avec opencv</title>
+<meta content="python, opencv, reconnaissance des formes, face recognition" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+
+<p>
+Après avoir lu un <a href="http://fideloper.com/facial-detection">blog</a> 
+sur la détection de visages, 
+je me suis dit que c'est facile d'écrire 
+un petit programme pour vérifier que cela marche. 
+Et c'est vrai ou pas si loin. Voici la recette
+sur Windows.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Tout d'abord, il faut installer si vous ne l'avez jamais fait 
+et en faisant bien attention aux numéros de version. 
+J'ai testé les versions x86 (= win32).
+<ul>
+<li><a href="http://www.python.org/download/releases/2.7.6/">Python 2.7</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy">numpy</a> (pour Python 2.7)</li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#opencv">opencv</a> (pour Python 2.7)</li>
+</ul>
+Ensuite, il faut récupérer les modèles de détection de visages sur
+<a href="https://github.com/Itseez/opencv/tree/master/data/haarcascades">github</a>
+et les place dans un répertoire de votre choix.
+On récupère une image comme la suivante qui est utilisée dans
+tous les exemples de programmes de traitement d'images :
+</p>
+
+<center>
+<p>
+<a href="documents/Lenna.png"><img src="documents/Lenna.png" alt="Lenna.png" title="Lenna.png" width="200px" /></a>
+</p>
+</center>
+
+<p>
+Finalement, il suffit d'exécuter ce programme python qu'on sauvegarde
+dans le répertoire où se trouve déjà l'image et le fichier 
+<tt>haarcascade_frontalface_alt2.xml</tt>.
+</p>
+
+<pre class="brush: py">
+# coding:latin-1
+import sys, os
+import cv2
+ 
+def detecte_visages(image, image_out, show = False):
+    # on charge l'image en mémoire
+    img = cv2.imread(image)
+    # on charge le modèle de détection des visages
+    face_model = cv2.CascadeClassifier("haarcascade_frontalface_alt2.xml")
+    
+    
+    # détection du ou des visages
+    faces = face_model.detectMultiScale(img)
+    
+    # on place un cadre autour des visages
+    print ("nombre de visages", len(faces), "dimension de l'image", img.shape, "image", image)
+    for face in faces:
+        cv2.rectangle(img, (face[0], face[1]), (face[0] + face[2], face[0] + face[3]), (255, 0, 0), 3)
+        
+    # on sauvegarde le résultat final
+    cv2.imwrite(image_out, img)
+    
+    # pour voir l'image, presser ESC pour sortir
+    if show :
+        cv2.imshow("visage",img)
+        if cv2.waitKey(5000) == 27: cv2.destroyWindow("visage")
+  
+if __name__ == "__main__":
+    # applique 
+    for file in os.listdir(".") :
+        if file.startswith("visage") : continue # déjà traité
+        if os.path.splitext(file)[-1].lower() in [".jpg", ".jpeg", ".png" ] :
+            detecte_visages (file, "visage_" + file)
+</pre>
+
+<p>
+Et on obtient :
+</p>
+
+<center>
+<p>
+<a href="documents/visage_Lenna.png"><img src="documents/visage_Lenna.png" alt="visage de Lenna" title="visage de Lenna" width="200px" /></a>
+</p>
+</center>
+
+<p>
+Quelques essais plus loin, on s'aperçoit que le modèle 
+n'aime pas trop les profils. Une fois qu'on a extrait le visage, 
+on peut essayer de le 
+<a href="http://docs.opencv.org/modules/contrib/doc/facerec/facerec_tutorial.html">reconnaître</a>.
+Mais ce sera pour une autre fois.
+</p>
+
+
+</body>
+</html>

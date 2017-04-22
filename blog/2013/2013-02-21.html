@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Références, modules</title>
+<meta content="references, module, python, Cython" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="" name="description"/>
+<meta content="2013-02-21" name="date"/></head>
+<body>
+<p>
+J'ai écrit un 
+<a href="http://www.xavierdupre.fr/blog/xd_blog.html?date=2013-01-28">blog</a> 
+il y a presqu'un mois à propos d'une classe permettant d'effectuer rapidement 
+des opérations sur une table, de faire des jointures, de regrouper
+les données un peu à la manière du langage SQL. Je pensais ajouter à la classe
+quelques notions de statistiques et des graphes mais je me suis aperçu
+qu'il existe des modules qui ont l'air de faire ça très bien :
+<ul>
+<li><a href="http://pandas.pydata.org/">pandas</a> ou 
+<i>Python Data Analysis Library</i>, le module utilise 
+le module <a href="http://www.numpy.org/">numpy</a>, mais il autorise 
+l'utilisation de données textuelles. Il permet différentes opérations entre
+tables telles que <i>groupby</i>, <i>join</i>, <i>union</i>.
+L'auteur du module a pensé
+à faire le pont avec <a href="http://www.r-project.org/">R</a>. Le module 
+a l'air assez bien pensé pour les séries temporelles, les données manquantes,
+les dates, les lissages. Le module autorise la lecture d'une table depuis
+une table <a href="http://www.sqlite.org/">sqlite</a> (tables qu'on peut
+regarder en utilisant 
+<a href="http://www.yunqa.de/delphi/doku.php/products/sqlitespy/index">SQLiteSpy</a>) 
+ou toute autre base de données accessibles via une connexion. 
+Un module permet de dessiner aisément des graphes via
+<a href="http://matplotlib.org/">matplotlib</a>.
+</li>
+<li><a href="http://statsmodels.sourceforge.net/">Statsmodels</a>, ce module utilise 
+le précédent. Il reprend différents traitements statistiques, principalement
+linéaire, quelques tests statistiques. Cela dit, je ne vois pas trop 
+l'intérêt de tout réimplémenter. Je préférerais un pont bien conçu entre Python 
+et <a href="http://www.r-project.org/">R</a> dont je n'aime toujours pas la syntaxe
+mais qui reste la référence. C'est plutôt la direction que je choisirais,
+écrire en Python le code R dont je ne veux pas me souvenir.
+</li>
+</ul>
+</p>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>How to extend a stack?</title>
+<meta content="Programming, stack, array, allocation" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="A common way to create a sizeable but continuous array is to use a stack mechanism.  We start by allocating a buffer and when we need more space to  store new elements, we often multiply the size of this buffer by 2. We copy the existing elements into the new space, we add the new one and we free the old buffer. If we follow that strategy for a long time, we end up by allocation memory blocks of size N, 2N, 4N, 8N, ... The major  drawback of this approach is we cannot reuse the space we used for the first allocation. As a consequence, the new buffer is always larger than the sum of  all previously allocated block. And we because, we need to keep the last one alive to copy the existing elements to the new block, this way of  growing a stack cannot reuse the same memory space. This side effect could increase the memory fragmentation. " name="description"/>
+<meta content="2013-02-07" name="date"/></head>
+<body>
+<p>
+A common way to create a sizeable but continuous array is to use a stack mechanism. 
+We start by allocating a buffer and when we need more space to 
+store new elements, we often multiply the size of this buffer by 2.
+We copy the existing elements into the new space, we add the new one and
+we free the old buffer. If we follow that strategy for a long time,
+we end up by allocation memory blocks of size N, 2N, 4N, 8N, ... The major 
+drawback of this approach is we cannot reuse the space we used for the first allocation.
+The reason is simple: 
+</p>
+<!--
+<div lang="latex_help">   mettre latex à la place de latex_help
+N + 2N + 4N + ... + 2^k N = N (2^{k+1} - 1 ) < 2^{k+1} N
+</div>
+-->
+<p class="latexcenter">
+<img alt=" N + 2N + 4N + ... + 2^k N = N (2^{k+1} - 1 ) &lt; 2^{k+1} N " src="giflatex/blog_2013_2013-02-07.html__N2N4N2kNN2k112k1N.gif"/>
+</p>
+
+<p>
+As a consequence, the new buffer is always larger than the sum of 
+all previously allocated block. And we because, we need to keep the last
+one alive to copy the existing elements to the new block, this way of 
+growing a stack cannot reuse the same memory space. This side effect
+could increase the memory fragmentation.
+</p>
+<p>
+What does happen if we multiply the size of a block by a coefficient <i>c</i> 
+smaller than 2: 
+</p>
+<!--
+<div lang="latex_help">
+N + cN + c^2 N + ... + c^k N = N \frac{c^{k+1} - 1 }{c-1} 
+</div>
+-->
+<p class="latexcenter">
+<img alt=" N + cN + c^2 N + ... + c^k N = N \frac{c^{k+1} - 1 }{c-1}  " src="giflatex/blog_2013_2013-02-07.html__NcNc2NckNNfracck11c1.gif"/>
+</p>
+
+<p>
+We need to compare that sum to:
+</p>
+<!--
+<div lang="latex_help">
+N \frac{c^{k+1} - 1 }{c-1} - N (c^{k+1} + c^k) 
+</div>
+-->
+<p class="latexcenter">
+<img alt=" N \frac{c^{k+1} - 1 }{c-1} - N (c^{k+1} + c^k)  " src="giflatex/blog_2013_2013-02-07.html__Nfracck11c1Nck1ck.gif"/>
+</p>
+
+<p>
+We can remove <i>N</i> from the equation:
+<!--
+<div lang="latex_help">
+\frac{c^{k+1} - 1 }{c-1} - (c^{k+1} + c^k)  
+= \left(\frac{c}{c-1}-(c+1)\right) c^k - \frac{1}{c-1} \\
+=  c^k \frac{c - c^2 +1}{c-1}  - \frac{1}{c-1} 
+</div>
+-->
+</p>
+<p class="latexcenter">
+<img alt=" \frac{c^{k+1} - 1 }{c-1} - (c^{k+1} + c^k)   = \left(\frac{c}{c-1}-(c+1)\right) c^k - \frac{1}{c-1} \\ =  c^k \frac{c - c^2 +1}{c-1}  - \frac{1}{c-1}  " src="giflatex/blog_2013_2013-02-07.html__fracck11c1ck1ckleftfraccc1c1rightckfrac1c1ckfraccc21c1frac1c1.gif"/>
+</p>
+
+<p>
+This expression is positive if and only if: 
+</p>
+<!--
+<div lang="latex_help">
+c^k (c - c^2 +1)  - 1 > 0
+</div>
+-->
+<p class="latexcenter">
+<img alt=" c^k (c - c^2 +1)  - 1 &gt; 0 " src="giflatex/blog_2013_2013-02-07.html__ckcc2110.gif"/>
+</p>
+
+<p>
+So first, we must have <!-- <span lang="latex_help">c>1</span> --><img alt="c&gt;1" src="giflatex/blog_2013_2013-02-07.html__c1.gif"/>. 
+Second, we must also have <!-- <span lang="latex_help">c-c^2+1>0</span> --><img alt="c-c^2+1&gt;0" src="giflatex/blog_2013_2013-02-07.html__cc210.gif"/>, which means:
+</p>
+<!--
+<div lang="latex_help">
+c < \frac{\sqrt{5}+1}{2}
+</div>
+-->
+<p class="latexcenter">
+<img alt=" c &lt; \frac{\sqrt{5}+1}{2} " src="giflatex/blog_2013_2013-02-07.html__cfracsqrt512.gif"/>
+</p>
+
+<p>
+If that condition is fulfilled then, there will <i>k</i> 
+for which the above expression becomes positive.
+</p>
+
+<!-- CUT PAGE HERE -->
+
+<p>
+Now, we can think about the number of copies we made 
+to reach a given size <i>S</i> of stack. 
+Assuming <i>c</i> is fixed, we need to find <i>k</i> such as:
+</p>
+<!--
+<div lang="latex_help">
+N c^k > S \Longleftrightarrow k \legslant \frac{\ln S - \ln N}{\ln c} 
+</div>
+-->
+<p class="latexcenter">
+<img alt=" N c^k &gt; S \Longleftrightarrow k \legslant \frac{\ln S - \ln N}{\ln c}  " src="giflatex/blog_2013_2013-02-07.html__NckSLongleftrightarrowklegslantfraclnSlnNlnc.gif"/>
+</p>
+
+<p>
+Once we determine <i>k</i>, we can compute the number of times we copied 
+an element from an old buffer to a new one. Obviously, the first element
+was copied <i>k</i> times, elements after position <i>N</i> were copied
+at most <i>k-1</i>times. Elements after position <i>N + c N</i> were
+copied at most <i>k-2</i> times. The number of copies becomes:
+</p>
+<!--
+<div lang="latex_help">
+k N + (cN- N)(k-1) + (c^2N-cN)(k-2) + ... (c^{k-1}N-c^{k}N) \\ 
+= 
+N + cN + c^2N + c^k N + ... + c^{k-1} N
+</div>
+-->
+<p class="latexcenter">
+<img alt=" k N + (cN- N)(k-1) + (c^2N-cN)(k-2) + ... (c^{k-1}N-c^{k}N) \\  =  N + cN + c^2N + c^k N + ... + c^{k-1} N " src="giflatex/blog_2013_2013-02-07.html__kNcNNk1c2NcNk2ck1NckNNcNc2NckNck1N.gif"/>
+</p>
+
+<p>
+Finally, the number of copies is:
+</p>
+<!--
+<div lang="latex_help">
+N \frac{c^k-1}{c-1} \sim N \frac{\frac{S}{N}-1}{c-1} \sim \frac{S-N}{c-1}
+</div>
+-->
+<p class="latexcenter">
+<img alt=" N \frac{c^k-1}{c-1} \sim N \frac{\frac{S}{N}-1}{c-1} \sim \frac{S-N}{c-1} " src="giflatex/blog_2013_2013-02-07.html__Nfracck1c1simNfracfracSN1c1simfracSNc1.gif"/>
+</p>
+
+<p>
+So we should choose <i>c</i> as big as possible and strictly 
+inferior to <!-- <span lang="latex_help">\frac{\sqrt{5}+1}{2}</span> --><img alt="\frac{\sqrt{5}+1}{2}" src="giflatex/blog_2013_2013-02-07.html__fracsqrt512.gif"/>.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>De l'idée au programme informatique</title>
+<meta content="python, algorithme, print, implémentation, ENSAE" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+Lorsqu'on apprend à programmer, on a souvent une idée précise de l'objectif à 
+atteindre et pourtant, on reste perplexe devant l'écran ne sachant pas par où commencer.
+Par exemple, si on dispose d'une matrice de trois colonnes :
+
+<table border="1">
+<tr><td><b>x</b></td><td><b>y</b></td><td><b>poids</b></td></tr>
+<tr><td>A</td><td>C</td><td>3</td></tr>
+<tr><td>A</td><td>D</td><td>1</td></tr>
+<tr><td>A</td><td>E</td><td>4</td></tr>
+<tr><td>B</td><td>D</td><td>6</td></tr>
+</table>
+Et on souhaite calculer combien de fois on a le couple <i>(x,y)</i> divisé par combien de fois on a <i>x</i> :
+</p>
+
+<!--
+<div lang="latex_help">
+\frac{ \# (x,y) } { \# x }
+</div>
+-->
+<p class="latexcenter">
+<img src="giflatex/blog_2013_2013-11-08.html__fracxyx.gif" alt=" \frac{ \# (x,y) } { \# x } " />
+</p>
+
+
+<p>
+Par exemple, si <i>x=A</i> et <i>y=D</i>, on aura <i>1 / (3 + 1 + 4) = 0.125</i>. Maintenant, comment s'y prend-on ?
+</p>
+<p>
+Tout d'abord, on cherche à calculer un ratio de trucs qui ne sont pas des nombres entiers.
+Un dictionnaire est tout indiqué pour stocker ces trucs car il permet d'associer n'importe quoi (valeur) à
+presque n'importe quoi (clé). La valeur est une somme d'entiers, la clé est un couple de lettres ou une lettre.
+Sans me soucier des petits détails, voilà ce que j'ai envie d'écrire comme premier jet :
+</p>
+
+<pre class="brush: py">
+l = [ ['A','B', 3], ['A','C', 1], 
+      ['A','E', 4], ['B','D', 6], ]
+
+def transition(l):
+    d = {}
+    for x,y,n in l :
+        d [x,y] += n  # erreur ici : KeyError: ('A', 'B')
+        d [x] += n
+    
+    for x,y in d :
+        d[x,y] /= d [x]
+    return d
+    
+print (transition(l))
+</pre>	
+
+<p>
+Bien sûr ça ne marche pas (voir l'erreur ci-dessus). Mais j'ai foi en moi. La logique est bonne.
+Lorsque j'écris <i>d [a,b] += n</i>, je suppose que le couple <i>(x,y)</i> existe dans le dictionnaire
+même la toute première fois. Et c'est pas possible ! Il est vide au début.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<pre class="brush: py">
+l = [ ['A','B', 3], ['A','C', 1], 
+      ['A','E', 4], ['B','D', 6], ]
+
+def transition(l):
+    d = {}
+    for x,y,n in l :
+        if (x,y) not in d : d[x,y] = 0   # j'ajoute la clé si elle est absente 
+        d [x,y] += n  
+        if x not in d : d[x] = 0   # j'ajoute la clé si elle est absente 
+        d [x] += n
+    
+    for x,y in d :         # erreur ici : ValueError: need more than 1 value to unpack
+        d[x,y] /= d [x]
+    return d
+    
+print (transition(l))
+</pre>	
+
+<p>
+Ca ne marche pas mieux mais on avance. L'erreur est plus loin (ce qui
+ne veut pas forcément dire grand chose)... Mais en fait, là je ne comprends pas
+ce qu'il se passe. Donc je mets des <i>print</i>.
+</p>
+
+
+<pre class="brush: py">
+l = [ ['A','B', 3], ['A','C', 1], 
+      ['A','E', 4], ['B','D', 6], ]
+
+def transition(l):
+    d = {}
+    for x,y,n in l :
+        if (x,y) not in d : d[x,y] = 0
+        d [x,y] += n  
+        if x not in d : d[x] = 0
+        d [x] += n
+    
+    for cle in d :         
+        print (cle)     # valeurs affichées ('A', 'C') et puis ('A', 'E') et puis ('A', 'B') et B
+        x,y = cle       # erreur ici : ValueError: need more than 1 value to unpack
+        d[x,y] /= d [x]
+    return d
+    
+print (transition(l))
+</pre>	
+
+<p>
+Ca affiche des choses mais comme je ne suis pas certain de ce que je devrais lire.
+Tout ce que je sais est que la dernière valeur traitée est <i>cle='B'</i>
+mais si ça se trouve, il n'y en a pas d'autre.
+Je remets un coup de 
+<i>print</i> pour savoir. J'affiche un plus avant la ligne incriminée,
+et un moins derrière. Si je vois un + et un -, c'est bon. Si je ne vois qu'un +,
+c'est pas bon.
+</p>
+
+<pre class="brush: py">
+l = [ ['A','B', 3], ['A','C', 1], 
+      ['A','E', 4], ['B','D', 6], ]
+
+def transition(l):
+    d = {}
+    for x,y,n in l :
+        if (x,y) not in d : d[x,y] = 0
+        d [x,y] += n  
+        if x not in d : d[x] = 0
+        d [x] += n
+    
+    for cle in d :         
+        print ("+",cle)
+        x,y = cle
+        print ("-",cle)
+        x,y = cle       
+        d[x,y] /= d [x]
+    return d
+    
+print (transition(l))
+</pre>
+
+<p>
+Et ça donne :
+</p>
+
+<pre class="brush: py">
++ ('A', 'C')
+- ('A', 'C')
++ ('A', 'E')
+- ('A', 'E')
++ ('B', 'D')
+- ('B', 'D')
++ B
+</pre>
+
+<p>
+J'ai compris, c'est <i>B</i> qui plante. Il est tout seul et je peux pas le couper en deux
+pour avoir <i>x,y</i>. Je corrige 
+de telle sorte que je ne découpe <i>cle</i> en <i>x,y</i> que lorsqu'il y a deux lettres :
+</p>
+
+
+
+
+<pre class="brush: py">
+l = [ ['A','B', 3], ['A','C', 1], 
+      ['A','E', 4], ['B','D', 6], ]
+
+def transition(l):
+    d = {}
+    for x,y,n in l :
+        if (x,y) not in d : d[x,y] = 0
+        d [x,y] += n  
+        if x not in d : d[x] = 0
+        d [x] += n
+    
+    for cle in d :         
+        if len(cle) == 2 :    # deux lettres ?
+            x,y = cle       
+            d[x,y] /= d [x]
+    return d
+    
+print (transition(l))
+</pre>	
+
+<p>
+Et j'ai bien le résultat souhaité :
+</p>
+
+<pre class="prettyprint">
+{('A', 'B'): 0.375, ('A', 'C'): 0.125, ('B', 'D'): 1.0, 'B': 6, 'A': 8, ('A', 'E'): 0.5}
+</pre>	
+
+<p>
+Il ne reste plus qu'à passer à de plus grands tableaux.
+</p>
+<p>
+On verra ça un autre jour.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Custom completion for IPython</title>
+<meta content="python, ipython, notebooks, completion" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Autocompletion is a nice feature quite useful when typing very long names.
+It is implemented by modules such as 
+<a href="http://ipython.org/">IPython</a>, 
+<a href="http://bpython-interpreter.org/">bpython</a> or
+<a href="http://www.dreampie.org/">DreamPie</a>. 
+I'm quite a big fan of a the first one, the notebooks to be precise.
+However, it did not seem quite 
+easy to add my custom autocompletion.
+I tried some search queries but I was only able to find
+<a href="http://ipython.org/ipython-doc/dev/config/integrating.html">Integrating your objects with IPython</a>
+or <a href="https://github.com/ipython/ipython/wiki/IPEP-11:-Tab-Completion-System-Refactor">IPEP 11: Tab Completion System Refactor</a>.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+So I followed the idea mentioned on the first page. I created 
+kind of fake classes. They do not do anything but populating
+the dictionary <tt>__dict__</tt> so that the information
+appears when <tt>tab</tt> is pressed.
+So I just did that for files except I had to replace
+some characters, normal for a filename but unexpected for a variable name.
+Based on that, I wrote some code 
+(<a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/_modules/ipythonhelper/kindofcompletion.html#AutoCompletion">here</a>)
+to populate a class with members very close to file names:
+</p>
+
+<pre class="brush: py">
+from pyquickhelper import AutoCompletionFile
+d = AutoCompletionFile(".")
+</pre>
+
+<p>
+As a result, when pressing <tt>tab</tt>, file names will appear:
+</p>
+
+<img src="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/_images/completion.png" />
+
+<p>
+I replaced <tt>"."</tt> by <tt>"_"</tt> but it is quite easy to use.
+By adding <tt>._</tt>, you get the real path.
+</p>
+
+<pre class="brush: py">
+os.listdir(d.sphinxdoc.source._)
+</pre>
+
+
+</body>
+</html>

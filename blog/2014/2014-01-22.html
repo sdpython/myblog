@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Automatically saving emails on a local folder</title>
+<meta content="python, IMAP, email, gmail" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+
+<p>
+When my student have their exams, I receive many emails with 
+their solution attached to them. I avoid downloading them
+all because it is manual. However, a couple of days ago, 
+I thought it might be useful if I write the tool which does
+it for me (I'm still refusing to do it manually).
+I ended up writing a Python module called 
+<a href="https://pypi.python.org/pypi/pymmails">pymmails</a>.
+To get the email from my students, I just had to 
+execute the following script:
+</p>
+<pre class="brush: py">
+from pyquickhelper import fLOG
+from pymmails import MailBoxImap
+fLOG(OutputPrint=True)
+user = "your.email"
+pwd = "password"
+server = "imap.your_provider.ext"
+box = MailBoxImap(user, pwd, server)
+box.login()
+box.dump_html(folder="students_exam", pattern='FROM "ensae" SINCE 1-Dec-2013')
+box.logout()
+</pre>
+<p>
+All the attachments were in a single folder.
+I hope I'll remember my own trick next year
+or maybe I'll use 
+<a href="http://jinja.pocoo.org/docs/">jinja2</a>
+or even
+<a href="http://docs.getpelican.com/">pelican</a>
+to make it better.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Among others things, it was not straight forward to write this code.
+I had to gather some piece of information such as:
+<ul>
+<li>Class <tt>imaplib.IMAP4</tt> for <a href="http://www.orange.fr/">orange</a>,
+    class <tt>imaplib.IMAP4_SSL</tt> for <a href="http://www.gmail.com/">gmail</a>.</li>
+<li>You need to select a folder first before searching:
+        <pre class="brush: py">
+        M = IMAP (server)
+        M.login(login, pwd)
+        M.select(qfold, readonly=True)   # qfold in M.list() (after some cleaning)
+        typ, data = M.search(None, 'ALL')
+        a_message = M.fetch(...)
+        M.close()
+        </pre>
+        </li>
+<li>To fetch the body and the text: <tt>t,data = M.fetch(num, '(BODY[HEADER])')</tt></li>
+<li>To fetch everything: <tt>t,data = M.fetch(num, '(RFC822)')</tt></li>
+<li>Every field (including attachments names) of the header can be encoded in a different encoding. The decoding happens with
+        a different function: <tt>text, encoding = email.header.decode_header(value)[0]</tt>
+        (the encoding is noticeable with <tt>=?</tt>, the encoding can start in
+        the middle of the string if somebody pressed <tt>Reply</tt> and modified the subject).</li>
+<li>The way you can search emails is described here: <a href="http://tools.ietf.org/html/rfc3501#page-49">IMAP Protocol</a></li>
+</ul>
+</p>
+
+</body>
+</html>

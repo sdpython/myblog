@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Désactiver les logs de cvxopt</title>
+<meta content="programming, python, logs, cvxopt" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+Des élèves m'ont posé cette question aujourd'hui : comment désactiver les logs
+que génère le module <a href="http://cvxopt.org/">cvxopt</a>. J'ai trouvé
+la réponse en cherchant <i>cvxopt disable log</i> sur un moteur de recherche 
+<a href="http://cvxopt.org/userguide/coneprog.html#algorithm-parameters">cvxopt, algorithm parameters</a>
+ou encore
+<a href="http://stackoverflow.com/questions/10924550/cvxopt-output-suppression-with-mosek">CVXOPT output suppression with MOSEK</a>.
+</p>
+
+<pre class="brush: py">
+from cvxopt import solvers
+solvers.options['show_progress'] = False
+</pre>
+
+</body>
+</html>

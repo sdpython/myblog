@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Accélérer Python</title>
+<meta content="python, cpython, pyjion, pypy, JIT" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+
+<p>
+Python est très lent, c'est pratiquement son seul défaut avec le fait qu'il n'est pas
+vraiment un langage multi-thread à cause du 
+<a href="https://wiki.python.org/moin/GlobalInterpreterLock">GIL</a>.
+Bref, pour accélérer le langage, on passe le plus souvent par du C et donc un langage compilé.
+Le plus simple est d'écrire ses calculs en C puis de s'interfacer avec le langage Python.
+C'est comme cela que fonctionne la librairie <a href="http://www.numpy.org/">numpy</a>.
+Une autre option consiste à écrire en pseudo langage C avec <a href="http://cython.org/">Cython</a>.
+C'est l'option choisie par <a href="http://scikit-learn.org/stable/">scikit-learn</a>. Mais on ne réécrit pas tout,
+on utilise un profileur qui nous indique où le programme perd le plus de temps et on travaille
+spécifiquement sur cette partie. Et si on ne veut pas réécrire du code, on peut penser à changer d'interpréteur
+afin que le même code python soit exécuté plus rapidement.
+Sur ce point, il faut lire 
+<a href="http://sametmax.com/les-interpreteurs-alternatifs-de-python/">Les interpréteurs alternatifs de python</a>.
+Une caractéristique des langages compilés (et non interprétés) et que les variables sont déclarées
+avec un type précis.
+</p>
+
+<pre class="brudh: py">
+def addition(x, y):
+    return x + y
+</pre>
+
+<p>La fonction précédente fonctionnera si l'addition de <i>x</i> et <i>y</i> au moment de l'exécution
+si cette addition à un sens ce qui ne requiert pas que ces deux variables soient du même type.
+</p>
+
+<pre class="prettyprint">
+double addition(double x, double y) {
+    return x + y;
+}
+</pre>
+
+<p>En C, on est obligé de spécifier le type car on ne peut donner un sens 
+au symbol <i>+</i> que si le type des variables est connu. Compiler le langage Python
+implique alors de faire de l'inférence de type... ce qu'il est parfois impossible 
+d'accomplir à moins d'exécuter le programme. On se tourne alors vers les 
+<a href="https://en.wikipedia.org/wiki/Just-in-time_compilation">JIT</a> qui propose
+de compiler certaines parties d'un programme en partant du code interprété
+lors de l'exécution.
+</p>
+
+</body>
+</html>

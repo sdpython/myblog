@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Les classes en programmation</title>
+<meta content="python, programmation, classe" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+<i>Monsieur, c'est vraiment utile les classes ? On est obligé de les utiliser ?</i> 
+C'est le genre de questions que les étudiants posent alors qu'ils commencent leur 
+projet. La réponse courte consiste à répondre que c'est plus pratique.
+Mais concrètement, ça veut dire quoi plus pratique ?
+D'une manière générale, on s'embarrasse rarement d'un concept 
+s'il n'apporte rien. On peut écrire les mêmes programmes sans classes mais...
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Voici quelques raisons pour lesquelles les classes sont <i>pratique</i>.
+La première sont les <b>variables liées</b>. Une matrice est définie par ses coefficients
+et sa dimension. L'un ne va pas sans l'autre et pour éviter de faire des erreurs,
+on définit une classe <i>Matrice</i> qui les contient. On est sûr alors de ne pas oublier 
+des informations en route. L'écriture est simplifiée.
+</p>
+
+<pre class="brush: py">
+def addition_matrice(l1, c1, coef1, l1, c2, coef2):
+    # ....
+    return l, c, coef
+</pre>
+
+Ou :
+
+<pre class="brush: py">
+def addition_matrice(m1, m2):
+    # ....
+    return m
+</pre>
+
+<p>
+La seconde raison est <b>lexicale</b>. On peut décrire un programme avec trois 
+axiomes : la séquence - le fait d'exécuter des instructions les unes à la suites des autres -, 
+les tests et les boucles - ou la répétition. Mais décrire un grand programme - ils le sont tous - avec 
+ces trois concepts, c'est long. Il est difficile d'avoir une vue d'ensemble.
+On a alors ajouté les fonctions. Moi qui ai commencé en basic sur un Amstrad,
+cela consistait à passer du <a href="https://en.wikipedia.org/wiki/Goto">GOTO</a> au
+<a href="https://en.wikipedia.org/wiki/GOSUB">GOSUB</a>. Et on s'est aperçu que parfois,
+on écrivait des tas de fonctions qui manipulent toujours les mêmes données.
+Cool. Et si on utilisait un seul mot pour désigner ces données et ces fonctions.
+Et voilà le mot classe, on invente des mots pour éviter les périphrases.
+</p>
+
+</body>
+</html>

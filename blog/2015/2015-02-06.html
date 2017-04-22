@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Quelques trucs à propos de PIG</title>
+<meta content="map reduce, PIG, programmation" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+PIG a besoin de connaître le nombre exact de colonnes. Supposons que
+vous ayez quatre colonnes :
+</p>
+<pre class="prettyprint">
+c1  c2  c3  c3
+1   2   3   4
+6   7   8   9
+...
+</pre>
+
+<p>
+PIG ne dira rien si on écrit ceci :
+</p>
+
+<pre class="prettyprint">
+A = LOAD '$CONTAINER/$PSEUDO/fichiers/ExportHDInsightutf8_noheader.txt'
+          USING PigStorage('\t') 
+           AS (c1:chararray,c2:chararray,c3:chararray) ;
+</pre>
+
+<p>
+La dernière colonne sera forcément incluse avec une autre, ce entraînera
+une erreur plus tard dans l'exécution du script. Une autre erreur causée par
+inadvertance :
+</p>
+<pre class="prettyprint">
+2015-02-05 23:40:54,964 [main] ERROR org.apache.pig.tools.pigstats.SimplePigStats - 
+ERROR 0: Exception while executing [POUserFunc 
+(Name: POUserFunc(org.apache.pig.builtin.YearsBetween)[long] - 
+scope-380 Operator Key: scope-380) children: null at []]: 
+java.lang.IllegalArgumentException: ReadableInstant objects must not be null
+</pre>
+<p>
+Cette erreur apparaît par exemple lors de la conversion d'une chaîne de caractères
+au format <tt>Date</tt>. Par ailleurs, on sait que les valeurs de cette 
+colonne ne sont jamais nulles. Alors pourquoi ? Le fichier importé sur Hadoop
+provient en fait d'un fichier texte enregistré à l'aide de 
+<a href="http://pandas.pydata.org/">pandas</a>. La première ligne 
+contient le nom des colonnes. Or, sous Hadoop, le nom des colonnes
+n'est jamais précisé dans un fichier. Il n'y a pas de concept de première ligne
+sous Hadoop. Un gros fichier est stocké sur plusieurs machines et en plusieurs blocs.
+Chaque blocs a une première ligne mais l'ensemble des blocs n'en a pas vraiment.
+Ces blocs ne sont d'ailleurs pas ordonnés. On n'insère donc jamais
+le nom des colonnes dans un fichier sur Hadoop car il n'y a pas de première ligne.
+</p>
+
+
+</body>
+</html>

@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Résoudre un sudoku avec Excel et VBA</title>
+<meta content="Excel, VBA, sudoku" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+
+<p>
+Le programme que vous trouverez plus bas résoud les sudoku. Je ne suis pas sûr qu'il faille 
+rappeler les régles de ce jeu mais comme elles sont simples :
+<ul>
+<li>Chaque case contient un chiffre entre 1 et 9.</li>
+<li>Dans chaque ligne et colonne, il ne peut y avoir deux chiffres égaux.</li>
+<li>Dans chaque petit carré, il ne peut y deux chiffres égaux.</li>
+</ul>
+</p>
+
+<center>
+<p>
+<a href="documents/4sudoku1.png"><img src="documents/4sudoku1.png" alt="un sudoku" title="un sudoku" height="200px" /></a>
+</p>
+</center>
+
+<p>
+Et le programme Excel que j'ai fait se présente sous la forme :
+</p>
+
+<center>
+<p>
+<a href="documents/4sudoku2.png"><img src="documents/4sudoku2.png" alt="un sudoku" title="un sudoku" height="250px" /></a>
+</p>
+</center>
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+L'algorithme tient en quelques lignes :
+<ul>
+<li>Au début la solution <i>S</i> est l'ensemble des cases connues.</li>
+<li>Pour chaque case on élimine les chiffres impossibles après avoir appliqué les trois règles
+citées ci-dessus.</li>
+<li>On choisit une case pour laquelle il ne reste plus qu'une seule possibilité et on l'ajoute à la solution <i>S</i>.</li>
+<li>On met à jour les chiffres impossibles pour chaque case et on retourne à l'étape précédente
+jusqu'à ce que la solution recouvre toutes les cases.</li>
+</ul>
+
+Néanmoins, il est possible qu'il existe plus d'un chiffre possible pour toutes les cases 
+autres que celle de la solution. Supposons que pour une case, deux chiffres soient possibles.
+Dans ce cas, il faut en essayer un puis reprendre l'algorithme. 
+Soit on arrive à la solution et c'est fini, soit on tombe dans une impasse. Dans ce dernier cas, on revient
+en arrière et on essaye l'autre chiffre. C'est très facile à faire par récurrence. Ca donne le programme suivant :
+</p>
+
+<pre class="brush: vb">
+Option Explicit
+
+Dim nbiter As Long
+
+'
+'  retourne le nombre de cases non vides
+' on compte toutes celles qui ne contiennent pas 0
+'
+Function sudoku_cases_non_vide(ByRef su As Variant) As Long
+    Dim n As Long
+    Dim i As Long
+    Dim j As Long
+    
+    n = 0
+    For i = 1 To 9
+        For j = 1 To 9
+            If su(i, j) &gt; 0 Then n = n + 1
+        Next j
+    Next i
+    
+    sudoku_cases_non_vide = n
+End Function
+
+'
+' retourne l'ensemble des nombres possibles pour une case
+' en tenant compte des contraintes
+'
+Function nombre_possible_pour_case(ByRef su As Variant, _
+						ByVal i As Long, ByVal j As Long) As Variant
+
+    Dim res() As Long
+    
+    ' on regarde d'abord si la case est vide
+    If su(i, j) &gt; 0 Then
+        ReDim res(0)
+        nombre_possible_pour_case = res
+        Exit Function
+    End If
+    
+    ' on crée un tableau,
+    ' si paspossible (i) : alors le chiffre i est déjà
+    ' pris ailleurs dans la ligne, dans la colonne ou dans le petit carré
+    ' qui contiennent la case i,j
+    
+    Dim paspossible(9) As Long
+    Dim k As Long
+    For k = 1 To 9
+        paspossible(k) = 0  ' au départ, tous sont possibles
+    Next k
+    
+    ' vérification des contraintes en ligne et en colonne
+    For k = 1 To 9
+        If su(i, k) &gt; 0 Then
+            paspossible(su(i, k)) = 1
+        End If
+        
+        If su(k, j) &gt; 0 Then
+            paspossible(su(k, j)) = 1
+        End If
+    Next k
+    
+    ' vérification des contraintes dans le petit carré de la case i,j
+    Dim ii, jj, iii, jjj As Long
+    ii = i - ((i - 1) Mod 3)
+    jj = j - ((j - 1) Mod 3)
+    
+    For iii = ii To ii + 2
+        For jjj = jj To jj + 2
+            If su(iii, jjj) &gt; 0 Then
+                paspossible(su(iii, jjj)) = 1
+            End If
+        Next jjj
+    Next iii
+    
+    ' nombre de possibles = tous ceux qui ne sont pas dans pospossible
+    ' on les compte d'abord
+    Dim n As Long
+    n = 0
+    For k = 1 To 9
+        If paspossible(k) = 0 Then n = n + 1
+    Next k
+    
+    ' puis on les met dans res
+    ReDim res(n)
+    n = 0
+    For k = 1 To 9
+        If paspossible(k) = 0 Then
+            n = n + 1
+            res(n) = k
+        End If
+    Next k
+    
+    ' fini
+    nombre_possible_pour_case = res
+    
+End Function
+
+'
+' retourne l'ensemble des nombres possibles pour une case
+' en tenant compte des contraintes
+'
+Function get_best_solution(ByRef su As Variant) As Variant
+    Dim i, j, mi, mj As Long
+    Dim pos As Variant
+    
+    ' on regarde d'abord si toutes les cases sont encore viables
+    For i = 1 To 9
+        For j = 1 To 9
+            If su(i, j) = 0 Then
+                pos = nombre_possible_pour_case(su, i, j)
+                If UBound(pos) = 0 Then
+                    Dim r(0) As Long
+                    get_best_solution = r
+                    Exit Function
+                End If
+            End If
+        Next j
+    Next i
+    
+    ' on teste la case qui offre le moins de chiffres possibles vérifiant
+    ' les contraintes
+    Dim l As Long
+    l = 0
+    For i = 1 To 9
+        For j = 1 To 9
+            If su(i, j) = 0 Then
+                pos = nombre_possible_pour_case(su, i, j)
+                If UBound(pos) = 1 Then
+                    Dim rrr(2) As Long
+                    rrr(1) = i
+                    rrr(2) = j
+                    get_best_solution = rrr
+                    Exit Function
+                ElseIf l = 0 Or UBound(pos) &lt; l Then
+                    l = UBound(pos)
+                    mi = i
+                    mj = j
+                End If
+            End If
+        Next j
+    Next i
+    
+    If l &gt; 0 Then
+        ' s'il y a une solution
+        Dim rr(2) As Long
+        rr(1) = mi
+        rr(2) = mj
+        get_best_solution = rr
+    Else
+        ' s'il n'y en a pas
+        ' excusez le nom de la variable (rrrr),
+        ' la portée d'une variable en VBA est la procédure
+        ' même si sa déclaration est à l'intérieur d'un bloc
+        Dim rrrr(0) As Long
+        get_best_solution = rrrr
+    End If
+End Function
+
+'
+' résolution du sudoku, su est le sudoku à résoudre
+'
+Function resolution(ByRef su As Variant) As Variant
+    ' premier cas, le sudoku est déjà résolu,
+    ' auquel cas, c'est fini
+    ' la variable nbiter compte le nombre d'itération pour la résolution
+    ' il vaut mieux vérifier que ce nombre ne devient pas trop grand,
+    ' sinon, il est possible que le programme entre dans une boucle infinie
+    ' ce qui oblige l'utilisateur à relancer Excel après l'avoir détruit l'application
+    ' dans le gestionnaire des tâches
+    If sudoku_cases_non_vide(su) = 81 Or nbiter &gt; 2000 Then
+        resolution = su
+        Exit Function
+    End If
+    
+    nbiter = nbiter + 1
+    
+    Dim copie As Variant
+    copie = su
+    
+    ' retourne la case la plus sympathique
+    Dim b As Variant
+    b = get_best_solution(copie)
+    
+    ' s'il existe une case impossible
+    If UBound(b) = 0 Then
+        Dim r(0) As Variant
+        resolution = r
+        Exit Function
+    End If
+    
+    Dim i, j As Long
+    i = b(1)
+    j = b(2)
+    
+    Dim nb As Variant
+    Dim sol As Variant
+    nb = nombre_possible_pour_case(copie, i, j)
+    
+    ' sinon on teste toutes les solutions possibles pour une case
+    Dim k As Long
+    For k = 1 To UBound(nb)
+        copie(i, j) = nb(k)
+        sol = resolution(copie)
+        If UBound(sol) &gt; 0 Then
+            resolution = sol
+            Exit Function
+        End If
+    Next k
+    
+    ' pas de solution
+    Dim re(0) As Long
+    resolution = re
+End Function
+
+'
+' macro appelée lorsque le bouton est enclenché
+'
+Sub macro_sudoku()
+    Dim sudoku() As Variant
+    Dim i, j As Long
+    Dim nb As Long
+    Dim ch
+    
+    ' vérification
+    i = 0
+    For Each ch In Selection
+        i = i + 1
+    Next ch
+    If i &lt;&gt; 81 * 2 Then
+        MsgBox "Vous n'avez pas sélectionné 81 * 2 cases, on sélectionne la plage B2:J10 + N2:V10"
+        Range("B2:J10,N2:V10").Select
+        Range("N2").Activate
+    End If
+    
+    ' on remplit le sudoku avec les 81 premières cases
+    ReDim sudoku(9, 9)
+    i = 1
+    j = 1
+    For Each ch In Selection
+        sudoku(i, j) = ch.Value
+        If j = 9 Then
+            j = 1
+            i = i + 1
+            If i = 10 Then Exit For
+        Else
+            j = j + 1
+        End If
+    Next ch
+        
+    ' on résoud le sudoku
+    Dim r As Variant
+    nbiter = 0
+    r = resolution(sudoku)
+    
+    If UBound(r) &gt; 0 Then
+        ' s'il y a une solution, on remplit les cases
+        i = 1
+        j = 1
+        For Each ch In Selection
+            If i &gt;= 10 Then
+                ch.Value = r(i - 9, j)
+            End If
+            If j = 9 Then
+                j = 1
+                i = i + 1
+            Else
+                j = j + 1
+            End If
+        Next ch
+    Else
+        ' s'il n'y a pas de solution, on remplit les cases de zéros
+        i = 1
+        j = 1
+        For Each ch In Selection
+            If i &gt;= 10 Then
+                ch.Value = 0
+            End If
+            If i = 9 Then
+                i = 1
+                j = j + 1
+            Else
+                i = i + 1
+            End If
+        Next ch
+    End If
+End Sub
+</pre>
+
+<p>
+Pour finir, un lien vers le fichier Excel : 
+<a href="documents/sudoku.xlsm">sudoku.xlsm</a>
+</p>
+
+
+</body>
+</html>

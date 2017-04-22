@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Unit test, what a relief ?</title>
+<meta content="python, unit test, programming" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+To be honest, I hesitated. French, English, I was pissed off by own coding 
+(I speak French in that case) but saved by a unit test...
+</p>
+<p>
+Function signature are a bit tricky in python because this definition
+does not exist. There is only one function and you have to tweak around 
+the parameters' type. So... this is an example of a case where unit tests 
+were useful to me.
+<pre class="prettyprint">
+def function_nobody(input) :
+    if isinstance (input, list) :
+        for line in list :
+            # ....
+    elif isinstance (input ,str) :
+        with open(input, "r", encoding="utf8") as f :
+            for line in f :
+                # ...
+</pre>
+So basically, the previous function accepts a file or a list. But I
+wanted it to be more generic and to accept iterators:
+<pre class="prettyprint">
+import collections
+def function_nobody(input) :
+    if isinstance (input, list) or isinstance (file, collections.Iterable) :
+        for line in list :
+            # ....
+    elif isinstance (input ,str) :
+        with open(input, "r", encoding="utf8") as f :
+            for line in f :
+                # ...
+</pre>
+I added <i>isinstance (file, collections.Iterable)</i>. But a string falls under 
+that condition which made the second case useless. But because I wrote
+unit tests, I was able to catch my mistake. I just reverted the two tests:
+<pre class="prettyprint">
+import collections
+def function_nobody(input) :
+    if isinstance (input ,str) :
+        with open(input, "r", encoding="utf8") as f :
+            for line in f :
+                # ...
+    elif isinstance (input, list) or isinstance (file, collections.Iterable) :
+        for line in list :
+            # ....
+</pre>
+And it worked. I confess I did not lose two much time and I would not have lost
+any even without unit tests because I would not know my failure. 
+However, I don't want to guess how much crazyness 
+I could have gone through if one of my scripts fails because of that a month, 
+two, three months later. How could I guess it is because of that... 
+</p>
+<p>
+Please do unit testing... Ok, it is late, my style might be overdramatic. 
+But, please remember this when it is your time to experience one of these
+overdramatic scenarii. (I used the latin plural for scenario, don't know
+if it works in English).
+</p>
+
+</body>
+</html>

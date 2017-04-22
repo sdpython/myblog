@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Python 2.7 and Python 3, difference with multiple inheritance</title>
+<meta content="python, iterator, yield, return" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+There is a little difference in the way Python 3 and Python 2.7 handles multiple inheritance.
+Class <tt>Cl</tt> inherits from <tt>ClA</tt> and <tt>ClB</tt>. <tt>ClA</tt> defines <tt>method1</tt>,
+<tt>ClB</tt> defines <tt>suffix</tt>. 
+The question is: Does method <tt>method1</tt> from class <tt>ClA</tt>
+know about method <tt>suffix</tt> from class <tt>ClB</tt>?
+In Python 3, it does:
+</p>
+
+<pre class="brush: py">
+class C0:
+    def suffix(self):
+        raise NotImplementedError()
+
+class ClA(C0):
+    def method1(self):
+        return "A.method1" + self.suffix()
+        
+class ClB(C0):
+    def suffix(self):
+        return "--B"
+        
+class Cl(ClA, ClB):
+    pass
+
+cl = Cl()
+print(cl.method1())
+</pre>
+
+<p><tt>[1]</tt></p>
+
+<pre class="prettyprint">
+A.method1--B
+</pre>
+
+<p>
+In Python 2.7?
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p><tt>[2]</tt></p>
+
+<pre class="prettyprint">
+Traceback (most recent call last):
+  File "test27.py", line 17, in &lt;module&gt;
+    print(cl.method1())
+  File "test27.py", line 7, in method1
+    return "A.method1" + self.suffix()
+  File "test27.py", line 3, in suffix
+    raise NotImplementedError()
+NotImplementedError
+</pre>
+
+<p>
+It does not. To fix it, the method has to be rewritten.
+</p>
+
+<pre class="prettyprint">
+class Cl(ClA, ClB):
+    def suffix(self):
+        return ClB.suffix(self)
+</pre>
+
+<p><b>2016/03/08</b> commentaire envoyé par Romain (see also
+<a href="https://wiki.python.org/moin/NewClassVsClassicClass">New Class Vs Classic Class</a>)</p>
+
+<p>
+La réelle différence ne se situe pas entre la 2.x et la 3.x mais entre la 2.1 et la 2.2. 
+En 2.2, les "new style classes" ont été introduites, et le "nouveau comportement" de l'héritage, 
+et en particulier de l'héritage multiple. Pour être backward compatible, 
+les versions 2.2 à 2.7 ont forcé l'utilisateur à utiliser de manière explicite <tt>object</tt> 
+comme classe de base pour obtenir le nouveau comportement. Si une classe n'a pas dans 
+ses ancêtres <tt>object</tt>, alors c'est une "vieille" classe, supportée par python 2.1.
+</p>
+<p>
+En python 3, la seule différence est le retrait de cette rétrocompatibilité avec la 2.1, 
+et du coup <tt>class x</tt> ou <tt>class x(object)</tt> ont la même signification.  
+Si on reprend ton bout de code, le simple fait de remplacer <tt>class C0:</tt> par 
+<tt>class C0(object):</tt> (qui est la manière la plus correcte en python 2.2+ 
+de déclarer une classe), ton bout de code s'exécute exactement de la même manière en python2 et en python3.
+</p>
+<p>
+En résumé, la vraie différence que tu pointes est le cassage en 3.0 de la 
+rétrocompatibilité des "old style classes" encore disponibles dans python 2, 
+puisque <tt>object</tt> (la classe de base utilisant le mécanisme de la métaclasse 
+type et permettant entre autres l'héritage multiple et l'utilisation des 
+descripteurs) devient la classe de base par défaut de toute classe déclarée 
+sans parent.
+</p>
+
+</body>
+</html>

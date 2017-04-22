@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Longitude, latitude et les carreaux de l'INSEE</title>
+<meta content="INSEE,carreaux,python" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Les <a href="http://www.insee.fr/fr/themes/detail.asp?reg_id=0&amp;ref_id=donnees-carroyees&amp;page=donnees-detaillees/donnees-carroyees/donnees-carroyees-200m.htm">données carroyées</a>
+à 200 mètres, produites par l'INSEE, contiennent
+<i>18 variables sur la structure par âge des individus, les caractéristiques des 
+ménages (locataire/propriétaire, etc.) et les revenus au 31 décembre 2010</i>
+pour chaque zone ou <i>carreau</i> de 200 mètres de côté d'un quadrillage
+qui recouvre le territoire français, territoire d'outre mer compris.
+</p>
+
+<p>Un des inconvénients relève du système de coordonnées utilisé pour la métropole,
+LAEA (<a href="https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection">Lambert Azimutal Equal Area</a> code EPSG 3035) 
+d'après la
+<a href="http://www.insee.fr/fr/themes/detail.asp?reg_id=0&amp;ref_id=donnees-carroyees&amp;page=donnees-detaillees/donnees-carroyees/donnees_carroyees_doc.htm#position-geographique">documentation générale</a>
+(voir également <a href="http://www.insee.fr/fr/themes/detail.asp?reg_id=0&amp;ref_id=donnees-carroyees&amp;page=donnees-detaillees/donnees-carroyees/donnees_carroyees_diffusion.htm#utilisation-des-fichiers-et-precautions-a-suivre">Documentation complète sur les données carroyées à 200 mètres</a>).
+Il faut le plus souvent les convetir en longitude/latitude pour tracer des cartes 
+avec les librairies existantes en Python (<a href="http://matplotlib.org/basemap/">basemap</a> par exemple).
+</p>
+<p>
+Comment trouver un code python qui permettent d'effectuer cette conversion ?
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Il faut tout d'abord accepter que le code trouvé ne sera pas forcément
+écrit en Python. Les transciptions de fonctions mathématiques ne devraient
+toutefois pas poser de problèmes.
+Si les premières recherches sur internet ne mènent à rien
+(<i>convert LAEA into longtiude latitude</i>), il faut se souvenir que la plupart
+des codes open source sont sur <a href="https://github.com/">github</a>. On
+ajoute ce mot-clé à la recherche pour finalement tomber sur le projet
+<a href="http://proj4js.org/">proj4js</a> dont la source révèle un répertoire
+<a href="https://github.com/proj4js/proj4js/tree/master/lib/projections">projections</a>
+qui contient des conversions pour la plupart des systèmes de projection
+existants dont <a href="https://github.com/proj4js/proj4js/blob/master/lib/projections/laea.js">laea.js</a>.
+Convertir le code en Python paraît d'une difficulté raisonnable.
+</p>
+
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Installation of module PyMC</title>
+<meta content="Python, references, teaching, initiation à la programmation, modules, PyMC" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<p>
+Installing a Python module can lead you quite far
+especially if this one includes some fortran files.
+That's what happened when I tried to install
+<a href="https://github.com/pymc-devs/pymc">PyMC</a>. 
+That's what I did for Python 3.3 but it does not mean
+it is the simplest way.
+<ul>
+<li>Install <a href="http://www.mingw.org/">MinGW</a>, check everything 
+    (including the fortran compiler)</li>
+<li>Modify one file: <i>c:\python33\Lib\distutils\cygwinccompiler.py</i>. 
+    It contains a deprected option for MinGW which
+    needs to be removed: <i>-mno-cygwin</i>.
+    </li>
+<li>Get the source for <a href="https://github.com/pymc-devs/pymc">PyMC</a>
+    as a ZIP archive. Uncompress in one local folder.</li>
+<li>Open a command line window, go to the folder which
+    contains the file setup.py and type the following commands:
+<pre class="prettyprint">
+set path=%path%;c:\mingw\bin;c:\python33
+python setup.py config_fc --fcompiler=gfortran build --compiler=mingw32
+python setup.py install
+</pre>
+        </li>
+</ul>
+Then, use Python and try <i>import pymc</i> to see if it worked.
+After that oue hour I spent gathering all the necessary steps,
+I forgot why I wanted to do it... Just kidding, Scipy does not
+exist yet on Python 3.3 and I needed the function 
+<a href="http://nullege.com/codes/search/pymc.utils.normcdf">normcdf</a>
+(or <a href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html">cdf</a>).
+</p>
+</body>
+</html>

@@ -1,0 +1,56 @@
+﻿=========================
+My first try with reveals
+=========================
+
+.. revealjs:: A quick try with sphinxjp.themes.revealjs
+
+    Let's how it goes
+
+ .. rv_small::
+
+    Created by `Xavier Dupré <http://www.xavierdupre.fr/blog/2014-02-01_nojs.html>`_ 
+
+.. revealjs:: What's up
+
+    Let's see how this text is displayed.
+    And what about these bullet points:
+        - bullet 1
+        - bullet 2
+        - bullet 3
+
+    .. rv_note::
+
+        hidden note
+
+.. revealjs::
+
+    .. revealjs:: The first slide comes horizontally.
+
+        The first slide of a pile.
+
+    .. revealjs:: The second slide comes vertically.
+
+        Well, do you remember where you are.
+        
+    .. revealjs:: The third slide still comes vertically.
+
+        I'm lost
+        
+.. revealjs::
+
+    .. revealjs:: Conlusion
+
+        I like it
+
+    .. revealjs:: Plus
+
+        It is easy to put online.
+        
+        
+
+        
+
+        
+
+        
+

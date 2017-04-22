@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Notebook to slides</title>
+<meta content="slides, notebook, python" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+Notebooks can be converted into slides with 
+<a href="http://ipython.org/ipython-doc/3/notebook/nbconvert.html">nbconvert</a>.
+It produces a slideshow with 
+<a href="http://lab.hakim.se/reveal-js/#/">reveal.js</a> if metadata are added to some cells. It indicates
+when a new slide of subslide should be started.
+</p>
+
+<img src="documents/slideshow.png" width="600"/>
+
+<p>
+The trick is if you have many notebooks to convert, 
+it is unlikely you are going to open all of them to tag each slide and subslide.
+So I implemented this very basic function
+<a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/blog/2015/2015-05-16_notebook_in_slides.html">add_tag_slide</a>
+which automatically tags the cells. 
+You can see an example of the outcome
+<a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/_downloads/example_pyquickhelper.slides.html#/">here</a>.
+I also recommend to copy/paste <i>reveal.js</i> locally. It works better.
+</p>
+
+</body>
+</html>

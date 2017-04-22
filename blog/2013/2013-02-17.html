@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Harry Potter and the Einstein's enigma</title>
+<meta content="Python, Einstein's Enigma, Harry Potter, clause, logic, prolog" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="" name="description"/>
+<meta content="2013-02-17" name="date"/></head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+When I read the first book of Harry Potter, my brain stopped when I faced
+the enigma solved by Hermione about finding the right potion. I want to solve it!
+I first realize that it would take me longer than reading the book but
+I'm still curious about how the author came up with this story. Maybe 
+she read about Einstein's enigma which looks the same and can be solved
+using the same reasoning. Anyway, here is the Potter's enigma:
+<ul>
+<li>One among us seven will let you move ahead.</li> 
+<li>Another will transport the drinker back instead.</li> 
+<li>Two among our number hold only nettle wine.</li> 
+<li>Three of us are killers, waiting hidden in line.</li> 
+<li>First, however slyly the poison tries to hide -- You will always find some on nettle wine's left side;</li> 
+<li>Second, different are those who stand at either end, But if you would move onward, neither is your friend;</li>
+<li>Third, as you see clearly, all are different size, Neither dwarf nor giant holds death in their insides;,</li> 
+<li>Fourth, the second left and the second on the right -- Are twins once you taste them, though different at first sight</li> 
+</ul>
+And Einstein's one:
+
+<ul>
+<ul>The Brit lives in a red house.</ul>
+<ul>The Swede keeps dogs as pets.</ul>
+<ul>The Dane drinks tea.</ul>
+<ul>The green house is next to, and on the left of the white house.</ul>
+<ul>The owner of the green house drinks coffee.</ul>
+<ul>The person who smokes Pall Mall rears birds.</ul>
+<ul>The owner of the yellow house smokes Dunhill.</ul>
+<ul>The man living in the centre house drinks milk.</ul>
+<ul>The Norwegian lives in the first house.</ul>
+<ul>The man who smokes Blends lives next to the one who keeps cats.</ul>
+<ul>The man who keeps horses lives next to the man who smokes Dunhill.</ul>
+<ul>The man who smokes Blue Master drinks beer.</ul>
+<ul>The German smokes Prince.</ul>
+<ul>The Norwegian lives next to the blue house.</ul>
+<ul>The man who smokes Blends has a neighbour who drinks water.</ul>
+</ul>
+</p>
+<p>
+I won't probably Hermione's confidence while facing this kind of enigma
+but if cellphones continue to evolve in a machine you can command
+by implementing program, maybe I could do something about it.
+</p>
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Sudoku, Minesweeper are some others games we could solve by applying
+the same logic. We define rules, we let an algorithm combine them,
+eliminate all opposing rules to get the final set of 
+possibilities. One language which could help me to solve is 
+<a href="http://fr.wikipedia.org/wiki/Prolog">Prolog</a>. I don't know it 
+is available on a cellphone but this is the Prolog code
+(found <a href="https://github.com/skanev/playground/blob/master/other/7languages/prolog/other/einstein.prolog">here</a>):
+
+<pre>
+nationality(Nationality) :- member(Nationality, [brit, swede, dane, norwegian, german]).
+color(Color) :- member(Color, [green, yellow, white, red, blue]).
+pet(Pet) :- member(Pet, [fish, dogs, birds, horses, cats]).
+beverage(Beverage) :- member(Beverage, [tea, coffee, milk, beer, water]).
+cigars(Brand) :- member(Brand, [pall_mall, dunhill, blends, prince, blue_master]).
+
+person([Nation, Color, Pet, Beverage, Cigars]) :- nationality(Nation), color(Color), pet(Pet), beverage(Beverage), cigars(Cigars).
+
+has(Thing, Person) :- nationality(Thing), Person = [Thing, _, _, _, _].
+has(Thing, Person) :- color(Thing), Person = [_, Thing, _, _, _].
+has(Thing, Person) :- pet(Thing), Person = [_, _, Thing, _, _].
+has(Thing, Person) :- beverage(Thing), Person = [_, _, _, Thing, _].
+has(Thing, Person) :- cigars(Thing), Person = [_, _, _, _, Thing].
+
+same(A, B, People) :- has(A, Person), has(B, Person), member(Person, People).
+
+first_house(A, People) :- has(A, Person), People = [Person, _, _, _, _].
+center_house(A, People) :- has(A, Person), People = [_, _, Person, _, _].
+left_of(A, B, People) :- has(A, PersonA), has(B, PersonB), nextto(PersonA, PersonB, People).
+neighbours(A, B, People) :- left_of(A, B, People); left_of(B, A, People).
+
+solution(People) :-
+  People = [_, _, _, _, _],
+
+  same(brit, red, People),
+  same(swede, dogs, People),
+  same(dane, tea, People),
+  left_of(green, white, People),
+  same(green, coffee, People),
+  same(birds, pall_mall, People),
+  same(yellow, dunhill, People),
+  center_house(milk, People),
+  first_house(norwegian, People),
+  neighbours(blends, cats, People),
+  neighbours(horses, dunhill, People),
+  same(beer, blue_master, People),
+  same(german, prince, People),
+  neighbours(norwegian, blue, People),
+  neighbours(blends, water, People),
+
+  maplist(person, People),
+  flatten(People, Items),
+  is_set(Items).
+</pre>
+I don't know if anybody would type that on his cellphone but I wanted to show my students
+how to do that in Python which implies I have to describe what a rule is and how to solve a 
+problem using such rules. I did implement the solution for the Einstein problem 
+(see <a href="documents/einstein_prolog.html">einstein_prolog.py</a>) and I had in 
+mind that I could do that as exercise during my teachings. But I finally gave up, I thought 
+explaining that the first program and tweaking it to solve Hermione's enigma would be too 
+much for two hours of teachings.
+</p>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Work on the features or the model</title>
+<meta content="python, machine learning, model, features" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+Sometimes, a machine learned model does not get it. It does not 
+find any way to properly classify the data. 
+Sometimes, you know it could work better with another model
+but it cannot be trained on such an amount of data.
+So what...
+</p>
+<p>
+Another direction consists in looking for non linear combinations
+of existing features which could explain better the border
+between two classes. Let's consider this known difficult example:
+</p>
+
+<p>
+<img src="documents/ml_features_model_5_1.png" />
+</p>
+
+<p>
+It cannot be linearly separated but it can with others kinds of models
+(k-NN, SVC). However, by adding simple multiplications between existing features,
+the problem becomes linear: 
+</p>
+
+<p>
+<img src="documents/ml_features_model_22_0.png" />
+</p>
+
+<p>
+The point is: if you know that a complex features would really help
+your model, it is worth spending time implementing it rather that
+trying to approximating it by using a more complex model.
+(<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/notebooks/ml_features_model.html">corresponding notebook</a>).
+</p>
+
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Edit distance and weights</title>
+<meta content="python, edit distance, Levenstein" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+I often had to implement an edit distance and I most of time 
+chose to use uniform weights : every modification costs 1.
+That's the easy solution. However, I was looking for a quick
+way to give different weights to every comparison
+between twwo characters.
+</p>
+<p>
+So I went to the site <a href="http://www.gutenberg.org/">Gutenberg</a> 
+and downloaded a few texts. I then did the following:
+<ul>
+<li>I split the text into lower case words.</li>
+<li>I grouped them by length.</li>
+<li>For all words having the same length, I looked for words with
+one letter difference.</li>
+<li>I counted the number of times the same pair was that differences.</li>
+<li>I normalized by the number of pairs and took <i>1-p</i> where <i>p</i> the frequency of a pair.</li>
+</ul>
+I assumed it would give me something reasonable. 
+</p>
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<pre class="brush: py">
+#coding:latin-1
+# downloaded from : http://www.gutenberg.org/
+#with open("jeunes_filles_en_fleur.txt","r",encoding="utf8") as f : text = f.read().lower()
+#with open("hugo_les_miserables.txt","r",encoding="utf8") as f : text = f.read().lower()
+with open("dorian_gray.txt","r",encoding="utf8") as f : text = f.read().lower()
+import re
+lettre = re.compile("[a-zéèêàôûùâîç]+")
+mots = lettre.findall(text)
+print ("nb char", len(text), "nb words", len(mots))
+
+# we group by word length
+long = { }
+for m in mots :
+    l = len(m)
+    if l not in long : long[l] = {}
+    long[l][m] = long[l].get(m,0)+1
+    
+# Hamming function    
+def diff(a,b) :
+    m = [ 0 if _ == __ else 1 for _,__ in zip(a,b) ]
+    return sum(m)
+    
+def diffl(a,b) :
+    m = [ (0 if _ == __ else 1,_,__) for _,__ in zip(a,b) ]
+    m.sort()
+    return m[-1]
+    
+# we count the number of characters pair which makes the difference
+# among a subset of words having the same length
+subst = { }
+    
+for l in sorted(long) :
+    print ("length", l, "nb words", len(long[l]))
+    for a in long[l] :
+        for b in long[l] :
+            d = diff(a,b)
+            if d == 1 :
+                df = list(diffl(a,b)[1:])
+                df.sort()
+                x,y = df
+                if (x,y) not in subst : subst [x,y] = {}
+                subst [x,y][l] = subst[x,y].get(l,0) + 0.5*(long[l][a] + long[l][b])
+         
+# we sum the counts         
+cost = {}                
+total = 0
+for pair,hist in subst.items() :
+    cost [pair] = sum([ k*v for k,v in hist.items() ])
+    total += cost [pair]
+    
+#we normalize    
+for k in cost :
+    cost[k] /= total
+    
+# we display    
+result = [ (v,k) for k,v in cost.items() ]
+result.sort(reverse=True)
+for k,v in result :
+    print ("%1.6f %s"% (k,v))
+</pre>
+
+<p>
+Below, you will find the first pairs for an English text:
+</p>
+<pre class="prettyprint">
+0.044317 ('s', 't')
+0.028266 ('a', 'i')
+0.026223 ('n', 't')
+0.022779 ('a', 'e')
+0.022020 ('t', 'w')
+0.020432 ('h', 'o')
+0.019302 ('n', 's')
+0.017563 ('f', 'n')
+0.016893 ('i', 'o')
+0.016174 ('h', 'w')
+0.016131 ('i', 'u')
+0.015305 ('d', 't')
+0.014790 ('h', 'i')
+0.014502 ('d', 'n')
+0.013989 ('i', 'n')
+0.013774 ('m', 's')
+0.013522 ('d', 's')
+</pre>
+<p>
+And for a French text:
+</p>
+
+<pre class="prettyprint">
+0.030172 ('s', 't')
+0.023355 ('a', 'e')
+0.022077 ('e', 'u')
+0.018951 ('e', 'i')
+0.018902 ('i', 'n')
+0.018756 ('n', 's')
+0.018534 ('e', 'o')
+0.017561 ('d', 'l')
+0.017274 ('d', 's')
+0.015066 ('l', 's')
+0.014506 ('e', 'é')
+0.013556 ('a', 'o')
+0.012882 ('n', 't')
+0.012515 ('l', 'm')
+0.012362 ('c', 'd')
+0.012040 ('d', 'n')
+0.011987 ('d', 'm')
+</pre>
+
+
+<p>
+We can easily extend the same method to insertion and deletion. We can argue 
+whether we choose to convert the weight we built using the function <i>1-p</i>
+or <i>1/(1-p)</i>. Because we only kept the words with only 
+one letter difference from texts with no mistakes at all. 
+It means that doing the mistakes we count 
+makes a big difference. So it should have a weight bigger than one,
+which would be the default weight in that case.
+</p>
+<p>
+I could have also computed
+a distance between the two images of each character in a pair
+but that's more complex. However, it would be closer to an intuitive
+definition of a mistake (such as letter with or without accent).
+</p>
+
+</body>
+</html>

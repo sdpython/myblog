@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Download data after redirection</title>
+<meta content="python, requests, download, internet" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+I was looking for a way to download a file from <a href="SourceForge">http://sourceforge.net/</a>
+with the following code:
+</p>
+
+<!-- SUMMARY BEGINS -->
+
+<pre class="brush: py">
+url = "something on source forge"
+req = urllib.request.Request(url)
+u = urllib.request.urlopen(req)
+bin = u.read()
+u.close()
+with open("something.zip","wb") as f : f.write(bin)
+</pre>
+
+<p>
+It failed due to redirections. 
+Doing it myself or trying to look for some module doing the job.
+Every query I tried on a search engine about getting a file from 
+<i>SourceForge</i> in Python gave me links to Python projects on hosted 
+on <i>SourceForge</i>. Not exactly what I was looking for.
+So...
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+I tried some search queries including redirection 
+and after a couple of them
+I found the following module <a href="http://docs.python-requests.org/en/latest/">requests</a>
+which made it a lot easier:
+</p>
+
+<pre class="brush: py">
+req = requests.get(url, allow_redirects = True, stream=True)
+bin = req.raw.read()
+with open("something.zip","wb") as f : f.write(bin)
+</pre>
+
+<p>
+I guess the module <a href="http://urllib3.readthedocs.org/en/latest/">urllib3</a>
+could also do the trick but I did not try it.
+</p>
+
+</body>
+</html>

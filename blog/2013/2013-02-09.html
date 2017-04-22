@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Program to convert latex into gif picture in a html document</title>
+<meta content="Programming, python, latex, html, references" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="A couple of days ago, I wrote a blog  (&lt;a href=&quot;http://www.xavierdupre.fr/blog/xd_blog.html?date=2013-02-04&quot;&gt;Insérer des formules en code Latex dans un blog&lt;/a&gt;) on how to insert Latex formulas in a blog post. Unfortunately, this way  does not seem to work all the time. The browser will try to convert formulas using another site each somebody tries to read the post.  And sometimes, the latex formula shows up instead of the picture. So, I decided to write a Python program to call  &lt;a href=&quot;http://latex.codecogs.com/latexit.js&quot;&gt;http://latex.codecogs.com/latexit.js&lt;/a&gt; before publishing the blog post. I only push GIF images and let the latex code  as comments. You will find this code  &lt;a href=&quot;documents/latex_svg_gif.html&quot;&gt;latex_svg_gif.py&lt;/a&gt;. Basically, it looks for latex formulas, extract them, call the site mentioned below, stores the images, put the former latex code in a comments section and adds a link to the created image." name="description"/>
+<meta content="2013-02-09" name="date"/></head>
+<body>
+<p>A couple of days ago, I wrote a blog 
+(<a href="http://www.xavierdupre.fr/blog/xd_blog.html?date=2013-02-04">Insérer des formules en code Latex dans un blog</a>)
+on how to insert Latex formulas in a blog post. Unfortunately, this way 
+does not seem to work all the time. The browser will
+try to convert formulas using another site each somebody tries to read the post. 
+And sometimes, the latex formula shows up instead of the picture. So,
+I decided to write a Python program to call 
+<a href="http://latex.codecogs.com/latexit.js">http://latex.codecogs.com/latexit.js</a>
+before publishing the blog post. I only push GIF images and let the latex code 
+as comments. You will find this code 
+<a href="documents/latex_svg_gif.html">latex_svg_gif.py</a>. Basically,
+it looks for latex formulas, extract them, call the site mentioned below,
+stores the images, put the former latex code in a comments section and
+adds a link to the created image.
+<pre>
+&lt;div lang="latex_help"&gt;
+N \frac{c^k-1}{c-1} \sim N \frac{\frac{S}{N}-1}{c-1} \sim \frac{S-N}{c-1}
+&lt;/div&gt;
+</pre>
+Becomes:
+<pre>
+&lt;!--
+&lt;div lang="latex_help"&gt;
+N \frac{c^k-1}{c-1} \sim N \frac{\frac{S}{N}-1}{c-1} \sim \frac{S-N}{c-1}
+&lt;/div&gt;
+--&gt;
+&lt;p class="latexcenter"&gt;
+&lt;img src="giflatex/blog_2013_2013-02-07.html__Nfracck1c1simNfracfracSN1c1simfracSNc1.gif"
+alt=" N \frac{c^k-1}{c-1} \sim N \frac{\frac{S}{N}-1}{c-1} \sim \frac{S-N}{c-1} " /&gt;
+&lt;/p&gt;
+</pre>
+The picture name is the concatenation of all symbols in [a-zA-Z0-9].
+</p>
+<p>
+However, recently, I found another framework which seems to work better
+than this one. I did not try but it is available with wordpress
+for example: <a href="http://www.mathjax.org/">MathJax</a>.
+</p>
+</body>
+</html>

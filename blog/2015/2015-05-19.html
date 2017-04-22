@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Continuous integration</title>
+<meta content="integration, python, travis, appveyor" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+I'm using <a href="">Travis</a> to check that my open source modules works
+on Linux. I discovered the following video 
+<a href="https://www.youtube.com/watch?v=d-p6lJJObLU">Olivier Grisel - Build and test wheel packages on Linux, OSX &amp; Windows - PyCon 2015</a>
+which explains how this is done for <a href="https://github.com/scikit-learn/scikit-learn">scikit-learn</a>.
+<a href="http://www.appveyor.com/">AppVeyor</a> offers the same service as Travis but for Windows 
+(it works with Azure). The setup is more complex as Python is the C++ compiler is still a pain 
+to configure. You can check how it is done for scikit-learn: 
+<a href="https://github.com/scikit-learn/scikit-learn/blob/master/continuous_integration/windows/windows_testing_downloader.ps1">windows_testing_downloader.ps1</a>,
+<a href="https://github.com/scikit-learn/scikit-learn/blob/master/appveyor.yml">appveyor.yml</a>.
+A few other interesting scripts: 
+<a href="https://github.com/google/benchmark/blob/master/mingw.py">mingw.py</a>.
+</p>
+
+
+</body>
+</html>

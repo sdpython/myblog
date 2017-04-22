@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Delay evaluation</title>
+<meta content="python, lambda function, memoization" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+The following class is meant to be a kind of repository of
+many tables. Its main issue it is loads everything
+first. It takes time and might not be necessary if not 
+all the tables are required.
+</p>
+
+<pre class="brush: py">
+import pandas
+
+class DataContainer:
+    def __init__( self, big_tables ):
+        self.big_tables = big_tables
+        
+    def __getitem__(self, i):
+        return self.big_tables[i]
+        
+filenames = [ "file1.txt", "files2.txt" ]
+          
+def load(filename):
+    return pandas.read_csv(filename, sep="\t")
+    
+container = DataContainer ( [ load(f) for f in filenames ] )
+</pre>        
+
+<p>
+So the goal is to load the data only when it is required.
+But I would like to avoid tweaking the interface of class.
+And the logic loading the data is held outside the container.
+However I would an access to the container to activate the loading 
+of the data. Si instead of giving the class <tt>DataContainer</tt>
+the data itself, I give it a function able to load the data.
+</p>
+
+<pre class="brush: py">
+def memoize(f):
+    memo = {}
+    def helper(self, x):
+        if x not in memo:            
+            memo[x] = f(self, x)
+        return memo[x]
+    return helper        
+        
+class DataContainerDelayed:
+    def __init__( self, big_tables ):
+        self.big_tables = big_tables
+        
+    @memoize
+    def __getitem__(self, i):
+        return self.big_tables[i]()
+        
+container = DataContainerDelayed ( [ lambda t=f : load(t) for f in filenames ] )        
+for i in range(0,2): print(container[i])
+</pre>
+
+<p>
+But I would like to avoid loading the data only one time. So I
+used a <a href="http://en.wikipedia.org/wiki/Memoization">memoize</a> mechanism.
+</p>
+
+</body>
+</html>

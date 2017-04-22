@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Quelques exercices de préparation à l'examen (1)</title>
+<meta content="python, ENSAE, programmation, exercice" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+On veut écrire une fonction qui détermine si une lettre est une voyelle.
+
+<pre class="brush: py">
+def est_voyelle(c):
+    ...
+    return 0 ou 1
+    
+print (est_voyelle("a"))  # doit afficher 1
+print (est_voyelle("b"))  # doit afficher 0
+</pre>
+
+Il faut écrire cette fonction de trois manières différentes :
+<ul>
+<li>La fonction n'est composée que de tests.</li>
+<li>La fonction est composée d'un test et d'une liste.</li>
+<li>Il n'y a aucun test dans la fonction, on utilise seulement un dictionnaire.</li>
+</ul>
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p><b>Solutions proposées</b></p>
+
+<p>Cas 1 : la solution n'est composée que de tests</p>
+<pre class="brush: py">
+def est_voyelle(c):
+    if c=="a" or c=="e" or c=="i" or c=="o"  or c=="u" or c=="y" :
+        return 1
+    else : return 0
+</pre>
+
+<p>Cas 2 : la solution est composée d'un test et d'une liste</p>
+<pre class="brush: py">
+def est_voyelle(c):
+    if c in ["a","e","i","o","u","y"]: return 1
+    else : return 0
+</pre>
+
+<p>Cas 3 : la solution est composée d'un dictionnaire</p>
+<pre class="brush: py">
+def est_voyelle(c):
+    d = { "a":1, "e":1, "i":1, "o":1, "u":1, "y":1 }
+    return d.get(c, 0)
+</pre>
+
+
+
+</body>
+</html>
+

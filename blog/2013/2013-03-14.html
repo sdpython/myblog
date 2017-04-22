@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Migration to Python 3, only for geeks!</title>
+<meta content="Python, python migration, Python 3" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="2013-03-14" name="date"/></head>
+<body>
+<p>
+I tried to migrate some of the script I wrote and to use Python 3.
+I just cut half of what I wrote. Too painful at the end, 
+The print change, ok, iteritems into items, ok, not unicode object 
+anymore, I do like, no cmp parameter for sort, just key, ok again,
+the integer division, definitively not ok. 1/2 is 0 in many languages
+except Python. No script can fix because Python is interpreted and discovered
+types during the execution. The following loop is just longer than
+expected and hard to catch using unit testing if you do not specifically
+look for it.
+<pre class="prettyprint">
+i = 10
+while i &gt; 0 :
+    i /= 10
+</pre>
+The rule to import files changed too, not too bad except it 
+is really difficult to migrate every file or to keep everything 
+working for two versions of Python (2.7 and 3.x). After finishing all
+the replacements, I had many failing unit tests, I started to fix them 
+one by one but at the end, I gave up. Having an empty list
+instead of a list with one element, more than one thousand lines
+of code involved, I gave up, too many side effect I cannot easily guess,
+easier to rewrite. On the other hand, the C
+library went easy (using boost really helped).
+</p>
+<p>
+I wonder how a company could impose such a change to its customers
+by introducing big breaks without having difficulties to keep them.
+The language is probably in a better shape now
+but I think it was too sudden. I wish there could be a tool allowing 
+a program to run at the same on both versions and throwing exception
+whenever a variable contains a different results (not very easy to
+write if you generate random variables or if you have dependencies on
+others libraries which changed their behavior).
+</p>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Compter les pièces de monnaie pour obtenir un montant</title>
+<meta content="python, algorithme, implémentation, optimisation, sac-à-dos, optimisation discrète, pièce, ENSAE" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+On est amené presque tous les jours à compter les pièces dans son porte-monnaie
+pour payer la baguette, le fromage ou la bouteille de vin. Comment écrire un algorithme qui 
+donne la liste des pièces qu'il faut piocher dans son porte-monnaie pour payer ?
+On s'intéressera seulement au cas où on cherche à composer le montant juste. 
+Cela revient à chercher un sous-ensemble <i>S</i> de pièces
+dans l'ensemble <i>P</i> des pièces du portefeuille pour composer le montant <i>M</i> :
+</p>
+
+
+<!--
+<div lang="latex_help">
+M = \sum_{ p \in S } p
+</div>
+-->
+<p class="latexcenter">
+<img src="giflatex/blog_2013_2013-11-09.html__MsumpinSp.gif" alt=" M = \sum_{ p \in S } p " />
+</p>
+
+
+<p>
+Une façon naïve de construire l'ensemble <i>S</i> est de procéder comme on le fait 
+souvent, c'est-à-dire à prendre la pièce la plus grosse, de voir si elle dépasse
+le montant <i>N</i> puis de passer à la seconde plus grande et ainsi de suite. Soit :
+<ul>
+<li>On trie les pièces par ordre décroissant.</li>
+<li>Au début, l'ensembe <i>S</i> est vide.</li>
+<li>On prend les pièces dans l'ordre décroissant et on les ajoute à l'ensemble <i>S</i>
+    si la somme de l'ensemble n'est pas plus grand que <i>M</i>.</li>
+</ul>
+Cela donne le programme suivant :
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<pre class="brush: py">
+def composition_montant(M, P) :
+    P.sort(reverse=True)
+    S = [ ]
+    for p in P :
+        if sum(S) + p &lt;= M : 
+            S.append(p)
+    return S
+    
+print ( composition_montant (  13,  [ 1,10,5,2] )  )  # affiche [10, 2, 1]
+</pre>	
+
+<p>
+Mais l'algorithme n'est pas parfait. Par exemple, il n'arrive pas à trouver
+la bonne solution pour <i>M=6</i> et <i>P =[ 5,2,2,2]</i> :
+</p>
+
+<pre class="brush: py">
+print ( composition_montant (  6, [ 5,2,2,2] )  )  # affiche [ 5 ]
+</pre>	
+
+<p>
+L'algorithme choisit la première pièce car elle est inférieure au montant
+mais se retrouve coincé par la suite car toutes les pièces qu'il ajoute
+lui font dépasser le montant. On peut dans un premier lui permettre de <i>"sauter"</i>
+la première pièce :
+</p>
+
+
+<pre class="brush: py">
+# coding: latin-1
+def composition_montant(M, P) :
+    P.sort(reverse=True)
+    S = [ ]
+    for p in P :
+        if sum(S) + p &lt;= M : 
+            S.append(p)
+    return S
+    
+def composition_premiere_piece_en_moins(M, P) :
+    r = composition_montant(M,P)
+    if sum(r) != M :
+        r = composition_montant(M,P[1:])
+    return r 
+    
+print ( composition_premiere_piece_en_moins (  13, [ 1,10,5,2]  ))  # affiche [ 10,2,1 ]
+print ( composition_premiere_piece_en_moins (  6,  [ 5,2,2,2]   ))  # affiche [ 2,2,2 ]
+print ( composition_premiere_piece_en_moins ( 106,  [ 100,5,2,2,2] ))  # affiche [ 5,2,2,2 ]    
+</pre>
+
+<p>
+Là encore, ça marche pour les deux premiers exemples mais pas pour le troisième
+suggéré ci-dessus. Une solution est de pouvoir <i>"sauter"</i> la première pièce
+mais aussi les suivantes :
+</p>
+
+
+<pre class="brush: py">
+# coding: latin-1
+def composition_montant(M, P) :
+    #P.sort(reverse=True)    # on déplace cette ligne là où elle ne sera executée qu'une fois
+    S = [ ]
+    for p in P :
+        if sum(S) + p &lt;= M : 
+            S.append(p)
+    return S
+    
+def composition_une_piece_en_moins(M, P) :
+    P.sort(reverse=True)     # on trie ici pour ne le faire qu'une seule fois
+    r = composition_montant(M,P)
+    if sum(r) != M :
+        for i,p in enumerate(P) :
+            if p &lt;= M :  # les pièces plus grandes que M ne sont pas prises en compte
+                P[i] = M+1  # on remplace la valeur de la pièce par M+1, de cette manière
+                            # elle ne sera pas choisie pour composer le montant M
+                
+                # on appelle la fonction précédente
+                r2 = composition_montant(M,P)
+                
+                if sum(r2) == M :
+                    # si ça marche, on a fini
+                    return r2
+                    
+                P[i] = p    # on remet P en place 
+    return r
+    
+print ( composition_une_piece_en_moins (  13, [ 1,10,5,2]  ))   # affiche [ 10,2,1 ]
+print ( composition_une_piece_en_moins (  6,  [ 5,2,2,2]   ))   # affiche [ 2,2,2 ]
+print ( composition_une_piece_en_moins ( 106, [ 100,5,2,2,2] )) # affiche [ 100,2,2,2 ]    
+print ( composition_une_piece_en_moins (  6,  [ 5,5,2,2,2]   )) # affiche [ 5 ]
+</pre>
+
+<p>
+On avance mais cela ne fonctionne toujours pas pour le dernier exemple. Il faudrait
+pouvoir sauter plusieurs pièces. Et c'est en fait très simple à faire, il suffit
+de rendre la fonction <i>composition_une_piece_en_moins</i> récursive :
+</p>
+
+<pre class="brush: py">
+# coding: latin-1
+def composition_montant(M, P) :
+    P.sort(reverse=True)
+    S = [ ]
+    for p in P :
+        if sum(S) + p &lt;= M : 
+            S.append(p)
+    return S  
+    
+def composition_une_piece_en_moins(M, P) :
+    P.sort(reverse=True)
+    r = composition_montant(M,P)
+    if sum(r) != M :
+        for i,p in enumerate(P) :
+            if p &lt;= M :
+                P[i] = M+1
+                # il faut utiliser P.copy() et non P
+                # sauf si on retire l'instruction P.sort car celle-ci change l'ordre
+                # des éléments (il est donc difficile de remettre la pièce en place à la fin de la boucle
+                r2 = composition_une_piece_en_moins(M,P.copy())
+                
+                if sum(r2) == M :
+                    return r2
+                P[i] = p
+    return r
+
+print ( composition_une_piece_en_moins (  13, [ 1,10,5,2]  ))  # affiche [ 10,2,1 ]
+print ( composition_une_piece_en_moins (  6,  [ 5,2,2,2]   ))  # affiche [ 2,2,2 ]
+print ( composition_une_piece_en_moins ( 106,  [ 100,5,2,2,2] ))  # affiche [ 100,2,2,2 ]    
+print ( composition_une_piece_en_moins (  6,  [ 5,5,2,2,2]   ))  # affiche [ 2,2,2 ]
+</pre>
+
+
+<p>
+Qu'a-t-on fait ? Une première façon de voir les choses est de se dire 
+qu'une pièce appartient ou non à l'ensemble
+<i>S</i>. Donc si, le portefeuille contient <i>N</i> pièces, il y a <i>2^N</i> façons de construire
+l'ensemble <i>S</i>. Et c'est ce que fait la fonction 
+<i>composition_une_piece_en_moins</i> : elle essaye d'abord avec toutes les pièces. 
+Puis, si ça ne marche pas, elle enlève une pièce et réessaye en se rappelant. 
+Comme elle se rappelle elle-même,
+il lui est possible maintenant d'enlever une seconde pièce, puis une autre à chaque récurrence
+jusqu'à ce qu'il n'en reste plus. De cette façon, la fonction aura essayé toutes les 
+compositions possibles des pièces du portefeuille pour s'arrêter à la première qui marche.
+Pour faire court, on parcourt les <i>2^N</i> possibilités, ce qu'il était sans doute plus
+simple d'écrire comme ceci :
+</p>
+
+<pre class="brush: py">
+def composition_plus_simple(M,P) :
+    r = sum(P)
+    if r == M : return P
+    for i in range(0,len(P)) :
+        r = composition_plus_simple (M, P[:i] + P[i+1:])
+        if r != None : return r
+    return None # pas de solution
+    
+print ( composition_plus_simple (  13, [ 1,10,5,2]  ))    # affiche [ 10,2,1 ]
+print ( composition_plus_simple (  6,  [ 5,2,2,2]   ))    # affiche [ 2,2,2 ]
+print ( composition_plus_simple ( 106, [ 100,5,2,2,2] ))  # affiche [ 100,2,2,2 ]    
+print ( composition_plus_simple (  6,  [ 5,5,2,2,2]   ))  # affiche [ 2,2,2 ]
+</pre>
+
+<p>
+Pour être exact, la fonction précédente (comme celle d'avant), parcourt toutes 
+les solutions en tenant compte de l'ordre : elle pourra supprimer la pièce 1 puis la pièce 2 
+tout comme elle supprimera la pièces 2 puis la pièce 1. Or pour notre problème,
+ça ne change rien. Donc, on pourrait faire encore plus simple puisque cette fois-ci,
+on n'explore pas deux fois la même solution :
+</p>
+
+<pre class="brush: py">
+# coding: latin-1
+def composition_plus_simple(M,P) :
+    if len(P) == 0 : return [ ]
+    if sum(P) == M : return P
+    r = composition_plus_simple(M,P[1:]) # on enlève la pièce
+    if sum(r) == M : return r
+    r = [ P[0] ] + composition_plus_simple(M-P[0],P[1:]) 
+                # on garde la pièce mais on cherche à obtenir la différence avec les pièces restantes
+    if sum(r) == M : return r
+    else : return []
+    
+print ( composition_plus_simple (  13, [ 1,10,5,2]  ))    # affiche [ 1,10,2 ]
+print ( composition_plus_simple (  6,  [ 5,2,2,2]   ))    # affiche [ 2,2,2 ]
+print ( composition_plus_simple ( 106, [ 100,5,2,2,2] ))  # affiche [ 100,2,2,2 ]    
+print ( composition_plus_simple (  6,  [ 5,5,2,2,2]   ))  # affiche [ 2,2,2 ]
+</pre>
+
+
+
+<p>
+Existe-t-il un algorithme plus rapide ? La réponse est oui : il existe un 
+algorithme de coût quadratique. Ce problème n'est pas très éloigné du problème
+du
+<a href="http://fr.wikipedia.org/wiki/Probl%C3%A8me_du_sac_%C3%A0_dos">sac-à-dos</a>
+pour lequel il existe une solution quadratique dans le cas où les objets
+à ranger dans le sac sont de poids entier. Ca tombe bien, c'est notre cas ici 
+(pièces en euros ou en cents). L'algorithme a pour coût <i>O(NM)</i> où <i>N</i>
+est le nombre de pièces et <i>M</i> le montant. Dans un premier temps, on
+va écrire une fonction qui détermine si un montant pour être composé 
+à partir d'un ensemble de pièces. L'idée de base de l'algorithme est :
+</p>
+<p><center><b>
+Si j'ai réussi à composer un montant <i>m</i> à partir des <i>k</i> premières pièces
+cela veut dire que je peux composer le montant <i>m+p</i> et seulement celui-là en ajoutant 
+la pièce <i>p</i> d'indice <i>k+1</i>.
+</b></center></p>
+<p>
+On en déduit l'algorithme suivant :
+<ul>
+<li>Au début on dispose d'un tableau <i>tab</i> de dimension <i>M+1</i>, initialisé à 0. Si
+ce tableau contient une valeur non nulle d'indice <i>m</i>, 
+alors cette valeur correspond au nombre de pièces
+utilisées pour composer le montant <i>m</i>.</li>
+<li>Pour chaque pièce <i>p</i>, on parcourt tous les montants <i>m</i> en sens inverse :
+        <ul>
+        <li>si <i>tab[m-p]</i> est non nul alors on peut écrire le montant <i>m</i> 
+                    avec la pièce <i>p</i> en plus </li>
+        <li>si <i>m==p</i>, on peut évidemment écrire le montant <i>m</i>.</li>
+        </ul>
+        </li>
+<li>à la fin, si <i>tab[M]</i> est non nul, alors on peut composer le montant <i>M</i>.</li>
+</ul>
+Et cela donne le programme suivant :
+</p>
+
+<pre class="brush: py">
+def composition_possible_dynamique(M, P) :
+    tab = [ 0 for i in range(M+1) ]
+    for p in P :
+        for m in range(M,0,-1) :
+            if m-p >= 0 and (m == p or tab[m-p] > 0) :
+                if tab[m] == 0 :
+                    tab[m] = tab[m-p] + 1
+                else :
+                    tab[m] = min(tab[m],tab[m-p] + 1)
+    return tab[M] 
+    
+print ( composition_possible_dynamique (  13, [ 1,10,10,5,2]  )) # affiche 3
+print ( composition_possible_dynamique (  6,  [ 5,2,2,2]   ))    # affiche 3
+print ( composition_possible_dynamique ( 106, [ 100,5,2,2,2] ))  # affiche 4
+print ( composition_possible_dynamique (  6,  [ 5,5,2,2,2]   ))  # affiche 3
+print ( composition_possible_dynamique (  6,  [ 5,5,2,3,2]   ))  # affiche 0
+</pre>
+
+<p>
+L'instruction <i>range(M,0,-1)</i> permet de parcourir les montant en sens inverse
+ce qui nous assure qu'une pièce n'est utilisée qu'une seule fois. En effet,
+si on parcourt les montants dans le sens croissant, le tableau 
+<i>tab</i> contiendra des valeurs possibles pour tous les multiples de la 
+pièce <i>p</i> (je vous laisse comprendre pourquoi). 
+</p>
+<p>
+Autre remarque : l'ordre des pièces importe peu. D'ailleurs, l'algorithme fonctionne
+justement parce que la solution ne dépend pas de l'ordre des pièces.
+</p>
+
+<p>
+Et pour obtenir cette solution, il ne reste plus qu'à récupérer la liste des pièces.
+On conserve, dans un 
+second tableau <i>prec</i>, la dernière pièce qui a permis d'obtenir le nombre minimal
+de pièces pour composer le montant <i>m</i>.
+</p>
+
+<pre class="brush: py">
+def composition_dynamique(M, P) :
+    tab  = [ 0 for i in range(M+1) ]
+    prec = [ 0 for i in range(M+1) ]
+    for p in P :
+        for m in range(M,0,-1) :
+            if m-p >= 0 and (m == p or tab[m-p] > 0) :
+                if tab[m] == 0 :
+                    tab[m] = tab[m-p] + 1
+                    prec[m] = p
+                elif tab[m] > tab[m-p] + 1 :
+                    tab[m] = tab[m-p] + 1
+                    prec[m] = p
+
+    if tab[M] > 0 :
+        piece = [ ]
+        pos = M
+        while pos > 0 :
+            piece.append(prec[pos])
+            pos -= prec[pos]
+            
+        return piece
+    else : 
+        return []
+        
+print ( composition_dynamique (  13, [ 1,10,10,5,2]  )) # affiche [ 2,10,1 ]
+print ( composition_dynamique (  6,  [ 5,2,2,2]   ))    # affiche [ 2,2,2 ]
+print ( composition_dynamique ( 106, [ 100,5,2,2,2] ))  # affiche [ 2,2,2,100 ]    
+print ( composition_dynamique (  6,  [ 5,5,2,2,2]   ))  # affiche [ 2,2,2 ]    
+print ( composition_dynamique (  6,  [ 5,5,2,3,2]   ))  # affiche [ ]    
+</pre>
+
+<p>
+On peut comparer les temps de traitement de deux solutions, une d'un coût quadratique
+et l'autre d'un coût exponentiel :
+</p>
+
+<pre class="brush: py">
+import random, time
+exemples = []
+N = 21
+for i in range (0,1000) :
+    l = random.randint(1,N)  # 
+    M = random.randint(1,100)
+    P = [ random.randint(1,20) for i in range(l) ]
+    exemples.append((M,P))
+    
+temps_exp  = time.clock()
+for M,P in exemples :
+    composition_plus_simple(M,P)
+temps_exp  = time.clock() - temps_exp 
+
+print (temps_exp)
+    
+temps_dyn  = time.clock()
+for M,P in exemples :
+    composition_dynamique(M,P)
+temps_dyn  = time.clock() - temps_dyn 
+
+print (temps_exp, temps_dyn) # 5.945673611467473 0.24070277620978064
+</pre>
+
+<p>
+Le temps exponentiel double à chaque qu'on augmente <i>N</i> de 1.
+</p>
+
+</body>
+</html>

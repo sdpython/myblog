@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>An issue or something to know with pythonnet</title>
+<meta content="python, pythonnet, Windows" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+
+<p>
+<a href="https://github.com/renshawbay/pythonnet">pythonnet</a> is a module which can 
+access .net assemblies (written in C# for example).
+</p>
+
+<pre class="brush: py">
+from clr import AddReference
+AddReference("something.dll or .exe")
+</pre>
+
+<p>
+It only works if the DLL can be found in one path in <tt>sys.path</tt> 
+and also if all dependencies are located in the same folder.
+If it is not the case, dependencies must be loaded first.
+</p>
+
+<pre class="brush: py">
+from clr import AddReference
+import sys
+sys.path.append("path to dependencies.dll")
+AddReference("dependencies.dll")
+sys.path.append("path to something.dll")
+AddReference("something.dll or .exe")
+</pre>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>GEOFLA, Lambert 93 projection</title>
+<meta content="python, basemap, lmabert" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+I was trying to use the files
+<a href="https://www.data.gouv.fr/en/datasets/geofla-departements-30383060/">GEOFLA® Départements</a>
+to draw a map and my first try left the map empty. I then discovered
+that the coordinates were expressed with Lambert 93 projection.
+A couple of searches later, I found a couple of versions of the same function
+in Javascript, PHP or Python. Here is the one I finally chose and modified:
+<a href="https://github.com/sdpython/ensae_teaching_cs/blob/master/src/ensae_teaching_cs/helpers/geo_helper.py">lambert93_to_WGPS</a>.
+After conversion, the file can be used more easliy with module 
+<a href="http://matplotlib.org/basemap/">basemap</a>.
+</p>
+
+</body>
+</html>

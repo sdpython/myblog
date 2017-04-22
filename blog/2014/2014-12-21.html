@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Unit test a Flask application</title>
+<meta content="python, flask, unit test" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+It is usually quite annoying to develop a web application
+and to test the code by just running it and checking it produces what you expect
+for a given request. It would be more simple to write a function
+which launches the web application on a local machine and retrieves
+the content of a given page. That describes what a unit test could be used for.
+</p>
+<p>
+I used <a href="http://flask.pocoo.org/">Flask</a> to do it.
+I hesitated to choose <a href="http://bottlepy.org/docs/dev/index.html">bottle</a>
+but I needed to be able to shutdown the application by some means.
+I found a way for Flask faster than for Bottle. That's why I used the first one.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+The code the wep application can be found here: 
+<a href="https://github.com/sdpython/ensae_teaching_cs/blob/master/src/ensae_teaching_cs/td_1a/simple_flask_site.py">simple_flask_site.py</a>.
+The first trick is to be able to shutdown the service:
+</p>
+<pre class="bursh :py">
+def shutdown_server():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
+@app.route('/shutdown/', methods=['POST'])
+def shutdown():
+    shutdown_server()
+    return Text2Response('Server shutting down...')
+</pre>
+<p>
+And you do it with:
+</p>
+<pre class="brush: py">
+import requests
+c = requests.post( "http://localhost:8025/shutdown/")
+</pre>
+<p>
+The second trick is after the web application has started, another thread must
+continue to query the website. So we run the website within a thread:
+</p>
+<pre class="brush: py">
+from ensae_teaching_cs.td_1a.simple_flask_site import app
+th = FlaskInThread(app, host="localhost", port=8025)
+th.start()  # just run app.run
+# ... any kind of test
+requests.post( "http://localhost:8025/shutdown/")
+</pre>
+
+</body>
+</html>

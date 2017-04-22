@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Palindromes</title>
+<meta content="palindrome, python" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="" name="description"/>
+</head>
+<body>
+<p>
+Aujourd'hui, je suis tombé sur cette 
+<a href="http://www.lemonde.fr/sciences/video/2013/03/21/les-defis-mathematiques-du-monde-episode-1-les-palindromes_1852289_1650684.html">vidéo</a>
+sur le site du Monde qui parlait des palindromes 
+(nombres ou mots qui ont la même signification qu'on les
+lise de gauche à droite ou de droite à gauche). A la fin de la 
+question, <a href="http://cedricvillani.org/">Cédric Villani</a> pose deux questions :
+<ul>
+<li>Combien y-t-il de palindromes à 351 chiffres ?</li>
+<li>Quelle est la plus petite différence entre deux palindromes ?</li>
+</ul>
+Les deux questions ne sont pas très difficiles mais pour la seconde,
+la réponse est presque toujours 11. Voici le résultat de la première 
+si <i>n</i> est le nombre de chiffres :
+</p>
+
+<!--
+<div lang="latex_help">
+9 * 10^{\left[\frac{n}{2}\right]-1} * 10^{(n \mod 2)}
+</div>
+-->
+<p class="latexcenter">
+<img src="giflatex/blog_2013_2013-03-21.html__910leftfracn2right110nmod2.gif" alt=" 9 * 10^{\left[\frac{n}{2}\right]-1} * 10^{(n \mod 2)} " />
+</p>
+
+
+<p>
+La partie entre crochets désigne la partie entière de la division de 
+<i>n</i> par 2. Le 11 est surprenant. Au début, je me suis
+dit qu'il suffisait de changer les deux chiffres les plus 
+proches du milieu et de fil en aiguille, on pense au fait
+que 1 et 0,999999999999, c'est quasiment la même chose
+et qu'il devrait y moyen d'appliquer ça ici. 
+Rapide calcul de tête : 11. Facile de démontrer que ce n'est 
+pas plus grand quand on comprend quels palidromes choisir 
+(voir plus bas). Pour démontrer que ce n'est pas plus petit,
+il suffit de démontrer que cela ne peut être ni 1, ni 2, ni 3, ...,
+ni 10 excepté pour les palindromes à trois chiffres.
+</p>
+<p>
+<pre>
+2  - py  9  theo  9  - ecart (11, '**', 11, '-->', 22)
+3  - py  90  theo  90  - ecart (10, '**', 101, '-->', 111)
+4  - py  90  theo  90  - ecart (11, '**', 1991, '-->', 2002)
+5  - py  900  theo  900  - ecart (11, '**', 19991, '-->', 20002)
+6  - py  900  theo  900  - ecart (11, '**', 199991, '-->', 200002)
+7  - py  9000  theo  9000  - ecart (11, '**', 1999991, '-->', 2000002)
+</pre>
+</p>
+<p>
+J'ai écrit un rapide programme en Python
+<a href="documents/palindrome.html">palindrome.py</a>
+pour produire la liste ci-dessus qui m'a permis
+de me souvenir que Python 3 fait des divisions
+réelles par défaut au lieu de division entière pour
+Python 2. Vous pourrez voir la réponse filmée 
+du mathématicien 
+<a href="http://www.lemonde.fr/sciences/video/2013/03/29/les-defis-mathematiques-du-monde-reponse-de-l-episode-1-les-palindromes_3150508_1650684.html">ici</a>.
+</p>
+<p>
+En cherchant un peu sur le net, on découvre qu'on s'est intéressé
+à beaucoup de problèmes autour des
+<a href="http://mathworld.wolfram.com/PalindromicNumber.html">palindromes</a>. 
+Travaillant pour un moteur de recherche, ce qui m'intrigue, c'est de savoir
+si on peut relier la difficulté de l'exercice au nombre de réponses reçues 
+par le journal.
+</p>
+</body>
+</html>

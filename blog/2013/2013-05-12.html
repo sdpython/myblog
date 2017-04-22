@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Les stations Vélib à Paris un jeudi soir</title>
+<meta content="python, velib, animated gif, opendata, matplotlib" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+Les données <a href="https://developer.jcdecaux.com/#/opendata/vls?page=dynamic">Vélib</a> 
+sont ouvertes (depuis peu) et on peut disposer de l'état des stations 
+(vélos et places disponibles) au moment où accède au service. 
+J'ai collecté les données pendant plusieurs consécutives.
+Elles ressemblent à celles qui suivent.
+</p>
+<p>
+<table border="1" style="font-size: 75%;">
+<tr><td><b>address</b></td><td><b>available bike stands</b></td><td><b>available bikes</b></td><td><b>banking</b></td><td><b>bike stands</b></td><td><b>bonus</b></td><td><b>last update</b></td><td><b>lat</b></td><td><b>lng</b></td><td><b>name</b></td><td><b>number</b></td><td><b>status</b></td></tr>
+<tr><td>3 AVENUE BOSQUET - 75007 PARIS</td><td>57</td><td>12</td><td>0</td><td>69</td><td>0</td><td>2013-05-09 22:58:47</td><td>48.8616404995762</td><td>2.30225034417595</td><td>07022 - PONT DE L'ALMA</td><td>7022</td><td>OPEN</td></tr>
+<tr><td>18 RUE MARIE ANDREE LAGROUA - 75013 PARIS</td><td>52</td><td>7</td><td>0</td><td>61</td><td>0</td><td>2013-05-09 22:53:34</td><td>48.8285952838574</td><td>2.38022060626611</td><td>13055 - LAGROUA</td><td>13055</td><td>OPEN</td></tr>
+<tr><td>25 RUE LOUIS LE GRAND - 75002 PARIS</td><td>12</td><td>19</td><td>0</td><td>31</td><td>0</td><td>2013-05-09 22:55:38</td><td>48.8705089372039</td><td>2.33405446193933</td><td>02015 - OPERA - CAPUCINES</td><td>2015</td><td>OPEN</td></tr>
+<tr><td>2 RUE DE LA REPUBLIQUE - 92170 VANVES</td><td>0</td><td>25</td><td>0</td><td>25</td><td>0</td><td>2013-05-09 23:01:03</td><td>48.8217026998931</td><td>2.28539562482839</td><td>21704 - REPUBLIQUE (VANVES)</td><td>21704</td><td>OPEN</td></tr>
+<tr><td>96 RUE DE LAGNY - 93100 MONTREUIL</td><td>20</td><td>4</td><td>0</td><td>27</td><td>0</td><td>2013-05-09 22:55:21</td><td>48.8492303008648</td><td>2.42142994000703</td><td>31001 - LAGNY (MONTREUIL)</td><td>31001</td><td>OPEN</td></tr>
+</table>
+</p>
+<p>
+Je me suis aperçu que l'état des stations est mis à jour de façon désynchronisée.
+A priori à chaque fois qu'un vélo arrive ou part et régulièrement
+toutes les dix minutes. Projeté sur un graphe, cela donne l'image suivante et 
+pour voir l'animation, il suffit de cliquer sur le lien.
+</p>
+<p>
+<a href="documents/velib_anime_gif.gif"><img src="documents/velib_000.png" width="500" /></a>
+</p>
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+<p>
+Le graphe n'est pas le plus explicite mais jouer avec Internet 
+et les paramètres de matplotlib prend beaucoup de temps. 
+<a href="http://matplotlib.org/">Matplotlib</a> a eu le bon goût de planter après 60 images.
+Je serai quand même curieux de voir ce que cela donne sur une journée et par beau temps.
+</p>
+</body>
+</html>

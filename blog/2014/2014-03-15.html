@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Data pipeline in Python</title>
+<meta content="python, pipeline, data, big data, luigi, pydata" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+I started to use Hadoop in 2008 at Yahoo. At that time, I liked it because 
+the language introduced new constraints (there is no index, you can dispatch a huge amount of data among
+many machines but you have a limited amount of memory to process it on each machine) and it was fun playing with them.
+However, after a while, I accumulated many jobs, and I had to remember which 
+one to run and in which order to get the final results. It is fine
+when you do research but not very convenient when you need to explain the full workflow 
+to somebody else and 
+even less convenient when you need to productionize the workflow.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+The way you can use Hadoop with Python did not evolve too much in a couple of years.
+Maybe because it is very simple as it is (even if some packages
+such as <a href="https://github.com/Yelp/mrjob">mrjob</a> seem to help).
+However, because many people are facing the issue of productionizing workflows,
+you can find many packages doing that. Many of them are not maintained anymore.
+The one which caught my attention is the following:
+<a href="https://github.com/spotify/luigi">luigi</a>.
+It reminded me of the same look as the <a href="http://ipython.org/notebook">notebooks</a>.
+It did not try it yet but this <a href="http://vimeo.com/79533035">presentation</a> made me 
+think it should not be too complex to use.
+</p>
+
+<p>
+It also seems to offer mandatory functionalities: possibility to stop, restart the workflow, 
+investigate an issue.
+It can work with Hadoop but also without. The workflow can be vizualized.
+According to the website, the framework was not meant to scale to dozens of thousands of jobs.
+One issue though: a workflow cannot be modified while it is running, so a step cannot
+introduce new steps (such as iterating on the same step until it converges).
+</p>
+
+<p>
+A picture is usually faster to understand than a long documentation.
+I would add that I usually look at the examples first before reading
+any documentation. If I cannot guess what the example is doing, I usually 
+do not investigate further.
+I do not know if others people do that to but I know, when you teach, 
+each new step you introduce must be close to the previous one.
+If the gap is too big, they don't follow. If it is too small,
+they think they don't need you. 
+I think that I will use that framework to show a visualization 
+of a workflow. That's the first small step.
+</p>
+
+<p>
+And for those who are looking for a list of modules to use to process data,
+a good page is the list published on the <a href="http://pydata.org/downloads/">pydata conference</a>.
+</p>
+
+
+
+</body>
+</html>

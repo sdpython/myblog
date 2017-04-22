@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Comment extraire les paramètres d'un url en javascript</title>
+<meta content="javascript, paramètres, html" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+
+<p>
+Plutôt que de créer des interfaces graphiques, j'utilise
+de préférence une page HTML avec du javascript que j'exécute
+avec un navigateur. Ca prend moins de temps et on trouve facilement 
+sur internet une solution à son problème, voire trop de solutions
+pour extraire les paramètres d'un url en javascript :
+<tt>http://....?par1=value1&amp;par2=value2</tt>. Voici un code
+qui fonctionne :
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+
+<pre class="brush: js">
+function extractUrlParams(url)
+{
+    // url = location.search par exemple
+	var t = url.substring(1).split('&amp;');
+	var f = [];
+	for (var i=0; i&lt;t.length; i++){
+		var x = t[ i ].split('=');
+		f[x[0]] = unescape (x[1]);
+	}
+	return f;
+}
+</pre>
+
+<p>
+En anglais, ça donne <i>extract GET parameters from a user inputed url with javascript</i>
+ou <i>How to get the value from URL Parameter?</i>.
+</p>
+
+<p>
+</p>
+
+</body>
+</html>

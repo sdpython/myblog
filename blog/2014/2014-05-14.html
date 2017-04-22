@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Deux ou trois choses à vérifier avant de rendre un projet informatique</title>
+<meta content="informatique, python, ensae" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+Avant de remettre un programme informatique à un relecteur, il est deux ou trois
+petites choses qui facilitent le travail de relecture :
+
+<ul>
+<li>Vérifier que le programme est transmis avec les fichiers supplémentaires dont il a besoin (données, images, ...)</li>
+<li>Vérifier que le programme n'inclut pas de noms de fichiers absolus mais relatifs (je n'ai pas de lecteur <tt>d:</tt>)</li>
+<li>Si le programme demande des valeurs que l'utilisateur doit rentrer, il faut ajouter dans l'intitulé de la question une valeur
+par défaut ou recommandée. C'est sans doute évident mais comme je relis plusieurs programmes à la fois, deviner la valeur
+qui fonctionne et qui ne fait pas planter le programme devient un exercice délicat. Je préfère également
+quelques lignes au début du programme spécifiant ces valeurs plutôt que d'avoir à les renseigner à chaque exécution.
+</li>
+</ul>
+</p>
+
+<p>
+Lorsqu'un programme ne marche pas et qu'on a passé beaucoup de temps à chercher l'erreur, 
+quoi de plus naturel que d'envoyer un mail à son professeur : 
+"Monsieur, je ne comprends pas, ça ne marche pas et ça devrait marcher".
+Une fois sur deux, je réponds qu'il me serait utile d'en savoir un peu plus :
+<ul>
+<li>les valeurs des paramètres et les données afin que je puisse <b>reproduire l'erreur</b>,</li>
+<li>la raison pour laquelle vous pensez que cela ne marche pas (pas de convergence, le résultat attendu n'est pas là, ...),</li>
+<li>les directions que vous avez explorées pour comprendre l'erreur (sous-entendu elles se sont révélées infructueuses).</li>
+</ul>
+
+Bien souvent, le message d'erreur que je peux lire après avoir reproduit l'erreur est une bonne 
+indication pour savoir où chercher. Dans le cas contraire, voici ce par quoi je commence en général :
+<ul>
+<li>mettre des <tt>print</tt> un peu partout pour afficher les valeurs intermédiaires,</li>
+<li>ajouter des tests à des endroits clés du programme pour m'assurer que les tableaux ont la bonne dimension, qu'il n'y a pas 
+de valeurs nulles ou presque nulles lors d'une division, ...,</li>
+<li>réduire la taille du problème ou choisir des valeurs singulières pour obtenir un problème pour lequel je connais le résultat.</li>
+</ul>
+Je conçois qu'un bug récalcitrant titille un peu et suscite l'envoi d'un mail
+simple et concis traduisant un certain état d'agacement : <i><b>ça</b> ne marche pas et <b>ça</b> devrait marcher !</i>
+En pareil cas, j'ai aussi tendance à réagir de la sorte. Toutefois, étant 
+la source de l'erreur, le programmeur est celui qui dispose des informations
+les plus détaillées. J'essaye de lui demander tout ce qu'il sait avant de me lancer en conjectures.
+</p>
+
+<p>
+Un cas concret : un programme est censé minimiser la longueur du chemin passant par tous les noeuds d'un graphe 
+(<a href="http://fr.wikipedia.org/wiki/Probl%C3%A8me_du_voyageur_de_commerce">problème du voyageur de commerce</a>). 
+L'algorithme implémenté était tout-à-fait correct à ceci près que l'arc liant le dernier noeud au premier 
+était oublié dans le calcul de la longueur du chemin (il ne bouclait pas). Je vous laisse imaginer 
+ce que l'algorithme produisait
+comme solution et pourquoi ce que j'ai vu au fil des itérations 
+m'a incité à aller inspecter le calcul de cette longueur.
+</p>
+
+
+
+</body>
+</html>

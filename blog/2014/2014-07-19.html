@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Data can be huge, don't panic!</title>
+<meta content="python, big data, sql" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Data can be huge. Even if you reduce it, even if you sample,
+it seems there is no end to it and every look into it seems
+so slow! So slow! Hundred of millions of rows to read every time
+you try to find something.
+That's the kind of issues I ran into when I first met data
+from Internet. It was almost six years ago. I realize now
+there might be better ideas but, back then, 
+I used <a href="http://www.sqlite.org/">SQLite</a> to avoid storing
+everything in memory because I could not. 
+3 Gb, even 6 Gb could not hold in my laptop memory six years ago.
+However, switching from flat files to SQL table is painful.
+Writing the schema is painful, at least to me.
+So I did a function which guesses it from any flat file and...
+well, I used some tricks, a couple are described here:
+<a href="http://www.xavierdupre.fr/app/pyensae/helpsphinx/notebooks/pyensae_flat2db3.html">Mix SQLite and DataFrame</a>.
+Whether they are useful is totally up to you.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+It takes 10 minutes to imagine a way to deal with that mountain of data.
+It takes a week to build the first tool (in Python).
+It takes a month to cover your most painful daily tasks 
+(still in Python because that's not the only thing you have to do).
+It takes a year to convince people to use your tools 
+because they have habits too and they don't understand why you believe 
+so much yours are better.
+</p>
+<p>
+Well, do not let the machine dictate you what to do. If you want
+to walk through 1 Gb of data in a second, there is always a way,
+you just have to find it. And share.
+</p>
+
+</body>
+</html>

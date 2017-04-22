@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Download a file from Dropbox with Python</title>
+<meta content="python, dropbox" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+It is tempting to do everything from a 
+<a href="http://ipython.org/notebook.html">IPython notebook</a> such
+as downloading a file from DropBox. On the web interface, when a user
+click on a file, a button <i>Download</i> shows up. A second click on this
+button and the file will be downloaded it. To retrieve the file from
+a notebook, the url of the page which contains the button but it is close
+from the good one. This leads to the following example:
+</p>
+
+<pre class="brush: py">
+url = "https://www.dropbox.com/[something]/[filename]?dl=1"  # dl=1 is important
+import urllib.request
+u = urllib.request.urlopen(url)
+data = u.read()
+u.close()
+
+with open([filename], "wb") as f :
+    f.write(data)
+</pre>
+
+<p>
+It first downloads the data as bytes and then stores 
+everything into a file.
+</p>
+
+
+</body>
+</html>

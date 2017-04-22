@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Install cvxopt on Ubuntu</title>
+<meta content="python, cvxopt, ubuntu, llapack, blas, anaconda" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+The module <a href="http://cvxopt.org/">cvxopt</a>
+is not part of <a href="http://docs.continuum.io/anaconda/pkg-docs.html">Anaconda</a> 
+distribution. If you try to run from a terminal:
+</p>
+<pre class="prettyprint">
+pip install cvxopt
+</pre>
+<p>
+It is probably because <a href="http://www.netlib.org/lapack/">Lapack</a> 
+and <a href="http://www.netlib.org/blas/">Blas</a> 
+are not installed.
+If it is the case, I suggest to follow the instructions
+in <a href="http://ubuntuforums.org/showthread.php?t=1505249">How to install Blas and Lapack</a>.
+After it is done, the following instruction should run:
+</p>
+<pre class="prettyprint">
+pip install cvxopt
+</pre>
+<p>
+On Windows, I suggest to go to 
+<a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">Unofficial Windows Binaries for Python Extension Packages</a>.
+</p>
+
+</body>
+</html>

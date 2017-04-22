@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>PyData 2015 in Seattle</title>
+<meta content="python, pydata" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+
+<p>
+I attended my first conference 
+<a href="">pydata</a> in 
+<a href="">Seattle</a> 
+and I must say I learned a lot.
+I discovered much what I could ever do by looking on Internet 
+for a library for a precise need. That was really
+worth taking a plane and attend. Most of all, I felt people very passionnated,
+constantly looking for improvement. So passionate that I would definitely 
+recommend Python over R as a first choice for
+a machine learning language. R seems only to grow by the number of 
+available packages. But Python catches up. And its environment
+is also extending by various initiatives to improve plotting
+or the handling of very big datasets.
+</p>
+<p>
+I would not be surprised if a language
+named Rython pops up one day.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+There were many talks about 
+<a href="">Spark</a>
+such as this one on
+<a href="http://sparklingpandas.com/">sparkling pandas</a>
+which aims at proposing the same methods as you would expect
+from any dataframe but for a 
+<a href="">Resilient Distributed Dataset (RDD)</a>.
+I came accross some code to convert Python into Scala:
+<a href="https://github.com/wrobstory/PythonToScala">PythonToScale</a>.
+</p>
+
+<p>
+The speech made by 
+<a href="https://github.com/wrobstory/pydataseattle2015/blob/master/PyDataSeattle2015.ipynb">Rob Story</a>
+was quite interesting as he 
+walked through many libraries to handle very big datasets on disk
+or with lazy evaluation. Big datasets means several Gb.
+Lazy evaluation usually means working with iterator or functional programming at which
+<a href="https://github.com/pytoolz/cytoolz">cytoolz</a> is very good.
+<a href="https://pypi.python.org/pypi/blaze">blaze</a> and <a href="https://pypi.python.org/pypi/odo">odo</a>, 
+<a href="https://github.com/Blosc/bcolz">bcolz</a>, 
+<a href="https://pypi.python.org/pypi/dask">dask</a> is hte only to propose distributed evaluation.
+<a href="">SArray</a>, 
+<a href="https://dato.com/products/create/docs/generated/graphlab.SFrame.html">SFrame</a> from 
+<a href="https://dato.com/products/create/docs/generated/graphlab.SArray.html">GraphLab</a>.
+The last one is <a href="https://pypi.python.org/pypi/Biggus">biggus</a> but I guess
+it is too early to say.
+</p>
+
+<p>
+Deep learning was quite popular. A couple of talks and many people in the room.
+<a href="">theano</a> is the main reference,
+I discovered <a href="http://deeplearning4j.org/">deeplearning4j</a>
+and discovered again 
+<a href="http://caffe.berkeleyvision.org/">caffe</a>
+whose development seems to be more active than in the past.
+And <a href="https://github.com/NervanaSystems/neon">neon</a> might become popular too.
+</p>
+
+<p>
+Engineers are still looking for a good way to display results.
+The Jupyter notebook is of course the first choise and many talks
+were relying on it.
+But for people who are fond of R Shiny, 
+<a href="https://github.com/adamhajari/spyre">spyre</a>
+should help them to build a simple web application
+which looks the same way.
+<a href="">bokeh</a> is growing fast and attracts a lof of attention.
+It is now possible to insert custom Javascript and callbacks.
+I'll end this section by some extensions of matplotlib 
+<a href="">cubehelix</a> and <a href="">viscm</a>.
+But because the notebook became very popular, many
+javascript extensions appear
+(<a href="">bearcart</a>).
+</p>
+
+<p>
+About machine learning, I discovered
+<a href="https://github.com/ocelma/python-recsys">python-recsys</a>, a recommendation system
+easy to train and easier to install (on Windows) 
+compare to
+<a href="http://muricoca.github.io/crab/index.html">crab</a>.
+<a href="">lifelines</a> would be a package to do 
+survival analysis.
+The presention <a href="https://github.com/eriktaubeneck/hack-the-derivative">Hack the Derivative</a>
+(link from <a href="http://seattle.pydata.org/schedule/presentation/37/">pydata</a>).
+was about computing a limit of a real function with complex number and studying
+the precision of the results.
+</p>
+
+<p>
+Finally some others links:
+<a href="http://blog.suiji.org/">Mood Stochastic</a> (the connection was the package 
+<a href="https://cran.r-project.org/web/packages/Rborist/index.html">Rborist</a>).
+An interesting paper: 
+<a href="http://hips.seas.harvard.edu/content/bayesian-online-changepoint-detection">Bayesian Online Changepoint Detection</a>
+and this associated <a href="https://github.com/codyrioux/pydata2015seattle/">notebook</a>.
+
+An interesting library for javascript plotting: <a href="http://code.shutterstock.com/rickshaw/">rickshaw</a>.
+Somebody to follow when it comes to deal with huge datasets:
+<a href="http://seattle.pydata.org/schedule/presentation/47/">Tob Story</a>.
+I don't remember how I heard about this one:
+<a href="https://pypi.python.org/pypi/ibis/1.3.2">ibis</a>. Anyway, this is a templating library.
+
+</p>
+
+</body>
+</html>

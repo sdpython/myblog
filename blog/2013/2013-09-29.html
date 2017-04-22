@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Zoomer sur graphe XY avec d3.js</title>
+<meta content="d3.js, javascript, visualisation" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+<a href="http://d3js.org/">d3.js</a> est un framework écrit
+en javascript qui permet de visualiser des données. Il 
+est conçu pour des sites web et permet de créer des graphes animés.
+Le résultat est assez esthétique à en juger par les différentes galleries :
+<ul>
+<li><a href="https://github.com/mbostock/d3/wiki/Gallery">gallerie officielle</a>,
+<a href="https://github.com/mbostock/d3/wiki/Gallery">gallerie étendue</a>
+        </li>
+<li><a href="http://biovisualize.github.io/d3visualization/">gallerie étendue</a></li>
+<li><a href="http://techslides.com/over-1000-d3-js-examples-and-demos/">1000 exemples avec d3.js</a></li>
+<li><a href="https://leanpub.com/D3-Tips-and-Tricks/read">D3 Tips and Trick</a></li>
+</ul>
+
+Tout d'abord, je dois dire que ça prend du temps de concevoir un graphe. 
+Mon objectif était de créer un graphe XY et de pouvoir zoomer horizontalemen sur une 
+partie. Quand on découvre l'outil et les spécifités de javascript,
+il est préférable de partir d'une exemple qui fonctionne déjà
+sans trop chercher à aggréger des bouts de codes venant de plusieurs graphes.
+L'exemple que j'ai trouvé pour le zoom vient d'ici : 
+<a href="http://jsfiddle.net/KSAbK/1/">js fiddle</a>. Appliqué à mes données,
+cela donne :
+</p>
+<p>
+<iframe  width="700" height="350" frameborder="0" 
+    src="documents/td9_by_hours.html"> 
+</iframe>
+</p>
+<p>
+Les premiers pas sont tout de même assez longs, les erreurs ne 
+sont pas faciles à comprendre, surtout quand on est novice.
+On espère que ce graphe qu'on est en train de constuire pourra resservir. 
+Cela dit voici, quelques astuces.
+</p>
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+<b>Avec on sans animation</b>
+</p>
+<p>
+Lorsqu'on regarde un script classique écrit avec <i>d3.js</i>, on distingue 
+trois parties (voir <a href="http://bl.ocks.org/mbostock/3885304">nbar</a>):
+<ul>
+<li>ce qui précède la fonction <i>d3.tsv</i> ou <i>d3.json</i></li>
+<li>ce qui suit la fonction <i>d3.tsv</i> ou <i>d3.json</i> (entre accolade)</li>
+<li>les fonctions placées à la fin du script</li>
+</ul>
+La fonction <a href="https://github.com/mbostock/d3/wiki/CSV">d3.tsv</a>
+est particulière : elle ne charge pas les données immédiatement.
+La page qui contient le graphe s'affiche d'abord, ensuite la fonction
+télécharge les donnéesde façon désynchronisées
+qui sont ensuite traitées par la fonction en accolade.
+Cela permet d'éviter d'attendre lorsque les données sont en grand nombre.
+Pour le zoom (ou une animation), on ne peut pas utiliser ce mécanisme car les données
+vont être constamment affichées, réaffichees, il faut donc qu'elle
+soient insérées sous forme de tableau dans le script javascript et non chargée.
+Ceci explique le code fournit qui produit le graphe ci-dessus 
+(et que vous pouvez lire à la fin de cet article).
+</p>
+
+<p>
+<b>Le débuggeur de Firefox ou Chrome</b>
+</p>
+<p>
+Pour comprendre ses erreurs, les navigateurs proposent des outils 
+d'aides au développement. On peut exécuter son script pas à pas,
+voir l'état des variables. Il suffit de charger sa page locale dans le 
+navigateur et d'aller dans le menu <i>options / outils de dévloppement </i>.
+il est utile d'aller jeter un coup d'oeil pour voir les noeuds HTML
+que le script ajoute.
+</p>
+
+<p>
+<b>Le graphe est vide (et les données dans un fichier local)</b>
+</p>
+<p>
+Pour des raisons de sécurité, Chrome ne permet pas le chargement de données
+local par l'intermédiaire de la fonction <i>d3.tsv</i> ou <i>d3.json</i>.
+Le plus simple est de l'autoriser à le faire en tapant :
+<pre class="prettyprint">
+"C:\Program Files (x86)\Google\Chrome\Application\Chrome.exe" --allow-file-access-from-files
+</pre>
+La navigateur acceptera de lire des données depuis un url du type <i>file://d:/...</i>.
+Néanmoins, il est préférable, avant de retourner à internet, de fermer Chrome
+puis de le réouvrir sans cet option. Vous pouvez aussi utiliser l'astuce suivante.
+</p>
+
+<p>
+<b>Eviter l'usage de la fonction <i>d3.json</i></b>
+</p>
+<p>
+La plupart des scripts javascript utilisant <i>d3.js</i> utilise la fonction <i>d3.json</i>
+(<a href="http://bl.ocks.org/mbostock/4063269">exemple</a>) :
+<pre class="prettyprint">
+d3.json("mes_donnees.json", function(data_json) {
+
+    // ...
+    var node = svg.selectAll(".node")
+            .data(bubble.nodes(classes(data_json))
+    // ...
+)} ;
+</pre>
+Mais l'exécution en locale ne fonctionne pas toujours et c'est difficile à 
+débugger. Les données json peuvent quasiment copiées telles quels dans un 
+fichier javascript (<i>data_json_local.js</i>):
+<pre class="prettyprint">
+var data_json = [
+  // .... données json
+  ] ;
+</pre>
+Ensuite, il suffit d'inclure ce fichier dans la page HTML en insérant la ligne :
+<pre class="prettyprint">
+&lt;script src="data_json_local.js"&gt;&lt;/script&gt;
+</pre>
+Et pour finir, on modifie le premier javascript en commentant l'appel
+à la fonction <i>d3.json</i> qui n'est plus utile. La variable
+<i>data_json</i> existe déjà :
+<pre class="prettyprint">
+//d3.json("mes_donnees.json", function(data_json) {
+
+
+    // ...
+    var node = svg.selectAll(".node")
+            .data(bubble.nodes(classes(data_json))
+    // ...
+//)} ;
+</pre>
+
+</p>
+
+<p>
+<b>Le script qui a généré le graphe ci-dessus :</b>
+</p>
+<p>
+<pre class="prettyprint">
+&lt;div id="d3jsexample"&gt;&lt;/div&gt;
+&lt;script src="http://d3js.org/d3.v3.js"&gt;&lt;/script&gt;
+&lt;script src="td9_by_hours_data.js"&gt;&lt;/script&gt;   &lt;!-- the data, contains the variable data  used by the following script, it looks like the following --&gt;
+&lt;!--
+data = 
+[
+{'velo': 12817.0, 'last_update': '10/9/13 11:35', 'minute': 35.0, 'heure': 11.0, 'place': 25202.0, 'name': '10/9/13 11:35', 'roulant': 225.0, 'somme': 38019.0}
+,{'velo': 12744.0, 'last_update': '10/9/13 11:40', 'minute': 40.0, 'heure': 11.0, 'place': 25273.0, 'name': '10/9/13 11:40', 'roulant': 227.0, 'somme': 38017.0}
+...
+] ;
+--&gt;
+&lt;script&gt;
+
+// defines the graph area (usually the same for for every graph)
+margin = {
+    top: 20,
+    right: 20,
+    bottom: 20,
+    left: 45
+};
+
+width = 600 - margin.left - margin.right;
+height = 300 - margin.top - margin.bottom;
+
+// defines the range of each axis
+var x = d3.time.scale()
+    .domain(d3.extent(data, function (d) {
+    return d.last_update;
+}))
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .domain(d3.extent(data, function (d) {
+    return d.velo;
+}))
+    .range([height, 0]);
+
+// graph type, also defines the columns to be used (last_update and velo in this case)
+var line = d3.svg.line()
+    .x(function (d) {
+    return x(d.last_update);
+})
+    .y(function (d) {
+    return y(d.velo);
+});
+
+// defines the function to call when zooming
+var zoom = d3.behavior.zoom()
+    .x(x)
+    //.y(y)
+    .on("zoom", zoomed);
+
+// creates a svg section in the d3jsex section
+svg = d3.select('#d3jsexample')
+    .append("svg")
+    .attr('width', width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .call(zoom);
+
+svg.append("rect")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("class", "plot");
+
+// two functions uses for the zoom
+var make_x_axis = function () {
+    return d3.svg.axis()
+        .scale(x)
+        .orient("bottom")
+        .ticks(10);
+};
+
+var make_y_axis = function () {
+    return d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .ticks(10);
+};
+
+// defines the axis
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+    .ticks(10);
+
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0, " + height + ")")
+    .call(xAxis);
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(10);
+
+svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("velib disponibles");
+      
+svg.append("g")
+    .attr("class", "x grid")
+    .attr("transform", "translate(0," + height + ")")
+    .call(make_x_axis()
+    .tickSize(-height, 0, 0)
+    .tickFormat(""));
+
+svg.append("g")
+    .attr("class", "y grid")
+    .call(make_y_axis()
+    .tickSize(-width, 0, 0)
+    .tickFormat(""));
+
+// objects for the zooming
+var clip = svg.append("clipPath")
+    .attr("id", "clip")
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", width)
+    .attr("height", height);
+
+var chartBody = svg.append("g")
+    .attr("clip-path", "url(#clip)");
+
+chartBody.append("path")
+    .datum(data)
+    .attr("class", "line")
+    .attr("d", line);
+
+// zooming functions
+function zoomed() {
+    //console.log(d3.event.translate);     // display information in the logging console of the browser (using developping tools)
+    //console.log(d3.event.scale);
+    svg.select(".x.axis").call(xAxis);
+    svg.select(".y.axis").call(yAxis);
+    svg.select(".x.grid")
+        .call(make_x_axis()
+        .tickSize(-height, 0, 0)
+        .tickFormat(""));
+    svg.select(".y.grid")
+        .call(make_y_axis()
+        .tickSize(-width, 0, 0)
+        .tickFormat(""));
+    svg.select(".line")
+        .attr("class", "line")
+        .attr("d", line);
+}
+
+&lt;/script&gt;
+</pre>
+Et la feuille de style :
+<pre class="prettyprint">
+.plot {
+    fill: rgba(250, 250, 255, 0.6);
+}
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.grid path {
+    stroke-width: 0;
+}
+.axis path, .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+.x.axis path {
+    display: none;
+}
+.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+</pre>
+</p>
+
+</body>
+</html>

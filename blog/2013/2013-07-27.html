@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Logging click events on your server</title>
+<meta content="programming, python, web server, javascript" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+Many websites log events, where users clicked for example.
+They want to optimize for a better use. You would assume
+every time a user requests a page, your server needs to provide 
+the user with the content of the page. However some cache mechanism
+could prevent you from getting that information, a user could 
+click on a link leading outside your website or the same page
+could be obtained from different others pages. You need
+a more precise information. How to log a click event then?
+</p>
+<p>
+To do that, we first need to do something when a user clicks on a url: we need
+to catch this event and to call another function. We use the following
+syntax:
+
+<pre class="prettyprint">
+&lt;a href="url" onmousedown="sendlog('url')"&gt;anchor&lt;/a&gt;
+</pre>
+
+The function <i>sendlog</i> will be executed when the user clicks on this particular url.
+The string between the quotes is the information to log. The function <i>sendlog</i>
+is defined in another file, <i>defsendlog.js</i> in this case. The following lines 
+must be added to the HTML page (header section):
+
+<pre class="prettyprint">
+&lt;script type="text/javascript" src="/defsendlog.js"&gt;&lt;/script&gt;
+</pre>
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+This file will contain the description of the function. Basically, it 
+consists in calling your server with a url which only has a meaning for you.
+If you do not want people to understand what you really send to your server,
+the information should be encrypted in the web page.
+
+<pre class="prettyprint">
+function sendlog(info) 
+{
+    var url = 'logs/click/' + encodeURIComponent(info) ;
+    var pageRequest = new XMLHttpRequest()
+    pageRequest.open('GET', url, false);
+    pageRequest.send(null);
+}
+</pre>
+
+It might be useful to introduce a random value in the url, completely meaningless
+but it will avoid caching.
+
+</p>
+
+<p>
+If your server is logging every request, you should see a line such as this one:
+<pre class="prettyprint">
+2013-07-27 21:08:07 - 127.0.0.1 - "GET /logs/click/%2Frss_reader.html HTTP/1.1" 200 -
+</pre>
+
+In Python, you can easily your own server by using the class
+<i>BaseHTTPRequestHandler</i> (see the following example:
+<a href="http://wiki.python.org/moin/BaseHttpServer">BaseHTTPServer.BaseHTTPRequestHandler</a>).
+
+You just need to overload method <i>do_GET</i> to do something 
+
+    def serve_content(self, path, method = "GET"):
+
+<pre class="prettyprint">
+class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    # ...
+    def do_GET(s):
+        path =  urlparse(self.path)
+        if path.path.startswith("/logs/") :
+            s.send_response(200)
+            s.send_header("Content-type", "text/html")
+            s.end_headers()            
+            
+            url  = path.path[6:]
+            info = urllib.parse.unquote(url)
+            # do something with info
+</pre>            
+</p>
+
+<p>
+Usually, it is convenient to log identified information. Not that we would know who is the user
+but we would be able to group all events coming from the same user for a short period of time 
+(a session). We need to log an id for every user. 
+The following function will generate such an id (I got it from
+<a href="http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript">here</a>):
+
+<pre class="prettyprint">
+function generateUUID()
+{
+    var d = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random()*16)%16 | 0;
+        d = Math.floor(d/16);
+        return (c=='x' ? r : (r&amp;0x7|0x8)).toString(16);
+    });
+    return uuid;
+}
+</pre>
+
+We then use cookie to store and retrieve this id all along a session:
+
+<pre class="prettyprint">
+function getUUID()
+{
+    var uuid = readCookie("rssuuid") ;
+    if (uuid == null) {
+        var uu = generateUUID() ;
+        createCookie("rssuuid", uu) ;
+        return uu ;
+    }
+    else {
+        return uuid ;
+    }
+}
+</pre>
+
+We finally modify the function <i>sendlog</i> to add this id:
+
+<pre class="prettyprint">
+function sendlog(link) 
+{
+    var info = 'logs/click/' + getUUID() + '/' + encodeURIComponent(link) ;
+    var pageRequest = new XMLHttpRequest()
+    pageRequest.open('GET', info, false);
+    pageRequest.send(null);
+}
+</pre>
+
+Here is an example of what you could get:
+
+
+<pre class="prettyprint">
+dtime                        uuid                                   type1   type2   args                                                 id_event
+2013-07-28 12:31:05.720984   5c469967-1dbe-4214-ea2a-dfa7bb8e1be4   imp     url     http://localhost:8080/rss_reader.html                1
+2013-07-28 12:31:19.011383   5c469967-1dbe-4214-ea2a-dfa7bb8e1be4   click   post    354/in                                               2
+2013-07-28 12:31:20.642292   5c469967-1dbe-4214-ea2a-dfa7bb8e1be4   click   post    354/in                                               3
+2013-07-28 12:31:21.295469   5c469967-1dbe-4214-ea2a-dfa7bb8e1be4   imp     url     http://localhost:8080/rss_reader.html?blog_selected=&amp;post_selected=354   4
+2013-07-28 12:31:32.834610   5c469967-1dbe-4214-ea2a-dfa7bb8e1be4   click   post    354/out                                              5
+2013-07-28 12:31:39.107667   5c469967-1dbe-4214-ea2a-dfa7bb8e1be4   click   url     rss_reader.html?search=today                         6
+2013-07-28 12:31:39.458983   5c469967-1dbe-4214-ea2a-dfa7bb8e1be4   imp     url     http://localhost:8080/rss_reader.html?search=today   7
+</pre>
+
+</p>
+
+</body>
+</html>

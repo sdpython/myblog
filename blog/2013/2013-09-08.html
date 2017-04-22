@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Convertir un tableau Excel au format HTML</title>
+<meta content="Excel, VBA, tableau, html" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+<p>
+Le code suivant convertit un tableau Excel au format HTML puis
+stocke le résultat dans le presse-papier (il suffit donc de faire
+CTRC+V pour le coller où on veut). La macro convertit la zone sélectionnée au format HTML.
+Voici ce qu'elle donne :
+</p>
+<p>
+<table>
+<tr><td style="background-color:#D59B5B;color:#FFFFFF;font-weight:bold;">objectif</td><td style="background-color:#D59B5B;color:#FFFFFF;font-weight:bold;">Python</td><td style="background-color:#D59B5B;color:#FFFFFF;font-weight:bold;">VBA</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">test</td><td style="background-color:#EED7BD;color:#0;"> if / else</td><td style="background-color:#EED7BD;color:#0;">if .. Then / else / end if</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">boucle</td><td style="background-color:#F7EBDD;color:#0;">for .. in ..</td><td style="background-color:#F7EBDD;color:#0;">for .. = .. to .. / next</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">fonction</td><td style="background-color:#EED7BD;color:#0;">def</td><td style="background-color:#EED7BD;color:#0;">fonction / end function</td></tr>
+</table>
+</p>
+<p>
+Le code de la fonction doit être copié/collé dans un module 
+(ALT+F11 pour voir le code VBA associé à la feuille).
+Je n'ai pas implémenté beaucoup de styles
+mais la fonction est facilement modifiable. 
+</p>
+<p>
+<pre class="prettyprint">
+' code à copier dans la feuille Excel
+Function ColorToHtml(ByVal value As String) As String
+    Dim scolor As String
+    scolor = Trim(Hex(value))
+    While Len(scolor) &lt; 6
+        scolor = "0" + scolor
+    Wend
+    scolor = Mid(scolor, 3, 4) + Mid(scolor, 1, 2)
+    ColorToHtml = "#" + scolor
+End Function
+
+Sub range_html_to_cliboard()
+    Set rge = Selection
+    Dim res, line, ce As String
+    res = "&lt;table&gt;" + Chr(10)
+    
+    For i = 1 To rge.Rows.Count
+        line = "&lt;tr&gt;"
+        For j = 1 To rge.Columns.Count
+            ce = "&lt;td style="""
+            If rge(i, j).Interior.color Then
+                ce = ce + "background-color:" + ColorToHtml(rge(i, j).Interior.color) + ";"
+            End If
+            If rge(i, j).Font.color Then
+                ce = ce + "color:" + ColorToHtml(rge(i, j).Font.color) + ";"
+            End If
+            If rge(i, j).Font.Bold Then
+                ce = ce + "font-weight:bold;"
+            End If
+            ce = ce + """&gt;"
+            ce = ce + rge(i, j).Text + "&lt;/td&gt;"
+            line = line + ce
+        Next
+        line = line + "&lt;/tr&gt;"
+        res = res + line + Chr(10)
+    Next
+    
+    res = res + "&lt;/table&gt;" + Chr(10)
+    
+    ClipBoard_SetData (res)
+End Sub
+</pre>
+</p>
+<p>
+La fonction ne marche pas tel quel sur les tableaux créés avec des styles,
+ni même avec une liste filtrée. Pour cela, il faut copier la zone désirée puis faire
+deux collages spéciaux, le formatting et les valeurs, au même endroit. 
+On sélectionne ensuite la zone collée
+puis on appelle la macro décrite ci-dessus.
+</p>
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+
+<p>
+Le code précédent utilise une fonction <i>ClipBoard_SetData</i>
+dont le code suit et qu'il faut recopier dans un module.
+
+<pre class="prettyprint">
+' code à copier dans un module (existant ou nouveau)
+' from http://stackoverflow.com/questions/14219455/excel-vba-code-to-copy-a-specific-string-to-clipboard
+Option Explicit
+
+Declare Function GlobalUnlock Lib "kernel32" (ByVal hMem As Long) As Long
+Declare Function GlobalLock Lib "kernel32" (ByVal hMem As Long) As Long
+Declare Function GlobalAlloc Lib "kernel32" (ByVal wFlags As Long, ByVal dwBytes As Long) As Long
+Declare Function CloseClipboard Lib "User32" () As Long
+Declare Function OpenClipboard Lib "User32" (ByVal hwnd As Long) As Long
+Declare Function EmptyClipboard Lib "User32" () As Long
+Declare Function lstrcpy Lib "kernel32" (ByVal lpString1 As Any, ByVal lpString2 As Any) As Long
+Declare Function SetClipboardData Lib "User32" (ByVal wFormat As Long, ByVal hMem As Long) As Long
+
+Const GHND = &amp;H42
+Const CF_TEXT = 1
+Const MAXSIZE = 4096
+
+Function ClipBoard_SetData(MyString As String)
+   Dim hGlobalMemory As Long, lpGlobalMemory As Long
+   Dim hClipMemory As Long, X As Long
+
+   ' Allocate moveable global memory.
+   '-------------------------------------------
+   hGlobalMemory = GlobalAlloc(GHND, Len(MyString) + 1)
+
+   ' Lock the block to get a far pointer
+   ' to this memory.
+   lpGlobalMemory = GlobalLock(hGlobalMemory)
+
+   ' Copy the string to this global memory.
+   lpGlobalMemory = lstrcpy(lpGlobalMemory, MyString)
+
+   ' Unlock the memory.
+   If GlobalUnlock(hGlobalMemory) &lt;&gt; 0 Then
+      MsgBox "Could not unlock memory location. Copy aborted."
+      GoTo OutOfHere2
+   End If
+
+   ' Open the Clipboard to copy data to.
+   If OpenClipboard(0&amp;) = 0 Then
+      MsgBox "Could not open the Clipboard. Copy aborted."
+      Exit Function
+   End If
+
+   ' Clear the Clipboard.
+   X = EmptyClipboard()
+
+   ' Copy the data to the Clipboard.
+   hClipMemory = SetClipboardData(CF_TEXT, hGlobalMemory)
+
+OutOfHere2:
+
+   If CloseClipboard() = 0 Then
+      MsgBox "Could not close Clipboard."
+   End If
+
+End Function
+</pre>
+</p>
+
+<p><b>2015/03/14</b> modification du premier code pour gérer des valeurs nulles</p>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Form in notebooks (IPython)</title>
+<meta content="python, notebook, html, form" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+Sometimes I need to type some credentials to access a remote machine 
+from my notebook. I could write them in a cell but then I would need
+to remove them from the notebook to avoid sharing them by negligence.
+I was using a simple fonction showing a window tkinter, a pop up. But this
+solution only works if the notebook server is local. When it is remote, 
+the pop up windows appears on the remote machine and I cannot see it.
+</p>
+<p>
+IPython allows javascript functions to execute some Python instructions
+which impact the workspace. All I had to do was to print a form in the page with
+some javascript. The result can be found here : 
+<a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/notebooks/having_a_form_in_a_notebook.html">Having a form in a notebook</a>.
+</p>
+
+</body>
+</html>

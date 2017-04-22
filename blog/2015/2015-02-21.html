@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Distribution pour Python sous Windows</title>
+<meta content="python, anaconda, winpython" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+La distribution <a href="https://winpython.github.io/">WinPython</a>
+propose maintenant Python 3.4 mais aussi des versions customisées (ou flavors).
+L'une d'entre elles utilise <a href="http://kivy.org/">Kivy</a>. Une autre
+est particulièrement intéressante pour un datascientist
+puisqu'elle inclue <a href="http://www.r-project.org/">R</a>.
+On peut alors passer facilement de Python à R depuis le même notebooks
+sans étape d'installation supplémentaire ce qu'on teste aisément
+avec un notebook préinstallé.
+Comme le compilateur <a href="http://www.mingw.org/">MinGW</a> fait
+partie de la distribution, <a href="http://cython.org/">cython</a>
+ne pose plus aucun problème.
+</p>
+<p>
+Avec cette dernière version, le choix entre WinPython et 
+<a href="http://continuum.io/downloads#py34">Anaconda</a> devient difficile
+sous Windows. Un seul bémol, l'installation du module 
+<a href="https://github.com/paramiko/paramiko">paramiko</a> est très simple avec Anaconda
+(avec <a href="http://www.continuum.io/blog/conda">conda install</a>)
+mais se révèle compliquée avec WinPython. Donc, si vous avez besoin d'accéder à des 
+ressources web de façon cryptée, Anaconda reste sans doute le plus sûr.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Format de compression BZ2</title>
+<meta content="python, bz2, compression" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+Il existe beaucoup de formats de compression. Le plus
+connu est dans doute le format <a href="http://fr.wikipedia.org/wiki/ZIP_(format_de_fichier)">zip</a>.
+Il serait impossible de tous les citer (voir <a href="http://fr.wikipedia.org/wiki/Compression_de_donn%C3%A9es">compression</a>).
+Un des logiciels les plus utilisés sous Windows est <a href="http://www.7-zip.org/">7z</a>.
+Il permet de compresser / décompresser les formats les plus utilisés pour 
+la compression du texte. Et le format <a href="http://fr.wikipedia.org/wiki/7-Zip">7-zip</a>
+est le plus souvent le plus efficace.
+</p>
+<p>
+Alors pourquoi aurait-on besoin d'autre format de compression ?
+Ce qui marche pour le texte ne marche pas forcément très bien sur la musique, les images
+ou la vidéo. Pour le texte, on cherche toujours une compression sans erreur. On
+accepterait mal qu'un document se retrouve altéré durant les étapes de compression / décompression.
+Pour les images, on recherche principalement des compressions
+avec un peu de perte : une déterioration de la qualité de l'image qui soit presque
+invisible pour l'oeil humain. Le format MP3 est aussi une compression de la musique avec perte.
+Pour la vidéo qui est très gourmande, on utilise le fait que les images changent peu 
+d'une seconde à l'autre comme le décor en fond d'écran. On ne va donc pas compresser
+les images directement mais la différence entre une image et sa précédente.
+</p>
+<p>
+Pour en revenir aux données qu'on compresse sans perte, pourquoi utiliser 
+un autre format de compression si  <a href="http://fr.wikipedia.org/wiki/7-Zip">7-zip</a> est meilleur ?
+En fait, il est meilleur la plupart du temps mais pour certains usages précis, d'autres formats 
+sont plus adaptés, plus simples ou plus performants. Le format <a href="http://fr.wikipedia.org/wiki/Bzip2">Bzip2</a>
+ou <i>Bz2</i>. Pour citer Wikipedia, les avantages de ce format sont :
+une faible utilisation mémoire à la compression, 
+la robustesse des archives à la corruption et la parallélisation possible sur de nombreux threads.
+</p>
+<p>
+Pour compresser du texte en Python au format <i>bz2</i>, on utilise 
+le programme suivant :
+<pre class="prettyprint">
+import bz2
+
+# les lignes de texte à décompresser
+lines = ["line1", "line2 é"]
+
+# on ouvre un fichier classique en mode binaire
+with open(file,"wb") as f :
+    comp = bz2.BZ2Compressor()
+    for line in lines :
+        tof = line + "\n"  # on ajoute une fin de ligne
+                           # puis on encode en utf8 avant de compresser
+        c = comp.compress ( tof.encode("utf8")  )
+        f.write( c )
+    c = comp.flush()   # il ne faut pas oublier car le 
+    f.write( c )       # BZ2Compressor fonctionne comme un buffer
+</pre>
+</p>
+<p>
+Pour le relire :
+<pre class="prettyprint">
+import bz2
+lines = [ ]
+with bz2.BZ2File(file, "r") as f :
+    for line in f :
+        s = str(line, encoding = "utf8")
+        lines.append (s)
+</pre>
+Avec ses deux exemples, il n'est pas besoin de conserver
+une version décompressée du fichier. On écrit et lit directement
+les données au format compressé. 
+</p>
+
+</body>
+</html>

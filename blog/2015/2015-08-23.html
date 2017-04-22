@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Building xgboost on Windows for Python</title>
+<meta content="xgboost, python, Windows" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+I'm unlucky. The day I decide to deal with xgboost on Windows,
+a couple of hours later, I see a commit which does that. 
+<a href="https://github.com/dmlc/xgboost">xgboost</a> is
+now on <a href="https://pypi.python.org/pypi/xgboost">pipy</a>
+even if the version for Python 3 is not ready yet
+(<a href="https://github.com/dmlc/xgboost/issues/453">Missing parentheses in call to 'print'</a>).
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Anyway, if you still want to build xgboost on your own for Python 3.4 (64 bit). This is
+what I did:
+<ul>
+<li>Install <a href="http://www.microsoft.com/en-us/download/details.aspx?id=8279">Microsoft Windows SDK for Windows 7 and .NET Framework 4</a>.
+It has to be done to make Visual Studio Express 2010 build for x64. It must be done first if you have
+a more recent version of Visual Studio installed on the same machine.
+</li>
+<li>Install <a href="http://download.microsoft.com/download/1/E/5/1E5F1C0A-0D5B-426A-A603-1798B951DDAE/VS2010Express1.iso">Visual Studio Express (C++)</a>.
+The link points to an image .iso.</li>
+<li>Install the <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">Java JDK</a>. 
+Change the verion if there is a more recent one.</li>
+<li>Download <a href="https://github.com/dmlc/xgboost">xgboost</a></li>
+<li>Check <a href="https://msdn.microsoft.com/fr-fr/library/tt15eb9t.aspx">OpenMD</a> is in 
+<tt>C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC</tt> (files
+vcomp.lib, vcombd.lib, omp.h).</li>
+<li>Open the solution in Windows directory (in xgboost) and update the path to 
+point to Java JDK and OpenMP, build the version release/x64 
+(see this <a href="https://github.com/sdpython/xgboost/commit/91cc9b2fadeb87560c24006b49a36fccc8bf3270">commit</a>)</li>
+<li>Go to the python folder and type <tt>python setup.py bdist_wheel</tt> to build the file .whl</li>
+</ul>
+    
+</p>
+
+<p><b>2016/01/08</b> more on 
+<a href="http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/blog/2015/2015-09-12_build_xgboost.html">Build xgboost for Python 3.4</a>
+and <a href="http://www.xavierdupre.fr/app/pymyinstall/helpsphinx//blog/2015/2015-11-12_build_xgboost_35.html">Build xgboost for Python 3.5</a>
+</p>
+
+</body>
+</html>

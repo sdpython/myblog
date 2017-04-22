@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Quelques astuces avec pandas python</title>
+<meta content="python, pandas" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+<p>
+Ce n'est pas toujours évident d'apprendre à manipuler un nouveau module.
+On commence toujours par des trucs simples qu'on peine toujours à faire
+même après quelques requêtes sur un moteur de recherche. Bref, 
+voici quelques raccourcis (on suppose que <i>df</i> est un 
+<a href="http://pandas.pydata.org/pandas-docs/dev/dsintro.html#dataframe">DataFrame</a>).
+Je recommande un rapide coup d'oeil à
+<a href="http://pandas.pydata.org/pandas-docs/dev/10min.html?highlight=dataframe">10 Minutes to Pandas</a>
+(et celle-ci aussi : <a href="http://pandas.pydata.org/pandas-docs/dev/basics.html">Essential Basic Functionality</a>).
+</p>
+<p>
+<b>Parcourir tous les éléments (version lente) :</b>
+<pre class="prettyprint">
+self.header = ['index'] + [ _ for _ in df.columns ]
+self.values = []
+for i in range(len(df) :
+    row = [ df.index[i] ] + [ df.ix[i,j] for j in range(len(self.header)) ]
+    self.values.append(row)
+</pre>
+</p>
+
+<p>
+<b>Parcourir tous les éléments (version plus rapide) :</b>
+<pre class="prettyprint">
+self.header = ['index'] + [ _ for _ in df.columns ]
+self.values = []
+for i,row in enumerate(df.values) :
+    row = [ df.index[i] ] + [ x for x in row ]
+    self.values.append(row)
+</pre>
+</p>
+
+<p>
+<b>Créer un DataFrame à partir d'une matrice (liste de listes) :</b>
+<pre class="prettyprint">
+df = pandas.DataFrame(liste_de_listes, columns = list_nom_colonnes)
+</pre>
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+<b>Renommer les colonnes :</b>
+<pre class="prettyprint">
+df.columns = [x.lower() for x in df.columns]
+</pre>
+</p>
+
+<p>
+<b>Ajouter une colonne à un DataFrame (colonne construite à partir des autres) :</b>
+<pre class="prettyprint">
+col = df.apply ( lambda row : (row["Open"] + row["Close"]) / 2, axis = 1 ) 
+df ["new_column"] = col
+</pre>
+</p>
+
+<p>
+<b>Sélectionner des lignes selon une condition portant sur plusieurs colonnes :</b>
+<pre class="prettyprint">
+cond = df.apply ( lambda row : row["Open"] > row["Close"], axis = 1 )
+sub = df [cond]
+</pre>
+</p>
+
+
+
+
+</body>
+</html>

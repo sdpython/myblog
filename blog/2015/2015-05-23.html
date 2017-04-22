@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Jenkins, TortoiseGit and locked files on Windows</title>
+<meta content="Jenkins, TortoiseGit, python" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+Some errors can be very annoying sometimes if they come 
+back again and again. Here is one of them:
+<a href="https://code.google.com/p/tortoisegit/issues/detail?id=623">TortoiseGit locks repository folders so that the user can't delete them</a>
+which I throught was caused by Jenkins. So annoying that
+it was mentioned in a couple of issues
+<a href="https://code.google.com/p/tortoisegit/issues/detail?id=401">401</a>,
+<a href="https://code.google.com/p/tortoisegit/issues/detail?id=497">497</a>,
+<a href="https://code.google.com/p/tortoisegit/issues/detail?id=1880">1880</a>.
+I could avoid using TortoiseGit but that's the only git GUI
+I don't have to remember the usage.
+</p>
+
+<p>
+So let's tweak the <a href="https://tortoisegit.org/docs/tortoisegit/tgit-dug-settings.html">TortoiseGit's Settings</a>
+even if some changes seem to fix it:
+<pre>
+TGitCache now checks file sizes before checking file contents. 
+This should mitigate possible "file is locked" problems.
+TGitCache now does not check the contents of files with filesize > 10 MiB any more
+and falls back to checking the timestamp of the files (as if TGitCacheCheckContent
+is set to "false") according the the git index. This limit can be changed by adjusting
+TGitCacheCheckContentMaxSize (measured in KiB) in TortoiseGit advanced settings.
+The reason for this change is that libgit2 reads a file to memory for hashing and,
+thus, locking the file and the repository for this time span.
+</pre>
+</p>
+<p>
+A couple of tricks:
+<ul>
+<li>Set the Overlay status to both "Shell" and "Shell extended"</li>
+<li>kill TGitCache.exe</li>
+</ul>
+</p>
+
+</body>
+</html>

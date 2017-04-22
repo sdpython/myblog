@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Build a Python 64 bit extension on Windows 8</title>
+<meta content="python, programming, windows, python 64, c++ module" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+I was using MinGW on Windows to build a Python extension including C++ code.
+The 32bit mode was working fine and I was using the following command line:
+<pre class="prettyprint">
+python setup.by build --compiler=mingw32
+</pre>
+
+I thought it would be easy to run it with the Python 64 bit version. No change
+would be required. I was a little bit over confident.
+
+<pre class="prettyprint">
+Traceback (most recent call last):
+  File "setup.py", line 11, in &lt;module&gt;
+    author_email  = '...',
+  File "c:\python33_x64\lib\distutils\core.py", line 148, in setup
+    dist.run_commands()
+  File "c:\python33_x64\lib\distutils\dist.py", line 929, in run_commands
+    self.run_command(cmd)
+  File "c:\python33_x64\lib\distutils\dist.py", line 948, in run_command
+    cmd_obj.run()
+  File "c:\python33_x64\lib\distutils\command\build_ext.py", line 323, in run
+    force=self.force)
+  File "c:\python33_x64\lib\distutils\ccompiler.py", line 1034, in new_compiler
+    return klass(None, dry_run, force)
+  File "c:\python33_x64\lib\distutils\cygwinccompiler.py", line 125, in __init__
+    if self.ld_version &gt;= "2.10.90":
+TypeError: unorderable types: NoneType() &gt;= str()
+</pre>
+
+I decided to switch to Visual Studio Express 2012 to build my extension.
+but I went through some error related to the file <b>vcvarsall.bat</b> because
+Python was not able to find the file <b>vsvars64.bat</b> (for one very good
+reason, it does not exist). I read some blogs where people suggest to reinstall
+<a href="http://www.microsoft.com/france/visual-studio/essayez/express.aspx">Visual Studio Express</a>
+but I did not remember the setup asking me anything about options.
+When I checked the folder of Visual Studio, I found the following file
+<b>vcvarsx86_amd64.bat</b>. Then, after some research (stubborness is mandatory for those parts)
+and some tweaks, I discovered two mistakes in the package <b>distutils</b>. 
+They need to be fixed in the file <b>msvc9compiler.py</b>:
+<ul>
+<li> The file uses the version Visual Studio used to compile Python (2010),
+      which is not the version I used, so I manually updated the function 
+      <b>get_build_version</b> to get:
+      
+        <pre class="prettyprint">
+            if majorVersion >= 6:
+                # pick on of the following line
+                majorVersion = 11 # VS 2012
+                majorVersion = 12 # VS 2013
+                majorVersion = 14 # VS 2015
+                return majorVersion + minorVersion          
+        </pre>
+            
+    Not the best but it works.
+</li>
+<li> The second modification is at the beginning of the same file which contains:
+    
+        <pre class="prettyprint">
+            PLAT_TO_VCVARS = {
+                'win32' : 'x86',
+                'win-amd64' : 'amd64',
+                'win-ia64' : 'ia64',
+            }            
+        </pre>
+            
+      The flag <b>amd64</b> must be replaced by <b>x86_amd64</b>.
+</li>
+</ul>
+After the two modifications, it was working fine with the following command line:
+<pre class="prettyprint">
+python setup.by build --compiler=msvc --plat-name=win-amd64
+</pre>
+And I understood why it was failing without any mysterious new installation.
+I checked about 64 bit version of MinGW but it looked a longer path than 
+the one I chose. Who knows?
+You will find some others details 
+<a href="http://www.xavierdupre.fr/app/pyhome3/helpsphinx/pyhome/pyhome3/srcpyhome/module_c/import_c_module.html">here</a>.
+I wrote a function which import a module written in one single C++ file. 
+If the module does not exist, it compiles it <i>inplace</i>.
+</p>
+<p>
+As a conclusion, I would say it was difficult to find the proper instructions.
+Maybe the number of documents related to that issue has increased,
+or the search engines I used were not able to give me the answer. 
+All I know is I do not want to go through that again even if I know there will 
+be a next time when I update Python or when I change my laptop. I hope next time
+I face that problem, search engines will show me my own page.
+</p>
+
+</body>
+</html>

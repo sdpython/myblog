@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>How to compare two text files?</title>
+<meta content="python, compare, diff, jsdifflib, pyquickhelper" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Many tools can be used to compare the differences between two files:
+<a href="http://en.wikipedia.org/wiki/Comparison_of_file_comparison_tools">Comparison of file comparison tools</a>,
+<a href="http://blog.jardalu.com/2012/8/17/top_5_diff_tools">Top 5 diff tools</a>.
+Python has a module <a href="https://docs.python.org/3.4/library/difflib.html">fsdifflib</a> but
+this is not very visual.
+Another option is to use javascript and a tool 
+such as <a href="https://github.com/cemerick/jsdifflib">jsdifflib</a>.
+</p>
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+I made a function which writes a HTML page with the javascript code
+which displays the diff between two files.
+</p>
+
+<pre class="brush: py">
+from pysquickhelper.sync.visual_sync import create_visual_diff_through_html
+with open("file1.txt","r",encoding="utf8") as f : text1 = f.read()
+with open("file2.txt","r",encoding="utf8") as f : text2 = f.read()
+pg = create_visual_diff_through_html(text1,text2)
+with open("page.html","w",encoding="utf8") as f : f.write(pg)
+import webbrowser
+webbrowser.open("page.html")
+</pre>
+
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Add your module to pipy</title>
+<meta content="python, pipy, module, extension" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+The purpose is to upload your own module to <a href="https://pypi.python.org/pypi">pipy</a>
+and be able to install using:
+<pre class="prettyprint">
+pip install module_name
+</pre>
+</p>
+<p>
+First you must have a login. You can do that by clicking on register 
+on <a href="https://pypi.python.org/pypi">pipy</a>. Then type:
+<pre class="prettyprint">
+c:\python33\python setup.py sdist register upload
+</pre>
+If you add any classifiers, they must be in the following 
+<a href="https://pypi.python.org/pypi?%3Aaction=list_classifiers">list</a>.
+Last detail, you are being asked to save your credentials, say yes, 
+otherwise it fails.
+</p>
+</body>
+</html>

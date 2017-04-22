@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Quelques astuces pour accélérer un programme</title>
+<meta content="programmation, python, optimisation, profiler" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Python n'est pas un langage rapide mais cela n'empêche pas que certaines 
+façons d'écrire du code son plus lentes que d'autres. On peut accélérer un code
+de différentes manières. En voici quelques-unes. L'article se conclut par 
+l'utilisation d'un <a href="http://en.wikipedia.org/wiki/Profiling_(computer_programming)">profiler</a>.
+</p>
+
+<p><b>Optimisation du code</b></p>
+
+<p>
+L'exemple suivant trie des éléments. Mais comme ceux-ci sont 
+soit des chiffres sous formes de lettres, soit des entiers, il faut d'abord
+tous les convertir en entiers.
+</p>
+
+<pre class="brush: py">
+rangs = ['6', 7, '5', 9, 8, '3']
+rangs = sorted([int(r) for r in rangs])
+</pre>
+
+<p>
+Il est plus simple de définir que ces nombres seront des entiers une 
+bonne fois pour toutes et ne jamais faire de conversions. 
+Il faut toujours avoir des listes d'objets de même type. Dans le cas contraire,
+c'est l'assurance de faire des erreurs.
+Dans le même genre d'idées, il faut éviter les fonctions qui retournent
+des résultats de types différents.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<pre class="brush: py">
+def gagnant_numero(main1, main2):
+    if gagnant(main1,main2)==main1: return 1
+    elif gagnant(main1,main2)==main2: return 2
+    else: return "egalite"
+</pre>
+
+<p>
+De plus, dans cette fonction, 
+la fonction <i>gagnant</i> est appelée deux fois avec les mêmes paramètres.
+Il ne sert à rien de la rappeler si le premier test est faux.
+</p>
+
+<pre class="brush: py">
+def gagnant_numero(main1, main2):
+    g = gagnant(main1,main2) 
+    if g == main1: return 1
+    elif g == main2: return 2
+    else: return "egalite"
+</pre>
+
+<p><b>Optimisation algorithmique</b></p>
+
+<p>
+Les deux fonctions suivantes calcule la fréquence des lettres dans un texte :
+</p>
+
+<pre class="brush: py">
+def compte_lettre(texte, alphabet):
+    alphabet = [ chr(65+i) for i in range(0,26) ]
+    return { l:texte.count(l) for l in alphabet }
+    
+def compte_lettre2(texte):
+    d = { }
+    for c in texte: d[c] = d.get(c,0)+1
+    return d
+</pre>
+
+<p>
+Quelle est la plus rapide ? A priori, la première a un coût de <i>O(26 len(texte))</i>.
+La seconde a un coût de <i>O(ln<sub>2</sub>(26) len(texte))</i>. On mesure :
+</p>
+
+<pre class="brush: py">
+import time
+t = time.clock()
+for u in range(0,10): res = compte_lettre(texte)
+d = time.clock() - t
+print (d/10) # ~ 0.03s
+
+t = time.clock()
+for u in range(0,10): res = compte_lettre2(texte)
+d = time.clock() - t
+print (d/10) # ~ 0.15s
+</pre>
+
+<p>
+Etrange ? Pas forcément : la fonction <i>count</i> est une fonction du langage Python
+qui a été optimisée. Même si elle parcourt la chaîne de caractères complète,
+elle est beaucoup plus rapide que si on la parcourait soi-même (elle est codée en C++).
+Le coût de l'algorithme ci-dessus ne tient pas compte des caractéristiques du langage.
+En revanche, si on augmente la taille de l'alphabet pour compter tous les couples de lettres :
+</p>
+
+<pre class="brush: py">
+alpha2 = [ a+b for a in alphabet for b in alphabet ]
+
+def compte_lettre(texte, alphabet):
+    return { l:texte.count(l) for l in alphabet }
+
+def compte_lettre2(texte):
+    d = { }
+    for i in range(1,len(texte)):
+        c = texte[i-1:i+1]
+        d[c] = d.get(c,0)+1
+    return d
+    
+import time
+t = time.clock()
+for u in range(0,10): res = compte_lettre(texte, alpha2)
+d = time.clock() - t
+print (d/10)  # ~ 0.40
+
+t = time.clock()
+for u in range(0,10): res = compte_lettre2(texte)
+d = time.clock() - t
+print (d/10) # ~ 0.28
+</pre>
+
+<p>
+Comme l'alphabet a pour taille <i>26<sup>2</sup></i>,
+la seconde version est plus efficace. L'aspect langage a moins d'importance.
+</p>
+
+<p><b>Profiler</b></p>
+
+
+
+
+<p>
+Lorsqu'on ne sait pas par où commencer pour accélérer son code, on peut utiliser
+<a href="http://en.wikipedia.org/wiki/Profiling_(computer_programming)">profiler</a>.
+C'est un outil qui espionne les fonctions pour compter le nombre d'appels,
+et le temps d'exécution. Il permet de détecter les parties du programme
+les plus exécutés.
+En Python, le profiler par défaut s'utilise comme ceci :
+</p>
+
+<pre class="brush: py">
+def main():
+    # le code à tester
+    # ...
+    
+import cProfile
+import re
+cProfile.run('main()')
+</pre>
+
+<p>
+Le programme est évidemment plus lent mais il enregistre les temps d'exécution
+de chaque fonction :
+</p>
+
+<pre class="prettyprint">
+         134123237 function calls (127083237 primitive calls) in 89.196 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000   89.196   89.196 &lt;string&gt;:1(&lt;module&gt;)
+        4    0.125    0.031   89.196   22.299 fonctions_statistiques.py:6(proba_preflop_vs_random)
+  1144000    1.848    0.000    1.962    0.000 random.py:173(randrange)
+  1144000    0.566    0.000    2.528    0.000 random.py:236(randint)
+   902000    1.281    0.000   78.048    0.000 regles.py:102(gagnant_numero)
+8008000/968000    5.612    0.000    5.715    0.000 regles.py:113(combinationsUniques)
+    44000    0.338    0.000    6.053    0.000 regles.py:122(combinaisons)
+    44000    0.544    0.000   83.608    0.002 regles.py:132(meilleure_main_joueur)
+    22000    0.107    0.000   84.784    0.004 regles.py:141(gagnant_showdown)
+  4842428   17.352    0.000   31.492    0.000 regles.py:25(main_triee)
+  4842428   14.593    0.000   19.743    0.000 regles.py:38(rangs_couleurs)
+  1095880    7.442    0.000    8.993    0.000 regles.py:50(estSuite)
+  3372472   11.857    0.000   57.545    0.000 regles.py:64(valeur)
+  1686236    3.902    0.000   76.767    0.000 regles.py:84(gagnant)
+    22000    1.471    0.000    4.245    0.000 structure.py:8(creer_jeu)
+        1    0.000    0.000   89.196   89.196 test_fonctions_statistiques.py:6(main)
+  3823880    0.326    0.000    0.326    0.000 {len}
+  1437872    0.387    0.000    0.387    0.000 {method 'add' of 'set' objects}
+ 69628829    7.397    0.000    7.397    0.000 {method 'append' of 'list' objects}
+ 20060549    3.462    0.000    3.462    0.000 {method 'count' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+  1437872    0.176    0.000    0.176    0.000 {method 'discard' of 'set' objects}
+    44000    0.042    0.000    0.042    0.000 {method 'index' of 'list' objects}
+  3372472    0.649    0.000    0.649    0.000 {method 'join' of 'str' objects}
+  1144000    0.114    0.000    0.114    0.000 {method 'random' of '_random.Random' objects}
+    66004    0.056    0.000    0.056    0.000 {range}
+  5938308    9.546    0.000    9.546    0.000 {sorted}
+</pre>
+
+<p>
+On s'intéresse d'abord aux fonctions qui sont appelées un grand nombre de fois
+et dont le temps cumulé est important. Si on arrive à accélérer une 
+de ces fonctions, le programme sera significativement plus rapide. 
+Par exemple, dans la fonction <i>main_triee</i>, on remplace :
+</p>
+
+<pre class="brush: py">
+mult = []
+for c in s:
+    mult.append((rangs.count(c), CONV[c]))
+</pre>
+
+<p>Par</p>
+
+<pre class="brush: py">
+mult = [ (rangs.count(c), CONV[c]) for c in s ]
+</pre>
+
+<p>
+On réduit le temps cumulé passé dans la fonction de 5 secondes,
+ce qui correspond plus ou moins à la moitié du temps passé dans la méthode <i>append</i>.
+</p>
+<p>
+L'inconvénient de ce <i>profiler</i> est qu'il ne distingue pas les 
+appels à une fonction selon qu'elle est appelée depuis la fonction
+<i>A</i> ou <i>B</i>. Pour remédier à cela, il faut utiliser un profiler
+plus outillé : <a href="http://pycallgraph.slowchop.com/en/master/">pycallgraph</a>.
+Une fois installé (ainsi que <a href="http://www.graphviz.org/">Graphviz</a> pour la visualisation des graphes), 
+on l'utilise comme suit :
+</p>
+
+<pre class="brush: py">
+import os
+os.environ["PATH"] += r";C:\Program Files (x86)\Graphviz2.34\bin"
+
+from pycallgraph import PyCallGraph
+from pycallgraph.output import GraphvizOutput
+
+with PyCallGraph(output=GraphvizOutput()):
+    main()
+</pre>
+
+<p>
+Pour obtenir le résultat suivant :
+</p>
+
+<a href="documents/pycallgraph.png">
+<img src="documents/pycallgraph.png" width="600px" />
+</a>
+    
+<p>
+On voit mieux qui appelle qui et combien de fois. De cette façon,
+on ne perd pas son temps à réfléchir à l'optimisation d'une fonction
+qui n'est quasiment jamais appelée.
+Pour les programmes plus gros, il est préférable de ne lancer le profiler
+que sur une partie du programme.
+</p>
+
+</body>
+</html>

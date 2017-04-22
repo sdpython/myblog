@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Règles de priorité en Python</title>
+<meta content="python, syntax, operators" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<p>
+A force de coder avec un langage de script qui autorise presque
+tout, on devient paresseux. On perd du temps pour 
+finalement redécouvrir quelques règles de priorité.
+J'ai écrit la fonction <i>f1</i> en pensant qu'elle
+se comporterait comme la fonction <i>f2</i>. 
+<pre class="prettyprint">
+def f1 (b) : return 1,1 if b else 0,0
+def f2 (b) : return (1,1) if b else (0,0)
+
+print ("f1", f1(False), "f2", f2(False))  # f1 (1, 0, 0) f2 (0, 0)
+print ("f1", f1(True),  "f2", f2(True))   # f1 (1, 1, 0) f2 (1, 1)
+</pre>
+On omet les parenthèses la plupart du temps en ce qui concerne
+les tuples en Python. Ces conversions implicites ont quelques
+effets secondaires. Je tâcherai de m'en souvenir.
+</p>
+</body>
+</html>

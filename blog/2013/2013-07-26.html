@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Keep the scrolling position after resfreshing</title>
+<meta content="programming, web server, javascript" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+I added the scrolling property to a div section:
+
+<pre class="prettyprint">
+div.divblogs{
+	position:absolute; 
+	margin-top:10%; 
+	margin-left:0%; 
+	margin-right:0%;
+	text-align: left;
+	width:20%;
+	height:80%;
+	overflow:scroll;
+} 
+</pre>
+Unfortunately, after a refresh or a click somewhere 
+which makes only helf the page change, every list returned to its first position.
+It was bothering me. I finaly found a way to keep list the way they are after
+a refresh. It requires cookies: we store the position of each section in cookies.
+<pre class="prettyprint">
+function createCookie(name,value,days) 
+{
+	if (days) 
+    {
+		var date = new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		var expires = "; expires="+date.toGMTString();
+	}
+	else var expires = "";
+	document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name) 
+{
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0;i &lt; ca.length;i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+	}
+	return null;
+}
+
+function savePosition(document, divId)
+{
+    var intY = document.getElementById(divId).scrollTop;
+    if (intY >= 0) {
+        createCookie("divid" + divId, "y" + intY + "_", 1) ;
+    }
+}
+
+function getPosition(document, divId)
+{
+    var cook  = readCookie("divid" + divId) ;
+    if (cook == null) return 0 ;
+    var start = cook.indexOf("y") ;
+    if (start == -1) return 0 ;
+    var end   = cook.indexOf("_", start) ;
+    var sub = cook.substring( start+1, end) ;
+    return sub ;
+}
+</pre>
+So to save the scrolling position of a div section, you just need to call
+the function <i>savePosition</i> each time it is updated:
+
+<pre class="prettyprint">
+&lt;div class="divblogs" id="divblogs" onscroll="savePosition(document,'divblogs')"&gt;
+...
+&lt;/div&gt;
+</pre>
+
+The last detail left is a function called when the page is reloading
+to restore each section's position:
+<pre class="prettyprint">
+&lt;body onload="setPositions(document,['divblogs', 'divpostsshort', 'divpostsext'])"&gt;
+</pre>
+
+The function <i>setPositions</i> is defined as follows:
+<pre class="prettyprint">
+function setPositions(document, listDiv)
+{
+    for (var i = 0 ; i &lt; listDiv.length ; ++i)
+    {
+        var divObject = document.getElementById(listDiv[i]);
+        divObject.scrollTop = getPosition(document,listDiv[i]) ;
+    }
+}
+</pre>
+
+Last detail, each section div has attributes (class and id). 
+They are important to enable the scrolling and the make them easily
+accessible.
+
+
+</p>
+
+</body>
+</html>

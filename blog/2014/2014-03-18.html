@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Python 3.4, no need to install pip anymore</title>
+<meta content="python" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+The new version Python 3.4 was just released. One interesting
+change is that modules <a href="https://pypi.python.org/pypi/pip">pip</a>
+and <a href="https://pypi.python.org/pypi/setuptools">setuptools</a>
+are now part of the distribution. That's a relief.
+Every module which does not requires C++ compilation
+can now be installed using <tt>pip install [module]</tt>
+without any extra step. On Windows, the others modules 
+can still be installed from this page:
+<a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">Unofficial Windows Binaries for Python Extension Packages</a>
+unless you want to use Visual Studio to compile them. In this
+case, I recommend reading this page:
+<a href="http://www.confusedbycode.com/articles/compiling-python-modules.html">Module Madness: installing Python modules on Windows</a>.
+</p>
+
+<p>
+Among the unexpected changes, the instruction <tt>#coding:latin-1</tt>
+is not allowed anymore. The C++ API changed a little bit. It made me make 
+a change to pythonnet to compile it with Python 3.4:
+<a href="https://github.com/sdpython/pythonnet/commit/de45c55c95ca1d003cb3033824625bb42103ecbe">pythonnet migration to Python 3.4</a>.
+Hopefully, the installation of executables (sometimes after looking for them)
+could become easier with <a href="http://pythonwheels.com/">Python Wheels</a>.
+Maybe <a href="http://winpython.sourceforge.net/">WinPython</a> will follow soon.
+</p>
+
+<p>
+However, I recommend to wait a little bit before switching. I had some weird behaviour with
+matplotlib: no failure with Python 3.3 but a failure while drawing a second graph with Python 3.4.
+</p>
+
+</body>
+</html>

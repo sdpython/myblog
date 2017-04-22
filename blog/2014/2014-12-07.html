@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>A few tricks with matplotlib</title>
+<meta content="python, matplotlib, crash" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+On Windows, <a href="http://matplotlib.org/">matplotlib</a> crashes sometimes. 
+I found this explanation and it worked for me.
+<a href="http://stackoverflow.com/questions/26955017/matplotlib-crashing-python">matplotlib crashing Python</a>
+</p>
+<pre class="brush: py">
+plt.close('all')
+</pre>
+<p>
+The latest version 1.4.2 enables zooming in notebook:
+<a href="http://matplotlib.org/users/whats_new.html#the-nbagg-backend">The nbagg backend</a>.
+See also
+<a href="http://stackoverflow.com/questions/26901890/ipython-notebook-on-linux-vm-running-matplotlib-interactive-with-nbagg">ipython notebook on linux VM running matplotlib interactive with nbagg</a>.
+</p>
+<p>
+Last trick: <a href="http://matplotlib.org/users/style_sheets.html">ggplot style</a> with matplotlib.
+</p>
+<pre class="brush: py">
+import matplotlib.pyplot as plt
+plt.style.use('ggplot')
+</pre>
+</body>
+</html>

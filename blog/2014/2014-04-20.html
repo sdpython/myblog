@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Les algorithmes sur les graphes ne sont pas aussi simples en Map/Reduce</title>
+<meta content="python, graphe, map reduce" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+Je ne suis plus d'où cette histoire est partie ni si elle est vraie mais
+on dit souvent que si on relie deux personnes quelconques dans le monde par une chaîne d'amis,
+<a href="http://fr.wikipedia.org/wiki/Six_degr%C3%A9s_de_s%C3%A9paration">cette chaîne ne sera pas plus longue que 7</a>. 
+Sans doute Facebook pourrait y trouver à redire.
+Ce qui m'intéresse ce soir est de savoir la longueur de la chaîne qui me relie au Président
+de la République.
+</p>
+
+<p>
+Je serais bien incapable de vous donner la réponse mais je pourrais vous dire comment la trouver.
+Si un de vos amis connaît la réponse à cette question, si cette réponse est <i>l</i>, alors dans votre cas,
+la réponse sera <i>l+1</i> et vos amis pourront dire que la réponse dans leur cas est <i>l+2</i>.
+Pour que toute personne dans Paris ait la réponse à cette question, il suffit qu'une vague parte du président
+et se propage à chacun d'entre nous.
+</p>
+
+<p>
+L'algorithme est en lui-même assez simple à implémenter à condition que le graphe soit petit.
+Lorsqu'il est grand (plusieurs dizaines de millions de noeuds), cela prend du temps, beaucoup de temps même
+si cela ne peut plus se faire sur le même ordinateur. On pense alors au concept 
+<a href="http://fr.wikipedia.org/wiki/MapReduce">Map/Reduce</a>
+qui permet d'effectuer des calculs distribués sur plusieurs machines. Mais dans ce cas-ci, ce n'est pas si évident.
+Et pour comprendre pourquoi, la lecture continue ici : <a href="notebooks/Graphe et Map Reduce.html">Graphe et Map Reduce</a>.
+</p>
+
+<p>
+J'ajoute ici quelques commentaires qui me sont parvenus cette semaine.
+</p>
+<p>
+Le nombre de connexions qui relient deux individus est un vieux problème : 
+<a href="https://en.wikipedia.org/wiki/Small-world_experiment">Small-world experiment</a>,
+<a href="http://fr.wikipedia.org/wiki/Nombre_d%27Erd%C5%91s">Le nombre d'Erdős</a>.
+Les algorithmes sur des grands graphes ne sont jamais évidents, 
+ne serait-ce que pour calculer (en un temps raisonnable)
+le plus court chemin entre deux pages Wikipedia comme sur
+<a href="http://wikidistrict.com/">Wikidistrict</a>, décrite ici
+<a href="http://www.kernix.com/blog/wikidistrict-une-exploration-ludique-de-wikipedia_p6">Wikidistrict, une exploration ludique de Wikipédia</a>.
+Le premier réflexe lorsqu'on traite un grand nombre de données est de réduire
+la taille du problème ou de regardeer sur des examples.
+Cependant, s'il est facile de concevoir ce qu'est un 
+échantillon au sein d'une population, qu'est-ce qu'un échantillon au sein d'un graphe,
+un échantillon qui respecte les propriétés du graphe. Vous trouverez quelques
+réponses ici : 
+<a href="http://www.springer.com/statistics/statistical+theory+and+methods/book/978-0-387-88145-4">Statistical Analysis of Network Data</a> (<i>Eric D. Kolaczyk</i>).
+</p>
+
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Nettoyer son code</title>
+<meta content="python, nettoyer, refactoring, pylint" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+Après quelques années passées à enseigner, j'ai plein de bouts de code
+qui traînent partout, écrits sur des versions de Python différentes.
+Il y a des print avec ou sans parenthèses, des codes indépendants, d'autres
+liés à d'autres bouts. Parfois, j'ai envie de les réutiliser bien qu'ils soient 
+vieux, qu'ils ne compilent plus avec la dernière version de Python.
+Alors, on s'y attaque, on l'exécute, on bute sur une erreur qu'on corrige
+avant d'essayer à nouveau. Est-ce le début d'un cycle fastidieux ou d'un cycle
+sans fin ? Avec un peu d'obstination - voire beaucoup - et on y arrive. Mais bien souvent,
+on s'arrête là, avec ce petit exemple qui fonctionne. C'est l'essentiel pour un 
+exemple. Pour un programme, c'est souvent un peu juste. Les exécutions à répétitions 
+n'ont ébranlé que la moitié du code. L'autre est restée intacte. La dernière 
+version de Python la comprend, de là à dire qu'elle puisse l'exécuter...
+</p>
+<p>
+Il existe un module qui effectue quelques vérifications : <a href="http://www.pylint.org/">pylint</a>.
+Il vérifie la syntaxe, les variables non utilisées, les modules importées inutilement, ou encore
+si une exception est correctement orthographiée. La plupart du temps, on se rarement rend 
+compte qu'on a écrit <tt>raise Exeption("....")</tt> sauf quand l'erreur survient. On pourra
+rétorquer que cela devrait être couvert par les tests unitaires mais couvrir 100% du code
+est un travail laborieux. Et si vous êtes parfois paresseux comme moi,
+vous utiliserez parfois <a href="http://winpython.sourceforge.net/">WinPython</a>
+qui vous signale chaque endroit que la bonne syntaxe réprouve. Y jeter un coup d'oeil
+de temps en temps permet de repérer quelques erreurs avant la première exécution.
+</p>
+
+</body>
+</html>

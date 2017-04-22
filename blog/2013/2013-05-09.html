@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Créer un site web en Python : Flask ou Django ou Pelican</title>
+<meta content="python, references, flask, django, site web, jinja, werkzeug, pelican" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<p>
+<a href="https://www.djangoproject.com/">Django</a> est le framwork
+le plus connu quand il s'agit de créer un site web en Python. 
+Le projet a démarré il y a plusieurs années (2005), il est robuste et 
+il est maintenu. En contre partie, le coût d'entrée est assez lourd.
+</p>
+<p>
+Récemment, j'ai découvert
+<a href="http://flask.pocoo.org/">Flask</a> qui est plus léger et suffit
+largement lorsqu'on veut construire un site internet à usage interne. 
+Il nécessite l'installation des modules
+<a href="http://jinja.pocoo.org/">JinJa</a> (disponible pour Python 3) et
+<a href="http://werkzeug.pocoo.org/">Werkzeug</a> (non disponible pour Python 3). 
+L'installation de ces modules se fait simplement avec <i>pip</i> 
+(<i>pip install &lt;module&gt;</i>, voir article 
+<a href="http://www.xavierdupre.fr/blog/xd_blog.html?date=2013-05-10">2013-05-10 : Installer un package simplement avec Python : pip</a>).
+</p>
+<p>
+Pour démarrer avec Flash, il suffit de lire la page suivante :
+<a href="http://www.scopart.fr/2012/07/introduction-a-flask-le-micro-framework-python/">Introduction à Flask</a>.
+Le code d'un service web <i>hello world</i> :
+
+<pre class="prettyprint">
+from flask import Flask
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "Bonjour !"
+
+if __name__ == "__main__":
+    app.run()
+</pre>
+Qu'on lance de cette façon :
+<pre>
+$ python hello.py
+ * Running on http://localhost:5000/
+</pre>
+
+Si j'avais su, j'aurais probablement créé ce blog de cette façon 
+en m'appuyant sur cet 
+<a href="https://github.com/mitsuhiko/flask/tree/master/examples/flaskr/">exemple</a>.
+Flask permet l'utilisation d'une base de données de type SQLlite.
+Différentes configurations sont disponibles
+<a href="http://flask.pocoo.org/extensions/">ici</a> pour interacer Flask
+avec 
+<a href="https://www.heroku.com/">Heroku</a>, 
+<a href="http://www.mongodb.org/">MongoDB</a>, 
+<a href="http://couchdb.apache.org/">CouchDB</a>, 
+<a href="http://openid.net/">OpenID</a>...
+</p>
+<p>
+Pour ceux qui souhaitent créer un blog en Python (et avec Python 2.7 ou 3),
+il existe aussi le package 
+<a href="http://docs.getpelican.com/">pelican</a>. Il dépend des packages,
+feedgenerator, pygments, docutils, pytz, blinker, unidecode, six, automatiquement
+installé avec pip (<i>pip install pelican</i>).
+</p>
+<p>
+Vous trouverez d'autres ressources pour créer un site 
+sur ce blog : <a href="http://www.scopart.fr/blog/">ScopArt</a>.
+</p>
+</body>
+</html>

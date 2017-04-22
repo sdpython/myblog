@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Installer Python pour faire des statistiques</title>
+<meta content="python, ipython, notebook, pandas, installation" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+L'environnement que je suggère est celui que j'utilise pour 
+préparer mes cours. Il permet d'utiliser les outils que je propose et d'obtenir
+un espace de travail équivalent à celui que propose R.
+Plusieurs options sont possibles : 
+<ul>
+<li>Utiliser <a href="http://continuum.io/downloads#py34">Anaconda</a> qui est aussi une
+    distribution avec tous les modules nécessaires sur tous les systèmes.</li>
+<li>Utiliser <a href="http://winpython.sourceforge.net/">WinPython</a> qui est une
+    distribution avec tous les modules nécessaires mais seulement sous Windows.</li>
+<li>Utiliser <a href="https://www.enthought.com/products/canopy/">Canopy</a> qui est encore une
+    distribution avec tous les modules nécessaires sur tous les systèmes.</li>
+<li>Installer soi-même les modules nécessaires</li>
+</ul>
+Je poursuivrai par l'installation de <a href="http://www.xavierdupre.fr/app/pyensae/helpsphinx/index.html">pyensae</a>,
+et je terminerai par la configuration de l'éditeur <a href="http://www.scintilla.org/SciTE">SCite</a>
+qui est, de mon point de vue, le plus simple éditeur qui soit mais 
+il fait bien ce pour quoi il est fait.
+</p>
+
+<p><b>2014/10/25</b></p>
+<p>
+Si je devais choisir une distribution, ce serait <a href="http://continuum.io/downloads#py34">Anaconda</a>.
+C'est la plus à jour et la plus complète. Une fois installée, elle devient la distribution par défaut
+sous Linux. Cela évite les confusions entre les différentes versions de Python (Python 2.7 est installée par défaut).
+Sous Windows, elle est plus complète que WinPython. Elle inclut notamment le package 
+<a href="http://www.paramiko.org/">paramiko</a> dont je me sers pour ouvrir une connexion
+SSH avec un serveur Linux et utiliser PIG.
+</p>
+
+<h2 id="winpython">Préliminaire</h2>
+
+<p>
+Il existe deux numéros de versions important à retenir :
+<ul>
+<li>La version du langage Python, la dernière étant 3.3, c'est celle qui servira
+d'exemple ici.</li>
+<li>La version de l'interpréteur : 32 ou 64 bit (= amd64). Je conseille
+d'utiliser la version 64 bit.</li>
+</ul>
+Une fois choisis ces deux numéros de versions pour l'installation 
+de Python, si ces versions sont précisées pour un module,
+alors il faudra choisir exactement ces deux mêmes versions.
+</p>
+
+
+
+<h2 id="winpython">WinPython</h2>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Le site <a href="http://winpython.sourceforge.net/">WinPython</a> propose
+une distribution de Python qui inclut à la fois le langage et 
+tous les modules nécessaires pour faire des statistiques. 
+Il n'inclut pas <a href="http://pygame.org/news.html">pygame</a>.
+Sous Windows, l'installation est simple, il suffit seulement 
+de choisir un répertoire d'installation. Tout se fera dans ce répetoire.
+Celui que j'ai choisi est <tt>C:\monpython</tt>.
+WinPython aura créé un répertoire <tt>c:\monpython\logiciel\WinPython-64bit-3.3.3.2</tt>.
+</p>
+
+<h3>Installation de <a href="http://www.xavierdupre.fr/app/pyensae/helpsphinx/index.html">pyensae</a></h3>
+
+<p>
+C'est le seul inconvénient de cette distribution est qu'il est impossible,
+sous Windows, d'utiliser un nouveau module en l'installant avec un 
+exécutable (comme ceux que je propose sur cette
+<a href="http://www.xavierdupre.fr/site2013/index_code.html">page</a>.
+Au lieu de cela, il faut ouvrir une fenêtre de commande (taper cmd
+dans la barre de recherche). On obtient une fenêtre noire comme ceci :
+</p>
+<center>
+<img src="documents/cmd.png" />
+</center>
+<p>
+Ensuite on tape les commandes suivantes :
+</p>
+<pre class="prettyprint">
+cd C:\monpython\WinPython-64bit-3.3.3.2\python-3.3.3.amd64\Scripts
+pip install pyensae --pre
+</pre>
+<p>
+Cela installera les dépendances nécessaires. Le court exemple
+décrit <a href="http://www.xavierdupre.fr/blog/notebooks/example%20pyensae.html">ici</a>
+fonctionnera. Le répertoire <tt>c:\monpython\logiciel\WinPython-64bit-3.3.3.2</tt>
+contient différent exécutables qui correspondent à différentes éditeurs
+ou lignes de commande qui fonctionnent tous sans autre modification.
+</p>
+
+<h3>Installation de <a href="http://www.scintilla.org/">SCite</a></h3>
+
+<p>
+Pour installer <a href="http://www.scintilla.org/SciTEDownload.html">SCite</a>,
+il faut télécharger le fichier <a href="http://prdownloads.sourceforge.net/scintilla/wscite339.zip?download">full download</a>
+et le dézipper à l'endroit que vous souhaitez. Pour utiliser le Python
+de WinPython, il faut modifier le chemin de l'interpréteur dans le menu
+<i>Options / Python Properties</i>.
+</p>
+
+<center>
+<img src="documents/scitep.png" />
+</center>
+
+<p>
+Tout en bas, il modifier les chemins de Python comme ceci :
+</p>
+<pre class="prettyprint">
+if PLAT_WIN
+	command.go.*.py=C:\monpython\WinPython-64bit-3.3.3.2\python-3.3.3.amd64\pythonw -u "$(FileNameExt)"
+	command.go.subsystem.*.py=1
+	command.go.*.pyw=C:\monpython\WinPython-64bit-3.3.3.2\python-3.3.3.amd64\pythonw -u "$(FileNameExt)"
+	command.go.subsystem.*.pyw=1
+	command.build.SConscript=scons.bat --up .
+	command.build.SConstruct=scons.bat .
+</pre>
+
+<p>
+Pour finir, il vous suffit, dans l'explorateur, 
+de créer des raccourcis sur le bureau.
+</p>
+
+<p><b>Remarque à propos de cvxopt (et d'autres modules) sous Windows</b> :
+</p>
+<p>
+Le module <a href="http://cvxopt.org/">cvxopt</a> ne fait pas partie de la distribution.
+Sous Windows, l'installation est relativement facile depuis ce <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#cvxopt">site</a>
+mais le setup installe <i>cvxopt</i> uniquement si la version standard de Python est installée (voir 
+paragraphe suivante. Le plus simple est d'installer Python et cvxopt, puis de recopier le répertoire 
+<tt>C:\Python33\Lib\site-packages\cvxopt</tt> dans le répertoire 
+<tt>C:\monpython\WinPython-64bit-3.3.3.2\python-3.3.3.amd64\Lib\site-packages</tt>.
+</p>
+
+<h2 id="ana">Anaconda</h2>
+
+<p>
+C'est la plus complète et la plus réactive. C'est celle que je recommande.
+Elle inclut le module <a href="http://www.paramiko.org/en/latest/">paramiko</a>
+que j'utilise pour créer une connexion <a href="http://fr.wikipedia.org/wiki/Secure_Shell">SSH</a> sur un cluster 
+<a href="http://fr.wikipedia.org/wiki/Hadoop">Hadoop</a>.
+Pour lancer les notebooks, il suffit d'ouvrir une fenêtre <tt>Terminal</tt>
+et d'écrire <tt>ipython notebook</tt>. Le notebook se lance avec comme répertoire courant
+<tt>/users/&lt;user&gt;</tt>.
+La fenêtre terminal ressemble à ceci :
+</p>
+
+<img src="https://c2.staticflickr.com/8/7019/6705112151_d1fecd5b5d_z.jpg" />
+
+<h2 id="can">Canopy</h2>
+
+<p>
+J'avoue que je ne l'ai pas essayée.
+</p>
+
+<h2 id="standard">Python standard</h2>
+
+<p>
+L'installation est un peu plus répétitive et il faut faire attention à 
+ne pas se tromper de version. On commence par installer 
+<a href="http://www.python.org/downloads/windows/">Python pour Windows</a>.
+Ensuite, on répète la même opération pour tous les modules nécessaires depuis 
+ce site <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">Unofficial Windows Binaries for Python Extension Packages</a>,
+à savoir :
+<ul>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#setuptools">setuptools</a> (uniquement pour les versions &lt;= 3.3)</li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#pip">pip</a> (uniquement pour les versions &lt;= 3.3)</li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy">numpy-mkl</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#matplotlib">matplotlib</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy">scipy</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#pandas">pandas</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#ipython">ipython</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyparsing">pyparsing</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#six">six</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#cvxopt">cvxopt</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#pillow">Pillow</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#scikit-learn">scikit-learn</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#jinja2">jinja2</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyreadline">pyreadline</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#networkx">networkx</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyqt">PyQt</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#lxml">lxml</a></li>
+<li><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#python-dateutil">dateutil</a></li>
+</ul>
+
+Après avoir installé les deux premiers modules,
+il est possible d'éviter certaines étapes en utilisant <tt>pip install [module]</tt>.
+Ce mécanisme gère automatiquement les dépendances. Il marche très bien
+sous Linux mais il peut échouer sous Windows (pour des questions 
+de compilateur C/C++).
+</p>
+<p>
+Pour faciliter l'installation, vous pouvez également utiliser le module 
+<a href="http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/">pymyinstall</a>. 
+Après avoir installé les deux premiers modules (<i>pip</i> et <i>setuptools</i> uniquement pour les versions &lt;= 3.3),
+il suffit d'installer ce module puis d'exécuter le script :
+</p>
+
+<pre class="brush: py">
+from pymyinstall import datascientist
+datascientist("install")
+</pre>
+
+<p>
+Il faudra cliquer quelques fois pour continuer l'installation mais cela devrait s'effectuer sans problèmes.
+</p>
+
+<h3>Installation de <a href="http://www.xavierdupre.fr/app/pyensae/helpsphinx/index.html">pyensae</a></h3>
+<p>
+C'est pareil mais d'un site différent :
+<ul>
+<li><a href="http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper">pyquickhelper</a></li>
+<li><a href="http://www.xavierdupre.fr/site2013/index_code.html#pyensae">pyensae</a></li>
+</ul>
+</p>
+
+<h3>Installation de <a href="http://www.scintilla.org/">SCiTe</a></h3>
+
+<p>
+L'installation de SCiTe est déjà décrite plus haut. Seul change le chemin d'accès
+à l'interpréteur Python :
+</p>
+
+<pre class="prettyprint">
+if PLAT_WIN
+	command.go.*.py=C:\Python33\pythonw -u "$(FileNameExt)"
+	command.go.subsystem.*.py=1
+	command.go.*.pyw=C:\Python33\pythonw -u "$(FileNameExt)"
+	command.go.subsystem.*.pyw=1
+	command.build.SConscript=scons.bat --up .
+	command.build.SConstruct=scons.bat .
+</pre>
+
+<p>
+Si un module manque, le premier réflexe est de regarder la
+mentionnées plus haut et qui contient un lien vers
+des setup pour la plupart des modules courants.
+</p>
+
+<p><b>2014/07/30</b></p>
+<p>
+Un ami m'a parlé du site <a href="http://chocolatey.org/">chocolatey</a> qui propose un moyen
+plus simple d'installer un module. La liste des modules disponibles va en
+s'accroissant.
+</p>
+
+<h2>Conclusion</h2>
+
+<p>
+J'ai présenté deux façons d'installer le langage Python et ses principaux
+modules. WinPython permet d'obtenir aisément un environnement 
+prévu pour faire des expériences statistiques. C'est un kit
+un kit d'installation. Dans l'autre cas, il faut assembler 
+les pièces détachées. Pour débugger, c'est assez simple avec l'outil
+Spyder inclus dans WinPython. Il existe aussi 
+<a href="http://www.jetbrains.com/pycharm/">PyCharm</a> ou
+<a href="https://wingware.com/">WingIDE</a>. Il a l'avantage 
+de souligner en rouge toutes les variables qu'il ne reconnaît pas.
+Ca permet de vite s'apercevoir de quelques erreurs d'écriture.
+</p>
+<p>
+Le dernier sera à propos des tabulations. J'ai pour habitude d'enlever toutes les 
+tabulations pour les remplacer par des espaces. Lorsqu'on mélange
+tabulations et espaces avec SciTe, on voit ce genre de tirets bleus apparaître :
+</p>
+<center>
+<img src="documents/sciteptab.png" />
+</center>
+<p>
+Cela crée parfois des problèmes d'indentation que l'interpréteur Python
+n'arrive pas à résoudre. Lorsqu'on passe de Mac à Windows, d'un éditeur à un autre,
+les espaces sont plus sûrs.
+</p>
+
+</body>
+</html>

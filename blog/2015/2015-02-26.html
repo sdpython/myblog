@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Use scikit-learn with your own model</title>
+<meta content="python, scikit-learn, machine learning" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+<a href="http://scikit-learn.org/stable/">scikit-learn</a> has a very simple
+API and it is quite simple to use its features with your own model.
+It just needs to be embbeded into a class which implements
+the methods <i>fit</i>, <i>predict</i>, <i>decision_function</i>, <i>score</i>.
+I wrote a simple model (kNN) which follows those guidelines:
+<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/ensae_teaching_cs/ml/sklearn_example_classifier.html?highlight=knn#ensae_teaching_cs.ml.sklearn_example_classifier.SkCustomKnn">SkCustomKnn</a>.
+A last method is needed for the cross validation scenario. This one needs 
+to clone the machine learned model. It just calls the constructor
+with proper parameters. To do so, it needs to get a copy of those.
+That is the purpose of method 
+<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/ensae_teaching_cs/ml/sklearn_base_learner.html#ensae_teaching_cs.ml.sklearn_base_learner.SkBaseLearner.get_params">get_params</a>.
+You are all set.
+</p>
+
+</body>
+</html>

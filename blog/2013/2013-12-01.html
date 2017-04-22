@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Recherche dichotomique, récursive, itérative et le logarithme</title>
+<meta content="python, recherche dichotomique, dichotomie, ENSAE" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+Lorsqu'on décrit n'importe quel algorithme, 
+on évoque toujours son coût, souvent une formule de ce style :
+</p>
+<!--
+<div lang="latex_help">
+O\left(n^u (\ln_2 n)^v\right)
+</div>
+-->
+<p class="latexcenter">
+<img src="giflatex/blog_2013_2013-12-01.html__Oleftnuln2nvright.gif" alt=" O\left(n^u (\ln_2 n)^v\right) " />
+</p>
+
+<p>
+<i>u</i> et <i>v</i> sont des entiers. <i>v</i> est souvent soit 0, soit 1.
+Mais d'où vient ce logarithme ? Le premier algorithme auquel on pense et dont
+le coût correspond au cas <i>u=0</i> et <i>v=1</i> est la 
+recherche dichotomique. Il consiste à chercher un élément
+dans une liste triée. Le logarithme vient du fait qu'on réduit 
+l'espace de recherche par deux à chaque itération.
+Fatalement, on trouve très vite l'élément à chercher.
+Et le logarithme, dans la plupart des algorithmes, vient du fait
+qu'on divise la dimension du problème par un nombre entier
+à chaque itération, ici 2.
+</p>
+<p>
+La recherche dichotomique est assez simple : on part d'une liste triée <i>T</i>
+et on cherche l'élément <i>v</i> (on suppose qu'il s'y trouve). 
+On procède comme suit :
+<ul>
+<li>On compare <i>v</i> à l'élément du milieu de la liste.</li>
+<li>S'il est égal à <i>v</i>, on a fini.</li>
+<li>Sinon, s'il est inférieur, il faut chercher dans la première moitié de la liste.
+    On retourne à l'étape 1 avec la liste réduite.</li>
+<li>S'il est supérieur, on fait de même avec la seconde moitié de la liste.</li>
+</ul>
+C'est ce qu'illustre la figure suivante où <i>a</i> désigne le début de la liste,
+<i>b</i> la fin, <i>m</i> le milieu. A chaque itération, on déplace ces trois 
+positions.
+</p>
+
+<center><img src="documents/dicho_image.png" /></center>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Voici une première implémentation en Python (version itérative) :
+</p>
+
+<pre class="brush: py">
+def recherche_dichotomique( element, liste_triee ):
+    a = 0
+    b = len(liste_triee)-1
+    m = (a+b)//2
+    while a &lt; b :
+        if liste_triee[m] == element :
+            return m
+        elif liste_triee[m] &gt; element :
+            b = m-1
+        else :
+            a = m+1
+        m = (a+b)//2
+    return a
+</pre>
+
+<p>
+Voici une seconde implémentation en Python (version récursive) :
+</p>
+
+<pre class="brush: py">
+def recherche_dichotomique_recursive( element, liste_triee, a = 0, b = -1 ):
+    if a == b : 
+        return a
+    if b == -1 : 
+        b = len(liste_triee)-1
+    m = (a+b)//2
+    if liste_triee[m] == element :
+        return m
+    elif liste_triee[m] &gt; element :
+        return recherche_dichotomique_recursive(element, liste_triee, a, m-1)
+    else :
+        return recherche_dichotomique_recursive(element, liste_triee, m+1, b)
+</pre>
+
+<p>
+L'ajout des parametrès <i>a</i> et <i>b</i> peut paraître un peu lourd.
+Voici une troisième implémentation en Python (toujours récursive) :
+</p>
+
+<pre class="brush: py">
+def recherche_dichotomique_recursive2(element, liste_triee):
+    if len(liste_triee)==1 :
+        return 0
+    m = len(liste_triee)//2
+    if liste_triee[m] == element :
+        return m
+    elif liste_triee[m] > element :
+        return recherche_dichotomique_recursive2(element, liste_triee[:m])
+    else :
+        return m + recherche_dichotomique_recursive2(element, liste_triee[m:])
+</pre>
+
+<p>
+Il ne faut pas oublier <tt>m +</tt> sinon le résultat peut être décalé
+dans certains cas. Ensuite, cette version sera un peu moins rapide
+du fait de la recopie d'une partie de la liste.
+</p>
+<p>
+Pour mieux comprendre les différences de ces algorithms, vous pouvez 
+observer le déroulement de l'exécution sur <a href="http://www.pythontutor.com/">PythonTutor</a>.
+</p>
+
+</body>
+</html>

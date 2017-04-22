@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Créer un GIF animé</title>
+<meta content="python, GIF, GIF animé, ImageMagick" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<p>
+Il y a quelques mois, j'ai écrit un article sur une façon
+de convertir des images en GIF animé. Il fallait télécharger
+deux fichiers. Maintenant, il suffit d'installer
+le module suivant : 
+<a href="http://www.xavierdupre.fr/site2013/index_code.html">pyhome3</a> 
+(il nécessite 
+<a href="http://www.python.org/download/">Python 3.3</a> et 
+<a href="http://www.numpy.org/">numpy</a>). Ensuite,
+le code suivant fera le reste :
+
+<pre class="prettyprint">
+# coding: latin-1
+
+# on prend les fichiers dans le répertoire
+import os
+files = os.listdir(".")
+# on ne garde que les images
+files = [ _ for _ in files if ".png" in _ ]
+# on les tri : image_2.png doit être avant image_10.png 
+# (ce qui n'est pas l'ordre alphatétique)
+# en enlève tout ce qui n'est pas un chiffre, on convertit un entier
+# puis on trie une liste de couples ( numéro, images )
+files = [ ( int (_.replace("image_","").replace(".png","")), _) for _ in files ]
+files.sort()
+files = [ _[1] for _ in files ]
+
+# ici, on renomme les fichiers car ImageMagick utilise l'ordre alphabétique
+files = [ ( "image_%03d.png" % i, _) for i,_ in enumerate(files) ]
+for new_name, old_name in files :
+    if new_name != old_name :
+        os.rename(old_name, new_name)
+        
+# on reprend la nouvelle liste de fichiers        
+files = [ _ for _ in os.listdir(".") if ".png" in _ ]
+files.sort()
+
+# il faut supprimer ces lignes et installer le module disponible ici
+# http://www.xavierdupre.fr/site2013/index_code.html (pyhome3)
+# qui ne marche qu'avec python 3.3 + numpy
+import sys
+sys.path.append(r"D:\Dupre\_data\program\pyhome")
+
+# on importe la fonction qu'il faut
+from pyhome3 import create_animated_gif, HalLOG
+
+# la fonction télécharge image magick et cela prend du temps, pour voir
+# ce qu'il se passe, il faut utilise la fonction suivante
+# le téléchargement n'est plus nécessaiire dès la seconde exécution
+HalLOG(OutputPrint=True)
+
+# et on l'exécute
+create_animated_gif(files, "final.gif", resize = (400,300))
+</pre>
+</p>
+
+<p>
+Si vous avez commencé votre programme avec Python 2.x, vous 
+pouvez toujours exéctuer le programme comme ceci :
+<pre class="prettyprint">
+import os
+os.system("c:\python33\python le_programme_precedent.py")
+</pre>
+</p>
+
+<p>
+Afficher le GIF animé en utilisant Python n'est pas facile.
+On pourrait recréer l'animation manuellement en affichant les images
+les unes après les autres via <i>tkinter</i>, on pourrait utiliser
+d'autres modules de type 
+<a href="http://www.riverbankcomputing.co.uk/software/pyqt/intro">pyQt</a>.
+Par paresse, j'ai choisi le code suivant :
+
+<pre class="prettyprint">
+with open("image_res.html", "w") as f :
+    f.write("<html>\n")
+    f.write("<body>\n")
+    f.write('&lt;img src="final.gif" /&gt;\n')
+    f.write("</body>\n")    
+    f.write("</html>\n")
+    
+import os
+os.system("image_res.html")
+</pre>
+
+Il crée un fichier html puis l'exécute : le navigateur par défaut
+se chargera de l'afficher.
+</p>
+</body>
+</html>
+
+
+

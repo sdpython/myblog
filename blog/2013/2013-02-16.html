@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Parser du XML</title>
+<meta content="Python, example, XML, parser" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="" name="description"/>
+<meta content="2013-02-16" name="date"/></head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+Traiter du XML peut s'avérer un cauchemar parfois. D'abord pour des
+problèmes d'encodings, je suis toujours ébahi devant la résistance
+que ces problèmes m'opposent. Je suis tout simplement incapable de comprendre
+dans quel sens opérer mes conversions, encoder, décoder, j'essaye tout
+et souvent sans succès comme cela est généralement le cas lorsqu'on 
+essaye de réparer une erreur à l'aveugle. Bref, mon problème du jour
+revenait à ajouter un champ à une palanquée de fichiers HTML. J'ai donc choisi
+de coder le &quot;truc&quot;.
+</p>
+<p>
+J'ai choisi de parser le fichier en XML plutôt qu'en HTML parce qu'il est plus
+facile ensuite d'accéder aux noeuds du documents. J'ajoute mon noeud
+et je sauve le document. Manque de bol, tous les guillements de mon
+code javascript ont disparu et été remplacé par un code abominable. 
+Je vais sur le net, je trouve que le module
+<i>xml.dom.minidom</i> que j'utilise ne permet pas de conserver les accents. J'adore.
+Je finis par écrire un code vraiment sale :
+</p>
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+<p>
+<pre class="prettyprint">
+import xml.dom.minidom 
+import sys, os
+
+if sys.version_info.major &lt; 3 :
+    raise Exception("expecting at least Python 3 to deal with utf8")
+    
+def _write_data(writer, data, section):
+    "Writes datachars to writer."
+    if data:
+        if section =="pre" :
+            data = data.replace("&amp;", "&amp;amp;") \
+                       .replace("&lt;", "&amp;lt;") \
+                       .replace("&gt;", "&amp;gt;")
+        elif section == "script" :
+            pass
+        else :
+            if section == None :
+                raise Exception("section name is empty")
+            data = data.replace("&amp;", "&amp;amp;") \
+                       .replace("&lt;", "&amp;lt;") \
+                       .replace("\"", "&amp;quot;") \
+                       .replace("&gt;", "&gt;")
+        writer.write(data)
+        
+def Text_writexml(self, writer, indent="", addindent="", newl=""):
+    section = self.localName
+    if section == None : section = self.sectionNameSpecial
+    if section == None : raise Exception("section name is empty")
+    _write_data(writer, "%s%s%s"%(indent, self.data, newl), section)
+
+def Element_writexml(self, writer, indent="", addindent="", newl=""):
+    # indent = current indentation
+    # addindent = indentation to add to higher levels
+    # newl = newline string
+    writer.write(indent+"&lt;" + self.tagName)
+
+    attrs = self._get_attributes()
+    a_names = sorted(attrs.keys())
+
+    for a_name in a_names:
+        writer.write(" %s=\"" % a_name)
+        _write_data(writer, attrs[a_name].value, "")
+        writer.write("\"")
+    if self.childNodes:
+        writer.write("&gt;%s"%(newl))
+        for node in self.childNodes:
+            if node.localName == None : 
+                node.sectionNameSpecial = self.localName
+            node.writexml(writer,indent+addindent,addindent,newl)
+        writer.write("%s&lt;/%s&gt;%s" % (indent,self.tagName,newl))
+    else:
+        writer.write("/&gt;%s"%(newl))    
+    
+xml.dom.minidom._write_data = _write_data
+xml.dom.minidom.Text.writexml = Text_writexml
+xml.dom.minidom.Element.writexml = Element_writexml
+
+if __name__ == "__main__" :
+    f = open(file, "r")
+    text = f.read()
+    f.close()
+    
+    dom = xml.dom.minidom.parseString(text)
+    
+    #
+    # insérer ses modifs ici
+    # 
+
+    header = '&lt;?xml version="1.0" encoding="utf-8"?&gt;'
+    text = header + "\n" + dom.documentElement.toxml()
+        
+    f = open(file, "w")
+    f.write(text)
+    f.close()
+</pre>
+</p>
+<p>
+Je n'ai pas perdu trop de temps mais je n'étais pas au bout de mes peines. 
+J'ai découvert que cette classe n'était vraiment pas pratique lorsqu'il s'agissait 
+de modifier un noeud. C'est simple lorsqu'il s'agit de créer une document
+mais modifier, ça... Bref, je n'ai trouver d'autres moyens simples 
+que de tout convertir en XML, de remplacer mon texte puis
+de recréer le document XML.
+</p>
+<p>
+<pre class="prettyprint">
+def replace_xml_in_template_using_dom_dirty(dom, node, newvalue) :
+    """
+    dom est un objet de xml.dom.minidom 
+    node un noeud du document
+    newvalue est le texte du nouveau noeud
+    """
+    xmltext = node.toxml()
+    allxml = dom.documentElement.toxml()
+    pos = allxml.find(xmltext)
+    if pos == -1 : raise Exception("unable to replace")
+    allxml = allxml.replace(xmltext, newvalue)
+    res = xml.dom.minidom.parseString(allxml) 
+    return res
+</pre>
+</p>
+<p>
+J'adore quand tout est simple. J'au fini par découvrir que pour modifier
+du XML, il valait mieux utiliser le module <i>xml.etree.ElementTree</i>.
+Mais je l'ai découvert trop tard et puis 
+il me restait toujours le problème des accents. Bref, tout ça n'a pas l'élégance
+d'un algorithme. Au moins, quand mon algorithme ne fonctionne pas, je sais que 
+l'erreur ne vient que de moi.
+</p>
+</body>
+</html>

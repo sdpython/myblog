@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>How to normalize an edit distance ?</title>
+<meta content="edit distance, levenstein" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="An edit distance is usually used to compute a distance between two words.          The basic version gives the same weight to every mistake or operation which means         every comparison, every insertion or deletion between two words weight the same.         The sum of all these errors gives a integer score and most of time, it is better         to keep that score within an interval such as [0,1]. But there are others options...         " name="description"/>
+<meta content="2013-01-25" name="date"/></head>
+<body>
+<p>
+An edit distance is usually used to compute a distance between two words. 
+The basic version gives the same weight to every mistake or operation which means
+every comparison, every insertion or deletion between two words weight the same.
+The sum of all these errors gives a integer score and most of time, it is better
+to keep that score within an interval such as [0,1]. 
+</p>
+
+<p>
+Most of the time, we divide the edit distance by the length of the longest word 
+involved in that distance. This score is not a distance anymore in a sense it does not 
+verify the triangular inequality. There are many option and the following 
+<a href="documents/edit_distance_normalization.pdf">document</a> studies some aspects 
+of normalizations. Based on that, the maximum length is not the best option,
+the minimum length is not very good either. A third option studied in that document seems
+to be the best, especially if this distance is used by a machine learned model as a feature.
+</p>
+</body>
+</html>

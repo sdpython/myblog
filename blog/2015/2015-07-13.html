@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Using Antlr4 to write a grammar</title>
+<meta content="programmation, python, antlr4" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Here are a few tricks I discovered when I implemented my first grammar
+using <a href="http://www.antlr.org/">Antlr 4</a>.
+First, it really helps to be able to test some parts
+of your grammar. One of the options is the plugin
+<a href="https://github.com/antlr/intellij-plugin-v4">IntelliJ Idea Plugin for ANTLR v4</a>
+for the following tool:
+<a href="https://www.jetbrains.com/idea/download/">IntelliJ IDEA</a> (the plugin works
+with the community edition, see also
+<a href="https://www.jetbrains.com/idea/help/installing-updating-and-uninstalling-repository-plugins.html#d777533e18545">Installing, Updating and Uninstalling Repository Plugins</a>).
+You will find many grammar examples at <a href="https://github.com/antlr/grammars-v4">antlr/grammars-v4</a>.
+The tool tells you if the grammar compiles and when it cannot parse an example
+as it displays a graphs with the recognized pieces.
+</p>
+<img src="https://github.com/antlr/intellij-plugin-v4/raw/master/images/error-popup.png" 
+    alt="source: https://github.com/antlr/intellij-plugin-v4"
+    title="source: https://github.com/antlr/intellij-plugin-v4" />
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+There are three kinds of objects:
+<ul>
+<li><b>fragment:</b> (syntax: <tt>fragment [Name] : [definition] ;</tt>), it represents
+    pieces of a grammar entity, they do not appear after a text was parsed
+    as they do not mean anything by themselves.</li>
+<li><b>token:</b> (syntax: <tt>[Name] : [definition] ;</tt>), it represents keywords,
+    tokens, it should avoid ambiguity. For example, if a token (<i>+</i> for example)
+    can have two meanings (unary, binary), these two meanings should be defined in two rules.</li>
+<li><b>rule:</b> (syntax: <tt>[name] : [definition] ;</tt>), defines the grammar of the languages,
+Antlr offers then the possibility to walk through the identified rules.</li>
+</ul>
+About the syntax, <tt>[Name]</tt> means the name must begin by an upper letter,
+<tt>[name]</tt>, it must begin by a lower letter. All objects are defined with a syntax
+very similar to regular expressions.
+The grammar <a href="https://github.com/antlr/grammars-v4/blob/master/dot/DOT.g4">DOT</a> 
+(<a href="http://www.graphviz.org/">graphviz</a> language)
+is a simple example to begin with. We can see that:
+
+<ul>
+<li>The objects appears from the most complex first to the most simple at the end of the grammar.</li>
+<li>The file ends with the rule: <tt>WS : [ \t\n\r]+ -&gt; skip ;</tt> which means that if a space
+could not be matched by a previous rule, it should be skipped. Spaces are 
+implicitely considered as separators.</li>
+<li>The file begins with <tt>grammar DOT;</tt> where <tt>DOT</tt> is the name of the grammar.</li>
+<li>The example <a href="https://github.com/antlr/grammars-v4/blob/master/java/Java.g4">Java.g4</a>
+contains a main rule <tt>compilationUnit: packageDeclaration? importDeclaration* typeDeclaration* EOF ;</tt>.
+<tt>EOF</tt> means the end of file. It forces the grammar to parse the whole file.</li>
+</ul>
+
+This tells us more about how Antlr tries to match the rule with the text 
+(not sure I'm right about this): 
+it tries rules in the order they are defined by the grammar, 
+it stops searching whenever it finds a token
+or a fragment (ambiguity is not possible for fragments and tokens).
+I went through many mistakes when building my first grammar. One of them was looking that way:
+</p>
+
+<pre class="prettyprint">
+line 1:0 mismatched input 'aa' expecting {'something', 'aa'}
+</pre>
+
+<p>
+As you noticed <tt>'aa'</tt> was expected but not matched. 
+It was usually due to some ambiguity. To detect the conflict,
+With the plugin mentioned above, 
+I checked the rule the string rule was supposed to match (it fails),
+I removed all rules above, it usually worked. By adding them back one by one
+in the grammar, it became easier to understand where the conflict was.
+</p>
+<p>
+On Python, I added function to module
+<a href="http://www.xavierdupre.fr/app/pyensae/helpsphinx/index.html">pyensae</a> to build and use Antlr4 grammar.
+See <a href="http://www.xavierdupre.fr/app/pyensae/helpsphinx/pyensae/languages/antlr_grammar_build.html">antlr_grammar_build.py</a>,
+<a href="http://www.xavierdupre.fr/app/pyensae/helpsphinx/pyensae/languages/antlr_grammar_use.html">antlr_grammar_use.py</a>.
+</p>
+
+</body>
+</html>

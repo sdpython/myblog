@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Some really annoying things with Hadoop</title>
+<meta content="python, hadoop, pig, jython" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+When you look for a bug, it could fail anywhere so you make assumptions on what you think
+is working and what could be wrong. I lost of couples of hours because I made the wrong one.
+I was preparing my teachings and I stored my data using Python serialization instead of json.
+That way, I could just use <tt>eval( string_serialized )</tt>. It already worked locally 
+and on a first cluster hadoop when this instruction was embedded in python 
+script. A PIG script was then calling it through streaming. 
+I then tried the same instruction and it failed many times until I check this line was 
+involved. And why? The error message was just not here
+to tell me anything about what happened. The script was just crashing.
+I suspect the line was just too long So, I'll do that another way.
+My first assumption were the schema I used in my Jython script. I finally chose 
+to save that issue by considering only strings. I commented out 
+line after line until this one out finally made my job work.
+That's the part of computing science I don't like. Long, full of guesses,
+impossible to accomplish without an internet connexion to dig into the vast amount of 
+recent and outdated examples. And maybe in a couple of months, this issue will be solved
+by a simple update.
+</p>
+<p>
+This night never happened. That's what I'll keep in mind. This night never happened.
+</p>
+
+</body>
+</html>

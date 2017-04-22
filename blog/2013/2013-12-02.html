@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Distance d'édition et programmation dynamique</title>
+<meta content="python, distance d'édition, programmation dynamique, Levenstein, ENSAE" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+La distance d'édition (ou distance de Levenstein) est un algorithme
+très connu qui sert à comparer deux mots, deux chaînes de caractères
+et, plus généralement, deux séquences. La distance est définie comme le nombre
+d'opérations minimum qui permet de passer du premier mot au second sachant 
+qu'il n'existe que trois opérations possibles :
+<ul>
+<li>le remplacement d'un caractère par un autre,</li>
+<li>la suppression d'un caractère,</li>
+<li>l'insertion d'un caractère.</li>
+</ul>
+Par exemple, dans le cas des deux mots : <i>idstzance</i> et <i>distances</i>,
+cela donne :
+</p>
+<center><img src="documents/edit_distance0.png" /></center>
+<p>
+Dans l'exemple qui précède, ces trois opérations ont un coût identique.
+Mais il pourrait tout-à-fait dépendre du caractère inséré ou supprimé ou
+de la comparaison entre les deux caractères. La distance est alors la somme de ces coûts.
+</p>
+<p>
+Trouver le nombre minimal d'opérations est un problème classique 
+qu'on peut résoudre à l'aide de la programmation dynamique. Cela veut dire que 
+le problème vérifie la propriété suivante : 
+<i>Toute solution optimale s'appuie elle-même 
+sur des sous-problèmes résolus localement de façon optimale</i> 
+(<a href="http://fr.wikipedia.org/wiki/Programmation_dynamique">Wikipedia</a>).
+Cela veut souvent dire qu'il existe une façon de trouver la solution 
+du problème par récurrence. Ou alors, si on trouve une façon de couper 
+le problème en deux, la solution optimale sera la combinaison
+des deux solutions optimales sur chacune des deux parties.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Dans le cas de la distance d'édition, on cherche une solution par récurrence
+en introduisant <i>d(i,j)</i> la distance optimale entre les <i>i</i>
+premiers caractères de la première chaîne et les <i>j</i>
+premiers caractères de la seconde chaîne. On en déduit les premières valeurs :
+</p>
+
+<!--
+<div lang="latex_help">
+\begin{array}{l}
+d(0,0) = 0 \\
+d(0,i) = d(i,0) = i 
+\end{array}
+</div>
+-->
+<p class="latexcenter">
+<img src="giflatex/blog_2013_2013-12-02.html__beginarrayld000d0idi0iendarray.gif" alt=" \begin{array}{l} d(0,0) = 0 \\ d(0,i) = d(i,0) = i  \end{array} " />
+</p>
+
+
+
+<p>
+Et la récurrence :
+</p>
+
+<!--
+<div lang="latex_help">
+d(i,j) = \min \left \{
+\begin{array}{l}
+d(i-1,j) + 1 \\
+d(i,j-1) + 1 \\
+d(i-1,j-1) + 1 \text{ si } c(i) \neq c(j) \\
+d(i-1,j-1) + 0 \text{ si } c(i) = c(j)
+\end{array}
+\right \}
+</div>
+-->
+<p class="latexcenter">
+<img src="giflatex/blog_2013_2013-12-02.html__dijminleftbeginarrayldi1j1dij11di1j11textsicineqcjdi1j10textsicicjendarrayright.gif" alt=" d(i,j) = \min \left \{ \begin{array}{l} d(i-1,j) + 1 \\ d(i,j-1) + 1 \\ d(i-1,j-1) + 1 \text{ si } c(i) \neq c(j) \\ d(i-1,j-1) + 0 \text{ si } c(i) = c(j) \end{array} \right \} " />
+</p>
+
+
+<p>
+Pour arriver au point <i>d(i,j)</i>, on a forcément soit inséré une lettre,
+soit supprimé une lettre, soit remplacé une lettre, 
+soit rien du tout si les deux caractères
+<i>c(i)</i> et <i>c(j)</i> sont égaux. On peut représenter cette matrice et la 
+solution optimale comme suit :
+</p>
+
+<center><img src="documents/edit_distance.png" /></center>
+
+<p>
+Voici une première implémentation itérative en Python (les indices sont décalés 
+car le premier élément d'un tableau est à l'indice 0 dans ce langage) :
+</p>
+
+<pre class="brush: py">
+def distance_edition(mot1, mot2):
+    dist = { (-1,-1): 0 }
+    for i,c in enumerate(mot1) :
+        dist[i,-1] = dist[i-1,-1] + 1
+        dist[-1,i] = dist[-1,i-1] + 1
+        for j,d in enumerate(mot2) :
+            opt = [ ]
+            if (i-1,j) in dist : 
+                x = dist[i-1,j] + 1
+                opt.append(x)
+            if (i,j-1) in dist : 
+                x = dist[i,j-1] + 1
+                opt.append(x)
+            if (i-1,j-1) in dist :
+                x = dist[i-1,j-1] + (1 if c != d else 0)
+                opt.append(x)
+            dist[i,j] = min(opt)
+    return dist[len(mot1)-1,len(mot2)-1]
+</pre>
+
+<p>
+Une seconde version récursive mais très longue aussi car
+la fonction s'appelle trois fois récursivement, ce qui donne un coût
+exponentiel à l'ensemble (donc à éviter telle quelle) :
+</p>
+
+<pre class="brush: py">
+def distance_edition_recursive(mot1, mot2):
+    if len(mot1) == 0 : return len(mot2)
+    elif len(mot2) == 0 : return len(mot1)
+    else :
+        return min ( distance_edition_recursive(mot1[:-1], mot2) + 1,
+                     distance_edition_recursive(mot1, mot2[:-1]) + 1,
+                     distance_edition_recursive(mot1[:-1], mot2[:-1]) + \
+                          (1 if mot1[-1] != mot2[-1] else 0))
+</pre>
+    
+<p>
+Le résultat cherché est souvent la liste des opérations qu'on obtient
+en récupérant le chemin à l'intérieur de la matrice <i>d(i,j)</i> (voir
+la figure précédente). Celui-ci s'obtient en mémorisant dans un second
+tableau l'opération qui a permis d'obtenir le minimum pour chaque case :
+</p>
+
+
+<pre class="brush: py">
+def distance_edition_chemin(mot1, mot2):
+    dist = { (-1,-1): 0 }
+    pred = { (-1,-1):  None }
+    for i,c in enumerate(mot1) :
+        dist[i,-1] = dist[i-1,-1] + 1
+        pred[i,-1] = (i-1,-1)
+        dist[-1,i] = dist[-1,i-1] + 1
+        pred[-1,i] = (-1,i-1)
+        for j,d in enumerate(mot2) :
+            opt = [ ]
+            if (i-1,j) in dist : 
+                x = dist[i-1,j] + 1
+                opt.append( (x, (i-1,j)) )
+            if (i,j-1) in dist : 
+                x = dist[i,j-1] + 1
+                opt.append( (x, (i,j-1) ) )
+            if (i-1,j-1) in dist :
+                x = dist[i-1,j-1] + (1 if c != d else 0)
+                opt.append((x, (i-1,j-1)) )
+            mi = min(opt)
+            dist[i,j] = mi[0]
+            pred[i,j] = mi[1]
+            
+    p = (len(mot1)-1,len(mot2)-1)
+    chemin = [ ]
+    while p != None :
+        chemin.append(p)
+        p = pred[p]
+    chemin.reverse()
+    return chemin
+</pre>
+
+<p>
+Il ne reste plus qu'à remonter de prédécesseur en prédécesseur pour
+retrouver le chemin emprunté (ce qui correspond à la dernière boucle).
+</p>
+<p>
+Pour mieux comprendre les différences de ces algorithms, vous pouvez 
+observer le déroulement de l'exécution sur <a href="http://www.pythontutor.com/">PythonTutor</a>.
+</p>
+
+</body>
+</html>

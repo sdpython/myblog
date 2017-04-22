@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Quelques astuces pour faire du machine learning</title>
+<meta content="python, machine learning" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+On a parfois l'impression qu'il suffit de 
+choisir un modèle (réseau de neurones, SVM, random forests, ou autres <a href="http://scikit-learn.org/stable/index.html">scikit-learn</a>),
+de l'entraîner puis de l'appliquer pour obtenir un prédicteur de bonne qualité. Mais ça ne marche pas toujours... 
+Voici quelques raisons qui pourraient l'expliquer.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Le machine learning se résume souvent à un problème d'optimisation. On cherche
+à trouver la meilleure fonction <i>f</i> qui permettent de prédire <i>Y</i>
+en fonction de <i>X</i> : <i>Y ~ f(X,w)</i> où <i>w</i> est un ensemble de paramètres.
+<i>f</i> appartient à une classe de modèles. Les réseaux de neurones en sont unes, les SVM une autre.
+Au sein de cette classe, on peut choisir des modèles avec plus ou moins de paramètres (le nombre
+de neurones sur la couche cachée pour les réseaux de neurones). Après avoir effectué ces deux choix,
+on optimise le vecteur de poids <i>w</i> sur une base d'apprentissage :
+</p>
+<!--
+<div lang="latex_help">
+w^* = \arg \min_{w} \sum_i e( f(X_i,w), Y_i)
+</div>
+-->
+<p class="latexcenter">
+<img src="giflatex/blog_2014_2014-03-28.html__wargminwsumiefXiwYi.gif" alt=" w^* = \arg \min_{w} \sum_i e( f(X_i,w), Y_i) " title=" w^* = \arg \min_{w} \sum_i e( f(X_i,w), Y_i) " width="246px" />
+</p>
+
+
+<p>
+La fonction <i>e</i> est une fonction évalue l'erreur de prédiction. <!--
+<div lang="latex_help_inline">(X_i,Y_i)</div>
+-->
+ <img src="giflatex/blog_2014_2014-03-28.html__XiYi.gif" alt="(X_i,Y_i)" title="(X_i,Y_i)" width="61px" /> 
+sont des données d'entraînement pour lesquelles on connaît la meilleure prédiction. 
+<!--
+<div lang="latex_help_inline">(X_{ik})</div>
+-->
+ <img src="giflatex/blog_2014_2014-03-28.html__Xik.gif" alt="(X_{ik})" title="(X_{ik})" width="44px" />  est une matrice avec <i>K</i> colonnes 
+qui correspondent aux variables de la base d'apprentissage.
+Dans le cas courant d'une régression :
+</p>
+
+<!--
+<div lang="latex_help">
+W^* = \arg \min_{w} \sum_i (f(X_i,w)- Y_i)^2 = \arg \min{w} \sum_i \left( Y_i - \sum_k w_k X_{ik} \right)^2
+</div>
+-->
+<p class="latexcenter">
+<img src="giflatex/blog_2014_2014-03-28.html__WargminwsumifXiwYi2argminwsumileftYisumkwkXikright2.gif" alt=" W^* = \arg \min_{w} \sum_i (f(X_i,w)- Y_i)^2 = \arg \min{w} \sum_i \left( Y_i - \sum_k w_k X_{ik} \right)^2 " title=" W^* = \arg \min_{w} \sum_i (f(X_i,w)- Y_i)^2 = \arg \min{w} \sum_i \left( Y_i - \sum_k w_k X_{ik} \right)^2 " width="528px" />
+</p>
+
+
+<p>
+Pour tirer meilleur parti du <i>machine learning</i>, il est utile de se poser quelques questions
+sur la nature du problème et les données dont on dispose.
+</p>
+
+<p><b>Types de problèmes</b></p>
+
+<p>
+Voici les principaux types :
+<ul>
+<li><b><a href="http://fr.wikipedia.org/wiki/R%C3%A9gression_(statistiques)">régression</a> :</b> la variable à prédire est continue et on cherche à s'en approcher le plus possible.</li>
+<li><b><a href="http://en.wikipedia.org/wiki/Statistical_classification">classification</a> :</b> la variable à prédire est une classe (ou un entier), le nombre de classes est souvent petit.</li>
+<li><b><a href="http://en.wikipedia.org/wiki/Learning_to_rank">ranking</a> :</b> la variable à prédire est un score qui sert à ordonner une liste.</li>
+<li><b><a href="http://en.wikipedia.org/wiki/Cluster_analysis">clustering</a> (non supervisé) :</b> on suppose que les données sont structurés et qu'il est possible de déterminer des groupes
+        plus ou moins homogènes sans pour autant les connaîtres au préalable.</li>
+<li><b><a href="http://fr.wikipedia.org/wiki/Apprentissage_par_renforcement">apprentissage par renforcement</a> :</b>
+        dans un jeu, la récompense ne vient qu'à la fin de sorte qu'il est seulement possible de connaître
+        la valeur d'un coup qu'une fois la séquence terminée.
+        </li>
+</ul>
+
+</p>
+
+
+<p><b>Classes de modèles</b></p>
+
+<p>
+Les modèles en vogue aujourd'hui sont les <a href="http://en.wikipedia.org/wiki/Random_forest">random forests</a>.
+Ils s'accomodent des variables discrètes ou continues et des valeurs manquantes. Ce n'est pas le cas des réseaux 
+de neurones et des SVM qui sont un peu passés de mode même si ceux-ci reviennent sur le devant de la scène 
+avec les <a href="http://en.wikipedia.org/wiki/Deep_learning">Deep Neural Network</a>.
+</p>
+
+<p><b>Variables continues, discrètes</b></p>
+<p>
+A chaque classe de modèle correspond un algorithme d'apprentissage. Les réseaux de neurones 
+sont optimisés par des méthodes de gradient. Ce type d'apprentissage fonctionne moins
+bien sur une variable discrète. C'est d'autant plus vrai si cette variable est une modalité 
+(ou <a href="http://fr.wikipedia.org/wiki/Variable_cat%C3%A9gorielle">variable catégorielle</a>) : il n'y a pas 
+d'ordre. Dans ce cas, il est possible de créer une variable binaire pour chaque modalité. 
+Si la variable discrète n'a pas d'échelle de valeur (du texte par exemple) et si le nombre de valeurs
+distinctes n'est pas trop grand (<i>=N</i>), on peut transformer 
+cette variable en <i>N</i> variables booléennes. 
+C'est préférable pour un modèle linéaire par exemple.
+</p>
+
+<p><b>Interprétabilité</b></p>
+
+<p>
+Parfois, le résultat qu'on souhaite n'est pas une prédiction fiable mais la possibilité
+de comprendre un peu mieux les données. Les réseaux de neurones qu'on associe à une <i>boîte noire</i>
+sont à éviter. Les arbres de décisions, la régression linéaires ou logistique sont plus indiqués.
+</p>
+
+<p><b>Une classe sur-représentée</b></p>
+
+<p>
+Imaginons qu'on cherche à classer des observations en deux classes A et B. Dans les faits,
+99% des observations sont de la classe A. Certains modèles prédirons A car cela ne fera que 1% d'erreur.
+Si l'objectif est discriminer entre A et B, il est préférable de biaiser la base d'apprentissage : 
+on prend toutes les observations de la classe B et autant d'observations de la classe A choisi au hasard.
+La prédiction sera évaluée avec une matrice de confusion :
+</p>
+<center>
+<table border="1">
+<tr><td></td><td>prédiction A</td><td>prédiction B</td></tr>
+<tr><td>classe A</td><td>bien classé</td><td>mal classé</td></tr>
+<tr><td>classe B</td><td>mal classé</td><td>bien classé</td></tr>
+</table>
+</center>
+
+<p>
+On peut également être amené à multiplier les exemples sous-représentés en introduisant un peu de bruit.
+Mais cela nécessite d'introduire quelques hypothèses sur ce bruit. L'autre direction consiste à
+considérer des modèles discriminants tels que l'analyse linéaire discriminante ou la régression
+logistique. On n'apprend pas à prédire une classe, on apprend une classe contre l'autre.
+Lorsqu'on construit les bases d'apprentissage et de tests, certaines classes rares peuvent ne pas être 
+présentes dans l'une des deux bases. Il en est de même de la distribution de certaines features sparses.
+Constuire deux bases homogènes veut peut-être dire choisir avec un peu plus d'attention les exemples aléatoires
+dans chaque base de sorte que les distributions des features soient homogènes.
+</p>
+
+<p><b>Score de confiance</b></p>
+
+<p>
+Certains modèles retournent un score de confiance en plus de la prédiction.
+Plus le score est haut, plus le résultat a de chance d'être correct ou d'être précis.
+Mais le modèle prédit rarement avec un haut score de confiance. Choisir un
+seuil pour ce score revient à choisir entre précision (le fait de prédire correctement) 
+et rappel (le fait de valider la prédiction). On représente ces deux ratios avec la courbe 
+<a href="http://fr.wikipedia.org/wiki/Receiver_Operating_Characteristic">ROC</a>.
+</p>
+
+<p><b>Base d'apprentissage et de test</b></p>
+
+<p>
+Pour éviter l'overfitting (ou le fait d'apprendre par coeur), on divise aléatoirement l'ensemble
+d'apprentissage en apprentissage et test. On apprend plusieurs modèles sur la base d'apprentissage
+mais on choisit le modèle qui fait le moins d'erreurs sur la base de tests.
+</p>
+
+
+<p><b>Normalisation</b></p>
+
+<p>
+Lorsqu'on n'utilise un modèle optimisé avec un méthode de descente de gradient, pendant les premières
+itérations d'apprentissage, le gradient est naturellement
+plus élevé pour les coefficients qui multiplient ces variables. On normalise pour que les variables
+soient traitées également. Cette configuration peut également arriver pour une même variable, 
+le maximum peut être dix à cent fois plus élevé que la moyenne. Dans ce cas, 
+il est conseillé d'appliquer une échelle logarithmique.
+</p>
+
+<p><b>Données très bruitées</b></p>
+
+<p>
+Lorsqu'on veut construire un prédicteur, on construit d'abord une base d'apprentissage 
+de <i>n</i> observations parmi <i>N</i>. <i>n</i> est parfois petit mais construire cette base
+est souvent coûteuse, c'est pourquoi on commence par petit. Après quelques essais, on s'aperçoit que
+cela ne marche pas bien. Les données sont bruitées, voire très bruitées. Une solution consiste
+à utiliser les <i>N</i> observations pour enlever le bruit en diminuant le nombre de variables, en les compressant.
+On peut utiliser les premiers axes d'une ACP 
+(<a href="http://fr.wikipedia.org/wiki/Analyse_en_composantes_principales">Analyse en Composante Principale</a>)
+ou un réseau diabolo : l'entrée et la sortie sont les mêmes (<i>X</i>) mais la couche cachée contient 
+moins de neurones que de variables et c'est celle-ci qu'on utilise.
+</p>
+
+<p><b>Boosting</b></p>
+
+<p>
+Le <a href="http://fr.wikipedia.org/wiki/Boosting">boosting</a> est une technique qui permet,
+au cours de l'apprentissage, de donner plus de poids aux erreurs comme l'algorithme 
+<a href="http://fr.wikipedia.org/wiki/AdaBoost">AdaBoost</a>.
+</p>
+
+<p><b>Active Learning</b></p>
+
+<p>
+L'<a href="http://en.wikipedia.org/wiki/Active_learning_%28machine_learning%29">active learning</a> consiste à augmenter au 
+fur et à mesure la base d'apprentissage à chaque itération du modèle et si possible, en ajoutant
+des exemples pour lesquels le modèle actuel fait beaucoup d'erreurs.
+</p>
+
+<p><b>Queues de distributions étranges</b></p>
+
+<p>
+Le notebook <a href="http://nbviewer.ipython.org/github/GaelVaroquaux/sklearn_pandas_tutorial/blob/master/rendered_notebooks/05.2_supervised_regression.ipynb">Supervised Learning: Regression of Housing Data</a> (à propos
+de <a href="http://scikit-learn.org/stable/">scikit-learn</a>), la dernière barre de l'histogramme est plus élevée que 
+celle qui précède :
+</p>
+<img src="data:image/png;base64,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" width="20%" />
+<p>
+Cela est probablement dû à un effet de seuil lors de la construction de la base de données : toutes les
+données au-dessus d'un certain seuil ont été regroupées dans la même catégorie.
+</p>
+
+
+</body>
+</html>

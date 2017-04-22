@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>IExplorer and class HTTPServer (Python)</title>
+<meta content="programming, python, iexplorer, HTTPServer" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+I was wondering why I could not make something work on IExplorer
+while it was perfectly working with Firefox and Chrome.
+My simple Python web server seemed to get stuck most of the time
+by IExplorer (no logs) when I could see all the requests sent by Firefox.
+When I was leaving IExplorer, the error message was "interrupted connection".
+I finally found the error: IExplorer sends mulitple requests in parallel
+and the class <i>HTTPServer</i> does not handle it. To fix that, you need to do
+the following:
+
+<pre class="prettyprint">
+from http.server import BaseHTTPRequestHandler, HTTPServer, SimpleHTTPRequestHandler
+from socketserver import ThreadingMixIn
+
+class ThreadedServer (ThreadingMixIn, HTTPServer) :
+   pass
+   
+class MyHandler(BaseHTTPRequestHandler):
+    def respond(self, status_code):
+        self.send_response(status_code)
+        self.end_headers()
+
+    def do_GET(self):
+        # ...
+
+server = ThreadedServer(('localhost', 8080), MyHandler)
+server.serve_forever()
+</pre>
+
+</p>
+
+
+</body>
+</html>

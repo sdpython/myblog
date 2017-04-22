@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>A template to create a Python module including Sphinx documentation and a setup</title>
+<meta content="python, programmation, references, programming, tutorial, sphinx, setup, unit tests" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+My students often struggle to debug their programs 
+when two or three students need to synchronize their versions.
+A good way to avoid wasting too much time is to use a tool to keep
+track of the modifications such as <a href="https://github.com/">github</a>.
+It then becomes easy to synchronize multiple versions.
+</p>
+<p>
+However, students still need to debug the program after a synchronization.
+A good practice is to write unit tests. Every time, you write a complex function
+or an easy one, a unit test should be written to ensure its behaviour
+will not change after many changes. But it means to add a file, to spend
+some time to do it right, and to frequently run all the unit tests.
+This is usually too painful when the project will only last a couple of months.
+Plus, you usually commit yourself to do it only after you went through the nightmare of 
+debugging once.
+</p>
+<p>
+Last but not least, my students usually do not add documentation to their code.
+Most of the time, they do not need it because the project is too short to
+lose track of the modifications and too small to not know it completely.
+Maybe another reason is because they cannot see a compiled version of the 
+documentation. The best way is to use Sphinx ut using it means spending 
+a couple of hours at least (a lot of more if you do it for the first time).
+Documentation can also be used to navigate through the program.
+</p>
+<p>
+For those reasons, I made a kind of template for a Python module. It includes
+an easy mechanism to add a unit test and to run it. It generates with the documentation
+with no change and it also generated a setup (gz, exe) with no change either.
+You can get it here: <a href="http://www.xavierdupre.fr/site2013/index_code.html#code">Pieces of codes, libraries</a> (section <i>Code</i>). 
+After you downloaded it, a page gives the short list of instructions to tweak the 
+template in order to make it yours: 
+<a href="http://www.xavierdupre.fr/app/python_project_template/helpsphinx/README.html#l-readme">README</a>.
+</p>
+</body>
+</html>

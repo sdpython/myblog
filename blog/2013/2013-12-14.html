@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Quelques exercices de préparation à l'examen (4)</title>
+<meta content="python, ENSAE, programmation, exercice" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+On reprend le même texte que celui de l'exercice précédent.
+On veut connaître le nombre maximum de mots qu'on peut trouver
+entre deux mots commençant par une voyelle.
+</p>
+<pre class="brush: py">
+# source du texte : http://www.gutenberg.org/files/1567/1567-h/1567-h.htm#link2H_4_0017
+texte = """They are rattling breakfast plates in basement kitchens,
+And along the trampled edges of the street
+I am aware of the damp souls of housemaids
+Sprouting despondently at area gates.
+The brown waves of fog toss up to me
+Twisted faces from the bottom of the street,
+And tear from a passer-by with muddy skirts
+An aimless smile that hovers in the air
+And vanishes along the level of the roofs.""".replace("\n"," ").lower().split()
+
+def nombre_de_mot_maximum(mots) :
+    ...
+    return un_nombre 
+</pre>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p><b>Solution proposée</b></p>
+
+<p>
+On utilise les fonctions de l'article précédent : 
+<a href="http://www.xavierdupre.fr/blog/2013-12-12_nojs.html">2013-12-11_nojs.html</a>.
+L'énoncé de l'exercice est un peu ambigü : lorsqu'on cherche le nombre maximum de mots
+entre deux mots commençant par des voyelles, est-ce qu'on impose que ces mots
+commencent par des consonnes ou non ? C'est ce dernier cas que le programme suivant résoud 
+(les commentaires contiennent la solution de premier cas, plus facile).
+</p>
+
+<pre class="brush: py">
+#coding:latin-1
+# source du texte : http://www.gutenberg.org/files/1567/1567-h/1567-h.htm#link2H_4_0017
+texte = """They are rattling breakfast plates in basement kitchens,
+And along the trampled edges of the street
+I am aware of the damp souls of housemaids
+Sprouting despondently at area gates.
+The brown waves of fog toss up to me
+Twisted faces from the bottom of the street,
+And tear from a passer-by with muddy skirts
+An aimless smile that hovers in the air
+And vanishes along the level of the roofs.""".replace("\n"," ").lower().split()
+
+def est_voyelle(c):
+    d = { "a":1, "e":1, "i":1, "o":1, "u":1, "y":1 }
+    return d.get(c, 0)
+
+def nombre_de_mot_maximum(mots) :
+    # on transforme la liste de mots en liste de 0 ou 1 (0, consonne en première lettre, 1, voyelle)
+    voyelle_pas_voyelle = [ est_voyelle(mot[0]) for mot in mots ]
+    # on ajoute la position
+    voyelle_pas_voyelle = [ (i,p) for i,p in enumerate(voyelle_pas_voyelle) ]
+    # on ne garde que les positions avec des voyelles
+    voyelle = [ c[0] for c in voyelle_pas_voyelle if c[1] == 1 ]
+    # si le résultat souhaité est le nombre maximum de mots entre deux mots commençant par une voyelle
+    # alors le résultat est : return voyelle[-1] - voyelle[0]
+    # si le résultat souhaité est le nombre maximum de mots commençant par une consonne entre deux mots commençant par une voyelle
+    # alors le résultat est :
+    diff = [ voyelle[i] - voyelle[i-1] for i in range(1,len(voyelle)) ]
+    return max(diff)
+    
+print ( nombre_de_mot_maximum(texte) )  # affiche 8
+</pre>
+
+<p>
+<b>Question : </b> à quoi sert la ligne suivante (ligne 21) ?
+</p>
+
+<pre class="brush: py">
+# on ajoute la position
+voyelle_pas_voyelle = [ (i,p) for i,p in enumerate(voyelle_pas_voyelle) ]
+</pre>
+
+<p>
+L'objectif de l'exercice est de trouver le nombre maximum de mots entre deux autres mots. Comment
+compter ces mots ? Comment savoir combien il y a de mots entre deux autres mots ? Une façon simple
+de faire est de considérer leurs positions : si je prends deux mots au hasard dans le texte qui
+ont pour positions <i>p</i> et <i>q</i>, la différence de leur position est exactement le 
+résultat cherché, soit <i>p-q</i>  (ou <i>p-q-1</i> selon qu'on inclut ou non le premier mot). C'est illustré par
+la figure suivante (extraite de <a href="http://pythontutor.com/">Python Tutor</a>) :
+</p>
+
+<center><img src="documents/voyelle1.png" /></center>
+
+<p>
+En haut, la liste des mots. En bas, on a remplacé les mots par 0 s'il commence par une consonne, 1 si c'est par une 
+voyelle. Si je compte le nombre de zéros entre deux <i>1</i> consécutifs, j'obtiens un nombre de mots commençant
+par une consonne entre deux mots commençant par une voyelle. 
+</p>
+<p>
+A partir de moment là, il est possible de conserver une liste de 0 ou de 1 ou de garder les positions des seuls éléments 1
+comme suit :
+</p>
+
+<center><img src="documents/voyelle2.png" /></center>
+
+<p>
+Mais pour ce faire, il faut à un moment ou à un autre considérer les éléments (0ou 1) et leurs positions. 
+D'où la fonction <tt>enumerate</tt> à la ligne 21.
+</p>
+
+
+
+</body>
+</html>
+

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Framework for Mobile Application</title>
+<meta content="mobile, programming, framework, kivy, cordova, phonegaps, xamarin, titanium, sencha touch, javascript, phone application" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+<p>
+What framework to choose if you want to build a mobile application which
+will save you some time while deploying on multiple phones? 
+(Android, Black Berry, iPhone, Windows Phone). I'm not sure 
+there is a perfect answer and it will probably change in a couple of months.
+However, this what I found. I was looking for answers. Which phones does it support today?
+Where can you develop your application? Which language? How to build?
+How to deploy? Cost? I limited my study to the following frameworks 
+(according to a friend, the others are not as mature):
+<ul>
+<li><a href="http://cordova.apache.org/">Apache Cordova</a> (or <a href="http://phonegap.com/">PhoneGaps</a>):
+        This framework provides a common API in javascript/HTML
+        to access the API of each phone. The goal is to build application
+        for many phone based on the same code. It produces 
+        a web application.
+        </li>
+<li><a href="http://www.sencha.com/products/touch">Sencha Touch</a>:
+        It contains more template javascript/HTML templates than Cordova.
+        The free framework does not seem to do more than
+        building a web application with javascript and HTML.
+        However, you can use both Cordova and Sencha Touch (see below).
+        </li>
+<li><a href="http://www.appcelerator.com/titanium/">Titanium Mobile</a>:
+        It is also a framework using javascript/HTML. The framework
+        can access the native API of each phone (as opposed to Cordova).
+        You might end up with a different version on each phone.
+        The framework should give more freedom than the first one.
+        </li>
+<li><a href="http://xamarin.com/">Xamarin</a> <a href="https://github.com/MvvmCross/MvvmCross">(+ MvvmCross)</a>:
+        It proposes a way to build phone application written in C#
+        on every phone (using <a href="http://www.mono-project.com/Main_Page">Mono</a> for iOS and Android).
+        It gives an access the native API.
+        The framework also includes the possibility to design hosted on
+        a remote machine which can communicate with the phone application.
+        </li>
+<li><a href="http://kivy.org/">kivy</a>
+        A framework in Python (2.7, migration to Python 3 should happen some day).
+        It was not meant to develop phone application but it now proposes
+        a way to make it work on Android,
+        with <a href="https://github.com/kivy/pyjnius">pyjnius</a>,
+        and iOS,
+        with <a href="https://github.com/kivy/pyobjus">pyobjus</a> and <a href="https://github.com/kivy/kivy-ios">kivy-ios</a>.
+        This two libraries connect Python to java which accesses the phone
+        functionalities. There is no support for Windows Phone.
+        A last module <a href="https://github.com/kivy/plyer">plyer</a>
+        gives access to some extra functionalities (GPS, text to speech).
+        </li>
+</ul>        
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+
+<div class="dataframe100l">
+<center>
+<table border="1">
+ <thead>
+    <tr style="text-align: right;">
+    <th></th>
+      <th><a href="http://cordova.apache.org/">Apache Cordova</a></th>
+      <th><a href="http://cordova.apache.org/">Sencha Touch</a></th>
+      <th><a href="http://www.appcelerator.com/titanium/">Titanium Mobile</a></th>
+      <th><a href="http://xamarin.com/">Xamarin</a></th>
+      <th><a href="http://kivy.org/">kivy</a></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Which phones does it support today?</th>
+      <td>Android, Blackberry, iOS, Windows Phone</td>
+      <td>Android, Blackberry, iOS, Windows Phone</td>
+      <td>Android, Blackberry, iOS, Windows Phone in 2014</td>
+      <td>Android, Blackberry, iOS, Windows Phone</td>
+      <td>Android, iOS</td>
+    </tr>
+    <tr>
+      <th>Where can you develop your application?</th>
+      <td>All platforms. Integration with Visual Studio.</td>
+      <td>All platforms.</td>
+      <td>All platforms.</td>
+      <td>All platforms but Windows is the preferred environnement.</td>
+      <td>All platforms.</td>
+    </tr>
+    <tr>
+      <th>Which language?</th>
+      <td>Javascript / HTML</td>
+      <td>Javascript / HTML</td>
+      <td>Javascript / HTML + native language of each phone if required</td>
+      <td>C#</td>
+      <td>Python</td>
+    </tr>
+    <tr>
+      <th>How to build? (= means Linux for Android, Mac for iOS, Windows for Windows, don't know for Blackberry)</th>
+      <td>= and <a href="https://build.phonegap.com/">Adobe® PhoneGap™ Build</a> for others platforms.</td>
+      <td>Any platform, it is a web application.</td>
+      <td>=</td>
+      <td>= and Windows</td>
+      <td>=</td>
+    </tr>
+    <tr>
+      <th>How to deploy?</th>
+      <td colspan="5">You need an account for each application platform.
+        which means Linux for Android, Mac for iOS, Windows for Windows, still don't know for Blackberry).
+        Virtual machines will probably not work.
+        </td>
+    </tr>
+    <tr>
+      <th>Cost?</th>
+      <td>free, you can pay to facilite the deployment of private applications: <a href="https://build.phonegap.com/">easy deployment</a></td>
+      <td>web framework is free, <a href="https://www.sencha.com/store/">Sencha Touch Store</a></td>
+      <td>free to start, then <a href="http://www.appcelerator.com/plans-pricing/">pricing</a></td>
+      <td><a href="https://store.xamarin.com/">Xamarin pricing</a> + Visual Studio with MSDN</td>
+      <td>free</td>
+    </tr>
+    <tr>
+      <th>API</th>
+      <td><a href="http://cordova.apache.org/docs/en/3.0.0/">Cordova API</a></td>
+      <td><a href="http://docs.sencha.com/touch/2.3.1/">Sencha Touch Documentation</a></td>
+      <td><a href="http://docs.appcelerator.com/titanium/3.0/#!/api/Titanium.API">Titanium API</a></td>
+      <td><a href="http://docs.xamarin.com/">Xamarin documentation</a></td>
+      <td><a href="http://kivy.org/docs/api-index.html">Kivy documentation</a></td>
+    </tr>
+    <tr>
+      <th>Example (Hello World)</th>
+      <td><a href="http://www.c-sharpcorner.com/UploadFile/dhananjaycoder/hello-world-windows-phone-application-using-phonegap-or-co/">"Hello World" Windows Phone Application Using PhoneGap or Cordova</a></td>
+      <td><a href="http://www.sencha.com/learn/sencha-touch-quick-start/">Sencha Touch Quick Start</a></td>
+      <td><a href="http://docs.appcelerator.com/titanium/2.1/#!/guide/Hello_World">Hello World</a></td>
+      <td><a href="http://sirars.com/tag/xamarin/">Creating a Cross-Platform App for Windows Phone 8 and Windows Store (PCL, MvvmCross)</a>,
+            <a href="http://slodge.blogspot.co.uk/2013/06/ndc2013-mobile-mvvm-and-xamarin-talks.html">Talks</a>,
+            <a href="http://docs.xamarin.com/guides/cross-platform/application_fundamentals/building_cross_platform_applications/case_study-tasky/">Case Study</a></td>
+      <td>free</td>
+    </tr>
+</tbody>
+</table>
+</center>
+    
+</div>
+
+<p>
+We can see <a href="http://www.sencha.com/products/touch">Sencha Touch</a> as an
+extension of <a href="http://cordova.apache.org/">Apache Cordova</a> which
+can shape a web application into a phone application.
+Both <a href="http://xamarin.com/">Xamarin</a> and <a href="http://www.appcelerator.com/titanium/">Titanium Mobile</a>
+access the native API which gives more freedom.
+<a href="http://kivy.org/">kivy</a> does not allow to get the exact same code
+for all phones and is not available on Windows. It seems easier to 
+write an application (it is python) but the deployment could hide some surprises
+(see <a href="https://github.com/kivy/kivy-ios/issues/23">Kivy apps using sqlite3 do not run on iOS</a>).
+</p>
+<p>
+To begin with, I was looking for a framework easy to use for a 
+student project. <a href="http://kivy.org/">kivy</a>
+seems a good choice for that purpose, hoping it will migrate to 
+Python 3 and it will propose support for Windows Phone 
+(<a href="http://news.cnet.com/8301-13579_3-57616679-37/iphone-market-share-shrinks-as-android-windows-phone-grow/">iPhone market share shrinks as Android, Windows Phone grow</a>).
+<a href="http://xamarin.com/">Xamarin</a> is appealing: you access the native API, C# is not a complicated language. 
+But it is not free. So my second choise would be <a href="http://cordova.apache.org/">Apache Cordova</a>.
+I'll probably try <a href="http://www.appcelerator.com/titanium/">Titanium Mobile</a> 
+when it supports Windows Phone.
+</p>
+<p>
+There is one last option: <a href="http://www.catrobat.org/">catrobat</a>. It is 
+a framework inspired by <a href="http://scratch.mit.edu/">Scratch</a> 
+which allows visual programming. It was made was kids. 
+<a href="http://www.catrobat.org/">catrobat</a> should make it easy to build
+a game on a mobile phone. It can be downloaded <a href="https://play.google.com/store/apps/details?id=org.catrobat.catroid">here</a>.
+You will find the documentation at <a href="http://www.catrobat.org/intro/index.html">Pocket Code</a>.
+</p>
+
+
+
+<p>
+Some articles about frameworks:
+<ul>
+<li><a href="http://stackoverflow.com/questions/17249500/xamarin-2-0-vs-appcelerator-titanium-vs-phonegap">Xamarin 2.0 vs Appcelerator Titanium vs PhoneGap</a></li>
+<li><a href="http://msdn.microsoft.com/en-us/magazine/hh975345.aspx">Develop HTML5 Windows Phone Apps with Apache Cordova</a></li>
+<li><a href="http://www.c-sharpcorner.com/UploadFile/dhananjaycoder/hello-world-windows-phone-application-using-phonegap-or-co/">"Hello World" Windows Phone Application Using PhoneGap or Cordova</a></li>
+<li><a href="http://docs.phonegap.com/en/2.3.0/guide_getting-started_windows-phone-8_index.md.html">Getting Started with Windows Phone 8</a></li>
+<li><a href="http://vimeo.com/68375201">Stuart Lodge: Sharing C# across Windows, Android and iOS using MvvmCross</a></li>
+<li><a href="http://visualstudiogallery.msdn.microsoft.com/618b51f0-6de8-4f85-95ce-a50c658c7767">Ninja Coder for MvvmCross</a></li>
+<li><a href="http://forums.xamarin.com/discussion/1003/your-opinion-about-several-crossplatform-frameworks#Comment_3334">Your opinion about several crossplatform frameworks</a> (held by Xamarin, so many biased)</li>
+<li><a href="http://dev.day.com/docs/en/cq/current/developing/mobile/phonegap_integration.html">Integrating PhoneGap (Apache Cordova) into Your Mobile Applications</a></li>
+<li><a href="http://www.appcelerator.com/blog/2012/05/comparing-titanium-and-phonegap/">Comparing Titanium and PhoneGap</a></li>
+<li><a href="http://www.sencha.com/blog/leveraging-phonegap-within-sencha-touch/">Leveraging PhoneGap within Sencha Touch</a></li>
+<li><a href="http://kivy.org/docs/guide/packaging-ios.html">Programming Guide, Create a package for IOS</a></li>
+<li><a href="http://looksok.wordpress.com/tag/kivy/">Mobile cross-platform programming frameworks</a></li>
+<li><a href="http://ionicframework.com/blog/what-is-cordova-phonegap/">The Last Word on Cordova and PhoneGap</a></li>
+</ul>
+Some articles about <a href="http://www.catrobat.org/">catrobat</a>:
+<ul>
+<li><a href="http://arxiv.org/pdf/1310.1390.pdf">A Scratch-like visual programming system for Microsoft Windows Phone 8</a></li>
+<li><a href="https://github.com/Catrobat/CatrobatForWindows">CatrobatForWindows</a></li>
+<li><a href="https://github.com/Catrobat/ScratchToCatrobat">ScratchToCatrobat</a></li>
+</ul>
+Some articles about <a href="http://kivy.org/">kivy</a>:
+<ul>
+<li><a href="http://www.informit.com/articles/article.aspx?p=2170160">Python and Your Phone: Let’s Talk About Kivy</a></li>
+<li><a href="http://stackoverflow.com/questions/16756289/is-kivy-strictly-a-gui-framework">Is Kivy strictly a GUI framework?</a></li>
+<li><a href="http://karanbalkar.com/tag/kivy/">Learning Kivy: Clipboard and Text Input</a></li>
+<li><a href="https://github.com/kivy/kivy/issues/693">Feature Request: An abstraction layer for accessing device sensors and common native features (kivy)</a></li>
+</ul>
+</p>
+
+</body>
+</html>
+

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Python, SQL, pandas and frustration</title>
+<meta content="python, thread" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+When I try to avoid coding and to use existing tools,
+I usually decompose my problem in smaller ones I think people
+already solved. I usually skip the documentation until I find an example 
+for each of them. That's how I proceed to use 
+<a href="http://pandas.pydata.org/">pandas</a>. I imagine how I would 
+do it using SQL and I try to write it using this module. My
+problem was the following one:
+</p>
+<pre class="brush: sql">
+SELECT location, MIN(commute) AS minc, MAX(commute) AS maxc FROM data
+</pre>
+<p>
+Which I was able to solve this way (after a couple of tries
+and a glass of wine to avoid losing my temper):
+</p>
+<pre class="brush: py">
+data = [ 
+    { "name":"hugo", "location":"paris", "commute":55 },
+    { "name":"marcel", "location":"paris", "commute":45 },
+    { "name":"jack", "location":"lyon", "commute":25 },    
+    { "name":"hugo", "location":"lyon", "commute":20 },  ]
+
+df = pandas.DataFrame(data)
+
+agg = df.groupby ( "location", as_index=False).agg ( 
+            { "commute": [ ("minc",min), ("maxc", max) ] } ) # first glass of wine
+print (agg)
+</pre>
+<p>
+Then, I wanted to write this:
+</p>
+
+<pre class="brush: sql">
+SELECT A.*, B.minc, B.maxc FROM data AS A INNER JOIN ( 
+        SELECT location, MIN(commute) AS minc, MAX(commute) AS maxc FROM data) AS B 
+</pre>
+<p>
+Which I converted into after a second glass of wine:
+</p>
+<pre class="brush: py">
+agg = df.groupby ( "location", as_index=False).agg ( 
+            { "commute": [ ("minc",min), ("maxc", max) ] } )
+agg.columns = ["minc", "maxc"]  # the second glass of wine
+join = df.merge (agg, left_on="location", right_on = "location")
+print (join)
+</pre>
+<p>
+But you could write it that way:
+</p>
+
+<pre class="brush: py">
+agg = df.groupby ( "location").agg ( 
+            { "commute": [ ("minc",min), ("maxc", max) ] } )
+agg.columns=["minc","maxc"]
+join = df.merge (agg, left_on="location", right_index= True)
+print (join)
+</pre>
+<p>
+Last precision: the instruction <i>agg.columns=["minc","maxc"]</i> rename
+the column name. However, it works in this case just because
+we aggregated only one column (<i>commute</i>). When
+several columns are aggregated, the order of the column
+in the resulting matrix is not always the same. So do not do the following:
+</p>
+<pre class="brush: py">
+def sums(l) : return ",".join(l)
+    
+agg = df.groupby ( "location", as_index=False).agg (
+            { "name":sums, 
+              "commute": [ ("minc",min), ("maxc", max) ] } )
+agg.columns=["name","minc","maxc"]  # glass of whisky
+</pre>
+
+<p>
+I often get frustrated about tools, it takes me so many tries to
+get the data the way I want before I start working on an algorithm using them.
+Then, you try to apply it on a much bigger dataset and it fails
+for a couple of bad rows which cannot be parsed because 
+of a string including tabs. After, I got the accent problem... 
+I hate those days.
+</p>
+
+</body>
+</html>

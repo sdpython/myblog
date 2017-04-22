@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Busy areas in Paris</title>
+<meta content="python, Paris, velib, statistics" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+During summer, one pleasure is to go to work by bike. 
+Simple option is to take a Velib but most of the time,
+the closest Velib station is empty. The same thing happens when you leave 
+your work to go back home. No bike is available.
+</p>
+<p>
+I thought maybe this could be used to draw a map of Paris showing areas
+where people work. I thought about looking at the distribution of the number of 
+available bikes over a day. I already mentioned
+that the Velib data was available 
+(see <a href="http://www.xavierdupre.fr/blog/2013-05-12_nojs.html">Les stations Vélib à Paris un jeudi soir</a>).
+Next figure shows it for a couple of stations and one of them is clearly a <i>working station</i>:
+bikes arrive in the morning and disappear at the end of the working day (it was taken a couple
+of weeks ago during a week day).
+</p>
+<p>
+<img src="documents/tb8_dis_hor.png" />
+</p>
+<p>
+The number of available bikes was measured every five minutes. 
+Knowing that every station does not have the same number of spots, I normalized
+the previous curve by the sum. I then considered the sum between 10am and 4pm. 
+So for each station, I built the following indicator:
+
+<!--
+<div lang="latex_help">
+I(s) =  \frac{\sum_{t=10am}^{4pm} X(s,t) }
+             { \sum_{t=0am}^{11:59pm} X(s,t) }
+</div>
+-->
+<p class="latexcenter">
+<img src="giflatex/blog_2013_2013-09-26.html__Isfracsumt10am4pmXstsumt0am1159pmXst.gif" alt=" I(s) =  \frac{\sum_{t=10am}^{4pm} X(s,t) }              { \sum_{t=0am}^{11:59pm} X(s,t) } " />
+</p>
+
+
+I used the information to draw a map of Paris with the Velib stations.
+If <i>I(s) > 0.25 </i>, I used a red flag and a green otherwise.
+
+</p>
+
+<p>
+<img src="documents/parisvelibword.png" />
+</p>
+
+<p>
+Basically, companies offices are located in the center of Paris (districts with one digit) and around the Seine,
+people live around (districts with two digits). It also shows there are some business
+areas just outside Paris like Issy-Les-Moulineaux (where I work).
+You can play with the final result below.
+It uses <a href="http://www.openstreetmap.org/">OpenStreetMap</a> and 
+<a href="http://openlayers.org/">OpenLayers</a>.
+
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+
+<iframe  width="700" height="500" frameborder="0" src="documents/2013-09-26_js_extension.html"> 
+</iframe>
+
+</p>
+
+<p>
+A sketch of the code follows. 
+It was done to illustrate my <a href="http://www.xavierdupre.fr/site2013/enseignements/index.html">teachings</a>.
+I used Python to generate the javascript. The code can be found 
+<a href="http://www.xavierdupre.fr/site2013/enseignements/code_examples/seance9_d3js_cor.html">here</a>.
+It could be easily modified to add some text on the map such as the values taken by the indicator.
+</p>
+<p>
+<pre class="prettyprint">
+  &lt;div id="mapdiv"&gt;&lt;/div&gt;
+  &lt;script src="http://www.openlayers.org/api/OpenLayers.js"&gt;&lt;/script&gt;
+  &lt;script&gt;
+    map = new OpenLayers.Map("mapdiv");
+    map.addLayer(new OpenLayers.Layer.OSM());
+    var proj =  new OpenLayers.Projection("EPSG:4326");
+    
+    var size = new OpenLayers.Size(10,10);
+    var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+
+    var icon_rouge = new OpenLayers.Icon('http://www.xavierdupre.fr/blog/documents/carrerouge.png', size, offset);
+    var icon_vert = new OpenLayers.Icon('http://www.xavierdupre.fr/blog/documents/carrevert.png', size, offset);
+ 
+    var zoom=13;
+ 
+    var markers = new OpenLayers.Layer.Markers( "Markers" );
+    map.addLayer(markers);
+    
+    var lonLat0 = new OpenLayers.LonLat( 2.374340555 ,48.83713369 ).transform(proj, map.getProjectionObject() );
+    markers.addMarker(new OpenLayers.Marker(position=lonLat0,icon=icon_rouge.clone()));
+
+    var lonLat1 = new OpenLayers.LonLat( 2.301961227 ,48.85213621 ).transform(proj, map.getProjectionObject() );
+    markers.addMarker(new OpenLayers.Marker(position=lonLat1,icon=icon_rouge.clone()));
+
+    ...
+  &lt;/script&gt;    
+</pre>
+</p>
+<p>
+<b>2013/11/26:</b> you can find similar information on the following page -
+<a href="http://www.raetschlab.org/suppl/shogun">Shogun - A Large Scale Machine Learning Toolbox</a>.
+</p>
+<p>
+<b>2014/05/05:</b> before doing anything with OpenStreetMap, you should check the library
+<a href="http://leafletjs.com/">leafletjs</a>. Pretty nice.
+</p>
+
+</body>
+</html>

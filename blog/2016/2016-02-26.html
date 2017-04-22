@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Don't mix return and yield</title>
+<meta content="python, iterator, yield, return" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+When a function uses the keyword <tt>yield</tt>, it becomes a generator.
+A second function can accept this generator and produce another one as follows.
+</p>
+
+<pre class="brush: py">
+def generator(seq):
+    for v in range(0,3):
+        yield v+1
+        
+def generator2(gen):
+    for r in gen:
+        yield r
+
+for v in generator2(generator(3)):
+    print(v)
+</pre>
+
+<p><tt>[1]</tt></p>
+
+<pre class="prettyprint">
+1
+2
+3
+</pre>
+
+<p>
+This is not the only way to write this function. Python 3.5 has introduction 
+keyword <tt>yield from</tt>.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<pre class="brush: py">
+def generator(seq):
+    for v in range(0,3):
+        yield v+1
+
+def generator2(gen):
+    yield from gen
+        
+for v in generator2(generator(3)):
+    print(v)
+</pre>
+
+<p><tt>[2]</tt></p>
+
+<pre class="prettyprint">
+1
+2
+3
+</pre>
+
+<p>
+The use of keyword <tt>return</tt> would give the same result
+in that case.
+</p>
+
+<pre class="brush: py">
+def generator(seq):
+    for v in range(0,3):
+        yield v+1
+        
+def generator2(gen):
+    return gen
+
+for v in generator2(generator(3), False):
+    print(v)
+</pre>
+
+<p><tt>[3]</tt></p>
+
+
+<pre class="prettyprint">
+1
+2
+3
+</pre>
+
+<p>
+However, it is not recommended to use if you use both <tt>return</tt> 
+and <tt>yield</tt> in the same function. The second one works:
+</p>
+
+<pre class="brush: py">
+def generator(seq):
+    for v in range(0,3):
+        yield v+1
+        
+def generator2(gen, b):
+    if b :
+        return gen
+    else:
+        for r in gen:
+            yield r+1
+
+for v in generator2(generator(3), False):
+    print(v)
+</pre>
+
+<p><tt>[4]</tt></p>
+
+
+<pre class="prettyprint">
+2
+3
+4
+</pre>
+
+<p>
+But the first one does not work anymore.
+</p>
+
+<pre class="brush: py">
+def generator(seq):
+    for v in range(0,3):
+        yield v+1
+        
+def generator2(gen, b):
+    if b :
+        return gen
+    else:
+        for r in gen:
+            yield r+1
+
+for v in generator2(generator(3), True):
+    print(v)
+</pre>
+
+<p><tt>[5]</tt></p>
+
+
+<pre class="prettyprint">
+
+</pre>
+
+<p>
+You need to use <tt>yield from</tt>:
+</p>
+
+<pre class="brush: py">
+def generator(seq):
+    for v in range(0,3):
+        yield v+1
+        
+def generator2(gen, b):
+    if b :
+        yield from gen
+    else:
+        for r in gen:
+            yield r+1
+
+for v in generator2(generator(3), True):
+    print(v)
+</pre>
+
+<p><tt>[6]</tt></p>
+
+<pre class="prettyprint">
+1
+2
+3
+</pre>
+
+
+</body>
+</html>

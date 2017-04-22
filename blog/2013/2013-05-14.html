@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Programmation : gagner du temps maintenant ou plus tard ?</title>
+<meta content="python, best practice" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<p>
+Lorsqu'on programme, on veut avant tout arriver à construire un
+truc qui tourne et qui produise les résultats attendus. Ce faisant,
+certains raccourcis font parfois perdre du temps plus tard.
+</p>
+<p>
+Par exemple, pour éviter que les élèves passent par des étapes intermédiaires
+fastidieuses (lecture de fichiers, récupération de données), je leur propose 
+des fonctions toutes prêtes.
+<pre class="prettyprint lang-py">
+def download_data(dataset_name) :
+    ...
+    return dataset
+</pre>
+Comme il est parfois difficile d'écrire une fonction qui tourne 
+sur plusieurs environnement (chez moi, à l'école, sur différente
+versions de Python), les élèves doivent parfois bidouiller, quitte à
+aller au plus simple:
+<pre class="prettyprint">
+def download_data() :
+    ...
+    ... bidouille
+    ...
+    return dataset_qui_marce
+
+data1 = download_data()
+</pre>
+Et puis, on a besoin d'un autre jeux de données, le programme devient :
+<pre class="prettyprint">
+def download_data() :
+    ...
+    ... bidouille
+    ...
+    return dataset_qui_marce
+
+data1 = download_data()
+
+def download_data() :
+    ...
+    ... autre bidouille
+    ...
+    return dataset_qui_marche
+
+data2 = download_data()
+</pre>
+Et puis un troisième...
+</p>
+<p>
+Les élèves m'assurent que tout fonctionne comme prévu, je suggère
+de passer à l'étape suivante et de tester l'algorithme sur une dizaine
+de jeux de données. Comme je suppose qu'ils ont utilisé la fonction
+que je leur avais donnée, tester sur une dizaine de jeux de données
+revient dans mon esprit à écrire quelque chose de ce style :
+<pre class="prettyprint">
+datasetname  = [ "data1.txt", ... ]
+datasets = [ download_data(name) for name in datasetname ]
+</pre>
+Mais dans leur cas, la première réaction fut un soupir devant ma 
+requête quelque peu fastidieuse.
+</p>
+<p>
+Je pense que c'est à ce moment-là qu'on retient le mieux une 
+certaine façon d'organiser un programme qui fait perdre un peu de temps
+mais qui en fait gagner plus plus tard. L'inconvénient est que ce qu'on appris
+servira le plus souvent pour le projet suivant. Pour le projet courant, il 
+est trop tard pour tout changer avant le rendu.
+</p>
+<p>
+Laisser faire des erreurs ou donner une solution qui manquera de consistence
+tant qu'on n'aura pas saisi le fond du problème... 
+</p>
+<p>
+Ce n'est qu'un programme informatique. Cela dit, il faut parfois 
+une grosse crise pour chacun prenne conscience de l'étendue du problème.
+</p>
+</body>
+</html>

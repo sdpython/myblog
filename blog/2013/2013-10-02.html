@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Ways to show code in a blog post</title>
+<meta content="javascript, syntaxhilighter, blog, python" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+I found another way to show code in a blog. 
+It looks nicer than <a href="https://code.google.com/p/google-code-prettify/">prettify</a>.
+The only change is to indicate the langage you want to use to highlight
+you piece of code. It is called <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a>.
+</p>
+<p>
+You need to insert the following lines in the header:
+<pre class="brush: xml">
+&lt;link href="/js/shCore.css" rel="stylesheet" type="text/css" /&gt;
+&lt;link href="/js/shThemeDefault.css" rel="stylesheet" type="text/css" /&gt;
+&lt;script src="/js/shCore.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src="/js/shAutoloader.js" type="text/javascript"&gt;&lt;/script&gt;
+</pre>
+And those one at the end of the body:
+<pre class="brush: xml">
+&lt;script type="text/javascript"&gt;
+SyntaxHighlighter.autoloader(
+  'js jscript javascript /js/shBrushJScript.js',
+  'applescript /js/shBrushAppleScript.js'
+);
+ 
+SyntaxHighlighter.all();
+&lt;/script&gt;
+</pre>
+
+Then to highlight a piece of code:
+<pre class="brush: xml">
+&lt;pre class="brush: js"&gt;
+var your_code_here='simple try';
+&lt;/pre&gt;
+</pre>
+</p>
+<p>
+I also tweaked the css style to reduce the size in <i>shCore.css</i>:
+<pre class="brush: css">
+.syntaxhighlighter textarea {
+  ...
+  font-size: 0.98em !important;
+  ...
+}
+</pre>
+And to remove the green question mark, in <i>shThemeDefault.css</i>:
+<pre class="brush: css">
+.syntaxhighlighter .toolbar {
+  /*color: white !important;
+  background: #6ce26c !important;
+  border: none !important;*/
+  display: none;
+}
+</pre>
+</p>
+
+</body>
+</html>

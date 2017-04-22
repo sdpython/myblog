@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Quelques précisions sur les projets informatiques (finance)</title>
+<meta content="pyensae, python, finance" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+Lorsqu'on récupère les données depuis le site 
+<a href="https://fr.finance.yahoo.com/">Yahoo Finance !</a>, la dernière colonne
+est intitulé <i>Adj Close</i>. 
+</p>
+
+<center>
+<img src="documents/bnpadjclose.png" alt="cours de la BNP" />
+</center>
+
+<p>
+La série <i>Close</i> fait apparaître un saut le 20 février 2002. A cette date,
+la BNP a divisé le cours de ses actions par deux et multiplié le nombre de titre par deux.
+La colonne <i>Adj Close</i> corrige ces effets. Vous en saurez un peu plus en 
+lisant cette page <a href="https://help.yahoo.com/kb/finance/SLN2311.html?impressions=true">About historical prices</a>.
+</p>
+<p>
+J'ai également mis à jour le module <a href="http://www.xavierdupre.fr/app/pyensae/helpsphinx/">pyensae</a>
+et cette <a href="http://www.xavierdupre.fr/app/pyensae/helpsphinx/_downloads/pyensae%20StockPrices.html">page d'exemples</a>. 
+Il faut donc le réinstaller à nouveau pour bénéficier des améliorations.
+Il est maintenant possible
+de tracer plusieurs courbes à la fois sur le même graphique, de récupérer un sous-ensemble
+de la série. Enfin, je remets ici le lien vers le document 
+<a href="http://www.xavierdupre.fr/blog/documents/finance_autostrat.pdf">Petit exposé sur les algorithmes de trading</a>.
+</p>
+
+
+</body>
+</html>

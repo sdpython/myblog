@@ -1,0 +1,19 @@
+.node {
+	fill: blue;
+	stroke: magenta;
+}
+
+#chart {
+	font-family: 'Asap'; sans-serif;
+	width: 420;
+	height: 465;
+}
+
+.link {
+	stroke-width: 1px;
+	stroke: black;
+}
+
+#forceLayout {
+}
+

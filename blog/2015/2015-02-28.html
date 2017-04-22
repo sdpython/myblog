@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Automated build on Travis for a python module</title>
+<meta content="python, build, travis, automation" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+
+Many python modules display a small logo
+which indicates the build status: 
+<a href="https://travis-ci.org/sdpython/pyquickhelper"><img src="https://travis-ci.org/sdpython/pyquickhelper.svg?branch=master" /></a>. 
+I set up the same for the module
+<a href="">pyquickhelper</a> which is held on <a href="https://github.com/sdpython/pyquickhelper">github/pyquickhelper</a>.
+Travis installs packages before building the modules.
+The first step is to gather all the dependencies:
+</p>
+<pre class="prettyprint">
+pip freeze > requirements.txt
+</pre>
+<p>
+I replaced <tt>==</tt> by <tt>&gt;=</tt> and removed some of them, I got:
+</p>
+<pre class="prettyprint">
+Cython>=0.20.2
+Flask>=0.10.1
+Flask-SQLAlchemy>=2.0
+Jinja2>=2.7.3
+Markdown>=2.4.1
+...
+</pre>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+The full file is available at: <a href="https://github.com/sdpython/pyquickhelper/blob/master/requirements.txt">requirements.txt</a>.
+Next step is to define which instructions Travis needs to run to
+get the build done. These steps need to be defined
+in a file <a href="https://github.com/sdpython/pyquickhelper/blob/master/.travis.yml">.travis.yml</a>.
+I followed the instructions: <a href="http://docs.travis-ci.com/user/languages/python/">Getting started</a>.
+For my module, I just run the unit tests on python 3.4:
+</p>
+
+<pre class="prettyprint">
+language: python
+python:
+    - "3.4"
+install: 
+    - pip install -r requirements.txt
+script:
+    - python setup.py unittests
+    - python setup.py build_sphinx
+</pre>
+<p>
+Once the build is over, I could add a link in <tt>README.rst</tt>:
+</p>
+
+<pre class="prettyprint">
+.. image:: https://travis-ci.org/sdpython/pyquickhelper.svg?branch=master
+    :target: https://travis-ci.org/sdpython/pyquickhelper
+    :alt: Build status
+</pre>
+
+<p>
+Unfortunately, these settings fail sometimes when others
+dependencies are needed. Some modules require
+a fortran compilation and I did not find
+anything on that subject yet except maybe 
+to use Anaconda distribution on Travis
+<a href="http://conda.pydata.org/docs/travis.html">Using Conda with Travis CI</a>
+(one example I found: <a href="https://gist.github.com/dan-blanchard/7045057">.travis.yml</a>).
+</p>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Using pythonnet</title>
+<meta content="python, pythonnet, windows" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+I migrated over Windows 8.1 and I realized my version of 
+pythonnet for Python did not work anymore. I got the following
+error:
+
+<pre class="prettyprint">
+ImportError: dynamic module does not define init function (PyInit_clr)
+</pre>
+
+I did not really try to understand but I knew I had to access the sources first because 
+the official website of <a href="http://pythonnet.sourceforge.net/">pythonnet</a> 
+does not provide any version for python 3.x. 
+So I looked for pythonnet on github, I found 
+<a href="https://github.com/renshawbay/pythonnet">this</a>. 
+I got the sources which did not compile on the first try unless 
+I apply the three following modifications:
+<ul>
+<li>Download <a href="http://www.mono-project.com/Main_Page">Mono</a> and 
+<a href="http://www.nunit.org/">NUnit</a>, and replace <i>using Mono.Unix</i> by <i>Mono.Posix</i> 
+(+ adding <i>Mono</i> and <i>Mono.Posix</i> as references),</li>
+<li>Add the constant <i>PYTHON33</i> on every Project and every version,</li>
+<li>Remove the definition of the constant <i>DEBUG_PRINT</i>.</li>
+</ul>
+
+After the compilation completed (on Windows 8.1 + Visual Studio 2012, 2013), 
+I could use the two files <i>clr.pyd</i> and <i>Python.Runtime.dll</i> the same way.
+There were some others modifications I do not remember exactly. Anyway, my version
+is located here <a href="https://github.com/sdpython/pythonnet">sdpython/pythonnet</a>.
+</p>
+
+</body>
+</html>

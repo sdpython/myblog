@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Magic command %%CS for IPython Notebook</title>
+<meta content="python, pythonnet, ipython, magic command, CSharp" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+The <a href="http://ipython.org/notebook.html">notebooks</a> IPython offer
+a couple of <a href="http://ipython.org/ipython-doc/dev/interactive/tutorial.html">magic command</a>
+to run others language such <a href="http://nbviewer.ipython.org/github/ipython/ipython/blob/3607712653c66d63e0d7f13f073bde8c0f209ba8/docs/examples/notebooks/rmagic_extension.ipynb">%%R</a>,
+<a href="http://nbviewer.ipython.org/github/ipython/ipython/blob/d835d46dcc50043971b4a9915398bad1b5d63648/docs/examples/notebooks/octavemagic_extension.ipynb">%%octave</a>
+or <a href="http://nbviewer.ipython.org/urls/gist.githubusercontent.com/Ismael-VC/ae10c11d535f6741d8be/raw/4fa2f4c40fa7acc8c6e440ef34afd148b7c3f7d2/julia_magic.ipynb">%%julia</a>.
+I found one option for <a href="http://nbviewer.ipython.org/github/BayardRock/IfSharp/blob/master/Feature%20Notebook.ipynb">F#</a>
+but nothing on something like <tt>%%CS</tt>. However, magic commands are quite easy to handle. 
+It is not that difficult to add one which allows me to do that:
+</p>
+
+<pre class="prettyprint">
+%%CS mypower System.dll
+public static double mypower(double x, double y)
+{
+    if (y == 0) return 1.0 ;
+    return System.Math.Pow(x,y) ;
+}
+</pre>
+
+<p>
+To be able to call it that way:
+</p>
+
+<pre class="brush: py">
+mypower(3.0,3.0)
+</pre>
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+<a href="https://github.com/renshawbay/pythonnet">pythonnet</a> offers a simple way
+to call C# from a Python program. Based on that, creating a magic command requires three
+parts. The first one is a C# DLL which dynamically compiles a code.
+</p>
+
+<pre class="prettyprint">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.CodeDom.Compiler;
+using Microsoft.CSharp;
+using System.Reflection;
+
+namespace MagicIPython
+{
+    public static class MagicCS
+    {
+        private const string embedCode = @"
+                    namespace MagicCSIPython
+                    {0}                
+                        public static class MagicCSFunctions_{2}
+                        {0}  
+                            {3}
+                        {1}
+                    {1}
+                    ";
+
+        public static MethodInfo CreateFunction(string functionName, string code, string[] dependencies)
+        {
+            CSharpCodeProvider provider = new CSharpCodeProvider();
+            CompilerParameters parameters = new CompilerParameters();
+
+            if (dependencies != null)
+            {
+                foreach (var d in dependencies)
+                    parameters.ReferencedAssemblies.Add(d);
+            }
+
+            parameters.GenerateInMemory = true;
+            parameters.GenerateExecutable = false;
+
+            code = string.Format(embedCode, "{", "}", functionName, code);
+
+            CompilerResults results = provider.CompileAssemblyFromSource(parameters, code);
+            if (results.Errors.HasErrors)
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (CompilerError error in results.Errors)
+                {
+                    sb.AppendLine(String.Format("Error ({0}): {1}", error.ErrorNumber, error.ErrorText));
+                }
+                throw new InvalidOperationException(sb.ToString());
+            }
+            Type binaryFunction = results.CompiledAssembly.GetType(string.Format("MagicCSIPython.MagicCSFunctions_{0}", functionName));
+            return binaryFunction.GetMethod(functionName);
+        }
+
+        public static object RunFunction(MethodInfo function, object[] parameters)
+        {
+            return function.Invoke(null, parameters);
+        }
+    }
+}
+</pre>
+
+<p>
+The second part consists in a wrapper around this DLL
+</p>
+
+<pre class="brush: py">
+def create_cs_function(name, code, dependencies = None):
+    AddReference("MagicIPython.dll")
+    from MagicIPython import MagicCS
+    from System import String
+    from System.Collections.Generic import List
+
+    if dependencies is not None and len(dependencies) > 0 :
+        myarray = List[String]()
+        for i,d in enumerate(dependencies):
+            myarray.Add( d )
+        myarray = myarray.ToArray()
+    else:
+        myarray = List[String]().ToArray()
+    
+    obj = MagicCS.CreateFunction(name, code, myarray)
+    return lambda *params: run_cs_function(obj, params)
+
+def run_cs_function(func, params):
+    AddReference("MagicIPython.dll")
+    from MagicIPython import MagicCS
+    from System.Collections.Generic import List
+    from System import Object
+
+    par = List[Object]()
+    for p in params :
+        par.Add ( p )
+    return MagicCS.RunFunction(func, par.ToArray())
+</pre>
+
+<p>
+And the last one is the magic command itself:
+</p>
+
+<pre class="brush: py">
+import sys
+from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
+from IPython.core.magic import line_cell_magic
+from IPython.core.display import HTML                                
+
+@magics_class
+class CustomMagics(Magics):
+
+    @cell_magic
+    def CS(self, line, cell):
+        """
+        Defines command ``%%CS``.
+        """
+        if not sys.platform.startswith("win"):
+            raise Exception("Works only on Windows.")
+        
+        from ..tips_tricks.pythoncs import create_cs_function
+        if line is not None:
+            spl = line.strip().split(" ")
+            name = spl[0]
+            deps = " ".join(spl[1:]) if len(spl) > 1 else ""
+            deps = deps.split(";")
+            
+        if name == "-h": 
+            print(  "Usage: "
+                    "   %%CS function_name dependency1;dependency2"
+                    "   function code")
+        else :
+            try:
+                f = create_cs_function(name, cell, deps)
+            except Exception as e :
+                print(e)
+                return 
+            if self.shell is not None:
+                self.shell.user_ns[name] = f
+            return f
+
+def register_magics():
+    """
+    register magics function, can be called from a notebook
+    """
+    ip = get_ipython()
+    ip.register_magics(CustomMagics)
+</pre>
+
+<p>
+After that, what's left is to use it in a notebook: 
+<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx/notebooks/python_csharp.html">Python et C Sharp</a>
+</p>
+
+</body>
+</html>

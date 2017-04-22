@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Styles conditionnels en VBA sous Excel</title>
+<meta content="Excel, VBA, Evernote" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+J'avais besoin de créer un tableau avec une ligne de couleur différente
+pour chaque jour de la semaine. J'ai d'abord essayé de me passer de programmation
+en VBA car je me suis dit que c'est le genre de choses que je pourrais
+trouver sans un menu quelconque. J'ai commencé à chercher dans 
+les styles personnalisés, puis sur Internet mais j'ai finalement abandonné.
+Je suis passé au VBA et ça m'a pris une dizaine de minutes. J'ai utilisé la première 
+ligne pour les couleurs que je souhaitais (j'ai fait ça très vite, ce n'est pas
+du meilleur goût) puis j'ai composé le tableau, une première colonne
+pour les dates, une seconde qui contient le jour de la semaine
+(obtenu par formule). C'est ce numéro qui indiquera la couleur.
+</p>
+
+<center>
+<img src="documents/excel_couleur_ligne.png" />
+</center>
+
+<p>
+Puis j'ai écrit la macro suivante :
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<pre class="brush: vb">
+Sub Couleur()
+    ' on peut se passer de la première ligne en
+    ' remplaçant les lignes qui suivent par la valeur des couleurs
+    couleur1 = Range("A1").Interior.Color
+    couleur2 = Range("B1").Interior.Color
+    couleur3 = Range("C1").Interior.Color
+    couleur4 = Range("D1").Interior.Color
+    couleur5 = Range("E1").Interior.Color
+    couleur6 = Range("F1").Interior.Color
+    couleur7 = Range("G1").Interior.Color
+    Dim Couleur
+    Couleur = couleur1
+    For i = 3 To 121   ' modifier ici pour le nombre de lignes
+        c = Range("B" + Trim(Str(i))).value
+        If c = 1 Then Couleur = couleur7
+        If c = 2 Then Couleur = couleur1
+        If c = 3 Then Couleur = couleur2
+        If c = 4 Then Couleur = couleur3
+        If c = 5 Then Couleur = couleur4
+        If c = 6 Then Couleur = couleur5
+        If c = 7 Then Couleur = couleur6
+        Range("A" + Trim(Str(i)) + ":C" + Trim(Str(i))).Select   ' modifier ici pour le nombre de colonnes
+        With Selection.Interior
+            .Pattern = xlSolid
+            .PatternColorIndex = xlAutomatic
+            .Color = Couleur
+            .TintAndShade = 0
+            .PatternTintAndShade = 0
+        End With
+        Next i
+End Sub
+</pre>
+
+<p>
+Elle est très spécifique à ma feuille mais elle est facile à adaptée 
+à d'autres dimensions. Mon second problème consistait à recopier ce tableau
+dans <a href="https://evernote.com/intl/fr/">Evernote</a>. Et là, surprise,
+ça ne marche pas. J'ai essayé plein de choses, y compris transformer le 
+tableau au format HTML (voir <a href="http://www.xavierdupre.fr/blog/2013-09-08_nojs.html">Convertir un tableau Excel au format HTML</a>).
+La solution la plus simple est finalement de coller le tableau d'abord sous Word puis de le
+copier à nouveau depuis Word pour le coller dans Evernote. De ce point de vue-là, j'ai
+une préférence pour <a href="http://office.microsoft.com/fr-fr/microsoft-onenote-logiciel-de-prise-de-notes-FX010048770.aspx">OneNote</a>.
+Les copier/coller fonctionnent mieux. En définitive, tout ceci n'est pas très intéressant,
+mais si je ne le note pas quelque part, je vais encore passer du temps
+à le chercher.
+</p>
+
+</body>
+</html>

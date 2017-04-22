@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Sphinx themes and presentation</title>
+<meta content="python, sphinx, presentation, theme" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+
+<p>
+A year ago, I was looking for tools to generate automated help for a Python module.
+However, I was looking a tool able to use the javadoc style because most
+of my old code uses it. <a href="http://www.stack.nl/~dimitri/doxygen/">Doxygen</a> 
+is nice but the unavoidable tool is now 
+<a href="http://sphinx-doc.org/">Sphinx</a> (+ <a href="http://sphinx-doc.org/ext/autodoc.html">autodoc</a>). 
+I will not explain what I did because
+I did it quick (and wrong). The right way to do it is to use
+the following Sphinx extension: <a href="http://michaeljones.github.io/breathe/">Breathe</a>.
+Anyway, I do not remember all the issues I had when trying Sphinx 
+but I found the documentation more usable. So I played a little with some theme 
+I was able to find:
+
+<ul>
+<li><a href="http://pythonhosted.org/sphinxjp.themes.basicstrap/">basicstrap</a> 
+        (<a href="http://www.xavierdupre.fr/app/pyensae/helpsphinx/index.html">example</a>)</li>
+        
+<li><a href="https://pypi.python.org/pypi/solar-theme/1.3.2">solar theme</a> 
+        (<a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html">example</a>)</li>
+        
+<li><a href="https://github.com/hachibeeDI/Sphinx-hachibee-theme/">Sphinx-hachibee-theme</a> 
+        (<a href="http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html">example</a>)</li>
+        
+<li><a href="http://pythonhosted.org/sphinxjp.themes.sphinxjp/">sphinxjp</a> 
+        (<a href="http://www.xavierdupre.fr/app/pymmails/helpsphinx/generatedoc.html">example</a>)</li>
+        
+<li><a href="https://pypi.python.org/pypi/wild_sphinx_theme">wild_sphinx_theme</a> 
+        (<a href="http://www.xavierdupre.fr/app/python_project_template/helpsphinx/index.html">example</a>)</li>
+        
+<li><a href="http://sphinx-readable-theme.readthedocs.org/en/latest/">sphinx_readable_theme</a> 
+        (<a href="http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/index.html">example</a>)</li>
+        
+<li><a href="https://pypi.python.org/pypi/sphinx_rtd_theme">sphinx_rtd_theme</a> 
+        (<a href="http://www.xavierdupre.fr/app/pyhome3/helpsphinx/index.html">example</a>)</li>
+        
+<li><a href="http://pythonhosted.org/cloud_sptheme/cloud_theme.html">Cloud Sphinx Theme</a> 
+        (<a href="http://www.xavierdupre.fr/app/pysqllike/helpsphinx/index.html">example</a>)</li>
+</ul>
+</p>
+
+<p>
+Another thing I did wrong is the way I made the design of this blog.
+I implemented many thing (keywords generation, month aggregation...).
+But today, I would try first to look at <a href="http://docs.getpelican.com/en/3.3.0/">Pelican</a>
+or even directly use Sphinx which already does many things about indexes.
+If you look on the internet about <i>sphinx blog theme</i>, you would find
+some examples like the following one: 
+<a href="http://tinkerer.me/">Tinkerer</a>.
+You can even find theme to do presentation (instead of PowerPoint I suppose):
+</p>
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+<ul>
+<li><a href="http://pythonhosted.org/sphinxjp.themes.impressjs/#/installation">impressjs</a></li>
+<li><a href="http://pythonhosted.org/sphinxjp.themes.revealjs/#/">sphinxjp.themes.revealjs</a> (on <a href="https://github.com/tell-k/sphinxjp.themes.revealjs">github</a>)</li>
+<li><a href="http://pythonhosted.org/sphinxjp.themes.htmlslide/#Page1">HtmlSlide</a></li>
+</ul>
+I tried the module <i>sphinxjp.themes.revealjs</i>. It is based
+on a javascript framework <a href="http://lab.hakim.se/reveal-js/#/">Reveal.js</a>
+and has many nice examples. So, I installed the version
+for Sphinx from <a href="https://github.com/sdpython/sphinxjp.themes.revealjs">here</a>
+(I had to make a fix) or you can execute the following line:
+</p>
+
+<pre class="brush: py">
+from pymyinstall import ModuleInstall
+ModuleInstall("sphinxjp.themes.revealjs", "github", "sdpython").install(temp_folder="download")
+</pre>
+
+<p>
+Then, a new Sphinx project needs to be created by running the two 
+following instructions from a command line window 
+and in the folder where you want to create
+the presentation:
+</p>
+
+<pre class="prettyprint">
+set path=%path%;c:\Python33;c:\Python33\Scripts
+sphinx-quickstart
+</pre>
+
+<p>
+It requires to answer many easy questions. Once, it is done, you
+will have two folders <tt>source</tt> and <tt>build</tt>.
+To build the documentation/presentation, you just need to run:
+</p>
+
+<pre class="prettyprint">
+make html
+</pre>
+
+<p>
+The presentation will start from <tt>build/html/index.html</tt> which
+should have been created. It is not the presentation we expect because
+we did not tell Sphinx to choose this theme. That can be done by modifying
+the file <tt>source/conf.py</tt> as follows 
+(see also <a href="https://github.com/tell-k/sphinxjp.themes.revealjs">here</a>):
+</p>
+
+<pre class="brush: py">
+extensions = [ 'sphinxjp.themes.revealjs', ]
+html_theme = 'revealjs'
+html_use_index = False
+</pre>
+
+<p>
+The setup is done. The presentation can be build by modifying the file 
+<tt>source/index.rst</tt>. This is my example which you can find 
+<a href="documents/try_reveals_html/index.html">here</a>:
+</p>
+
+<pre class="prettyprint">
+=========================
+My first try with reveals
+=========================
+
+.. revealjs:: A quick try with sphinxjp.themes.revealjs
+
+    Let's how it goes
+
+ .. rv_small::
+
+    Created by `Xavier Dupré &lt;http://www.xavierdupre.fr/blog/2014-02-01_nojs.html&gt;`_ 
+
+.. revealjs:: What's up
+
+    Let's see how this text is displayed.
+    And what about these bullet points:
+        - bullet 1
+        - bullet 2
+        - bullet 3
+
+    .. rv_note::
+
+        hidden note
+
+.. revealjs::
+
+    .. revealjs:: The first slide comes horizontally.
+
+        The first slide of a pile.
+
+    .. revealjs:: The second slide comes vertically.
+
+        Well, do you remember where you are.
+        
+    .. revealjs:: The third slide still comes vertically.
+
+        I'm lost
+        
+.. revealjs::
+
+    .. revealjs:: Conlusion
+
+        I like it
+
+    .. revealjs:: Plus
+
+        It is easy to put online.
+
+</pre>
+
+
+<p>
+Or you can see that here:
+</p>
+
+<iframe src="documents/try_reveals_html/index.html" width="100%" height="400px" />
+
+</body>
+</html>

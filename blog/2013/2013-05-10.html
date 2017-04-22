@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Installer un package simplement avec Python : pip</title>
+<meta content="python, references, pip, setuptools, distribute, virtualenv" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+Pour installer les packages ou modules sous Python, il est possible
+d'utiliser un installer (.exe ou .msi sous Windows), de télécharger 
+les sources puis de taper depuis une fenêtre de commande :
+<pre class="prettyprint">
+python setup.py install
+</pre>
+Lorsque le package contient des extensions à compiler, il 
+faut parfois taper. Par défaut, c'est le compilateur 
+<a href="http://www.mingw.org/">MingGW</a>
+qui
+utilisé ou gcc sous Linux :
+<pre class="prettyprint">
+python setup.py build
+python setup.py install
+</pre>
+</p>
+<p>
+Python facilite l'installation en évitant l'étape de téléchargement. 
+Il faut pour cela d'abord intaller deux packages (comme mentionné ci-dessus) :
+<ul>
+<li><a href="https://pypi.python.org/pypi/distribute">distribute</a></li>
+<li><a href="https://github.com/pypa/pip">pip</a> (ou ici
+<a href="https://pypi.python.org/pypi/pip">pip from pypy</a>)</li>
+</ul>
+Ensuite, il suffit de se placer dans le répertoire <i>&lt;python&gt;/Scripts</i> et 
+taper :
+<pre class="prettyprint">
+pip install &lt;module_name&gt;
+</pre>
+
+L'avantage de cette méthode est la gestion automatique 
+des dépedendances qui sont installées si besoin.
+(voir plus bas pour la sortie d'écran après l'exécution de la commande
+<i>pip install jinja2</i>).
+</p>
+<p>
+<b>Remarque :</b> certains modules (<i>numpy</i>) contiennent des 
+fichiers C++ qui devront être compilés. Cette compilation nécessite
+l'installation de <a href="http://www.mingw.org/">MingGW</a> et
+la définition de certaines variables environnement. Il est préférable
+d'utiliser les setups tout préparés qui incluent les mêmes fichiers déjà compilés.
+</p>
+
+<p>Tester une installation</p>
+<p>
+Parfois, on veut juste tester un module et ne pas dégrader son
+environnement. C'est possible avec le module 
+<a href="http://www.virtualenv.org/">virtualenv</a>. Il faut d'abord l'installer :
+<pre>
+pip install virtualenv
+</pre>
+Ensuite, on crée un répertoire pour les différents environnements
+virtuels :
+<pre class="prettyprint">
+mkdir c:\python33vir
+</pre>
+On crée un environnement virtuel :
+<pre class="prettyprint">
+virtualenv c:\python33vir\virt1 --system-site-packages
+</pre>
+L'option <i>--system-site-packages</i> permet d'utiliser les
+modules déjà installés dans le répertoire de Python.
+Puis on va dans le répertoire <i>python33vir/vir1/Script</i>, on peut installer 
+le module à tester :
+<pre class="prettyprint">
+pip install jinja2
+</pre>
+Si vous obtenez une erreur (<i>bad sum</i>), il est préférable de recommencer 
+avant de chercher une autre erreur. Il suffit ensuite d'utiliser
+le programme <i>python33vir/vir1/Script/python.exe</i> (ou <i>pythonw.exe</i>)
+pour exécuter ses propres scripts.
+</p>
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p><b>Affichage après <i>pip install virtualenv</i></b></p>
+<p>
+<pre>
+C:\Python33\Scripts>pip install virtualenv
+Downloading/unpacking virtualenv
+  Downloading virtualenv-1.9.1.tar.gz (2.0MB): 2.0MB downloaded
+  Running setup.py egg_info for package virtualenv
+
+    warning: no previously-included files matching '*' found under directory 'docs\_templates'
+    warning: no previously-included files matching '*' found under directory 'docs\_build'
+Installing collected packages: virtualenv
+  Running setup.py install for virtualenv
+
+    warning: no previously-included files matching '*' found under directory 'docs\_templates'
+    warning: no previously-included files matching '*' found under directory 'docs\_build'
+    Installing virtualenv-script.py script to C:\Python33\Scripts
+    Installing virtualenv.exe script to C:\Python33\Scripts
+    Installing virtualenv.exe.manifest script to C:\Python33\Scripts
+    Installing virtualenv-3.3-script.py script to C:\Python33\Scripts
+    Installing virtualenv-3.3.exe script to C:\Python33\Scripts
+    Installing virtualenv-3.3.exe.manifest script to C:\Python33\Scripts
+Successfully installed virtualenv
+Cleaning up...
+
+C:\Python33\Scripts>
+</pre>
+</p>
+
+<p><b>Affichage après <i>pip install jinja2</i></b></p>
+<p>
+<pre>
+C:\Python33\Scripts>pip install jinja2
+Downloading/unpacking jinja2
+  Downloading Jinja2-2.6.tar.gz (389kB): 389kB downloaded
+  Running setup.py egg_info for package jinja2
+
+    warning: no previously-included files matching '*' found under directory 'docs\_build'
+    warning: no previously-included files matching '*.pyc' found under directory 'jinja2'
+    warning: no previously-included files matching '*.pyc' found under directory 'docs'
+    warning: no previously-included files matching '*.pyo' found under directory 'jinja2'
+    warning: no previously-included files matching '*.pyo' found under directory 'docs'
+Installing collected packages: jinja2
+  Running setup.py install for jinja2
+
+    warning: no previously-included files matching '*' found under directory 'docs\_build'
+    warning: no previously-included files matching '*.pyc' found under directory 'jinja2'
+    warning: no previously-included files matching '*.pyc' found under directory 'docs'
+    warning: no previously-included files matching '*.pyo' found under directory 'jinja2'
+    warning: no previously-included files matching '*.pyo' found under directory 'docs'
+    Fixing build\lib\jinja2\bccache.py build\lib\jinja2\compiler.py build\lib\jinja2\constants.py build\lib\jinja2\debug.py build\lib\jinja2\defaults.py build\lib\jinja2\environment.py build\lib\jinja2\exceptions.py build\lib\jinja2\ext.py build\lib\jinja2\filters.py build\lib\jinja2\lexer.py build\
+lib\jinja2\loaders.py build\lib\jinja2\meta.py build\lib\jinja2\nodes.py build\lib\jinja2\optimizer.py build\lib\jinja2\parser.py build\lib\jinja2\runtime.py build\lib\jinja2\sandbox.py build\lib\jinja2\tests.py build\lib\jinja2\utils.py build\lib\jinja2\visitor.py build\lib\jinja2\_stringdefs.py bu
+ild\lib\jinja2\__init__.py build\lib\jinja2\testsuite\api.py build\lib\jinja2\testsuite\core_tags.py build\lib\jinja2\testsuite\debug.py build\lib\jinja2\testsuite\doctests.py build\lib\jinja2\testsuite\ext.py build\lib\jinja2\testsuite\filters.py build\lib\jinja2\testsuite\imports.py build\lib\jinj
+a2\testsuite\inheritance.py build\lib\jinja2\testsuite\lexnparse.py build\lib\jinja2\testsuite\loader.py build\lib\jinja2\testsuite\regression.py build\lib\jinja2\testsuite\security.py build\lib\jinja2\testsuite\tests.py build\lib\jinja2\testsuite\utils.py build\lib\jinja2\testsuite\__init__.py buil
+d\lib\jinja2\testsuite\res\__init__.py build\lib\jinja2\_markupsafe\tests.py build\lib\jinja2\_markupsafe\_bundle.py build\lib\jinja2\_markupsafe\_constants.py build\lib\jinja2\_markupsafe\_native.py build\lib\jinja2\_markupsafe\__init__.py
+    Skipping implicit fixer: buffer
+    Skipping implicit fixer: idioms
+    Skipping implicit fixer: set_literal
+    Skipping implicit fixer: ws_comma
+    Fixing build\lib\jinja2\bccache.py build\lib\jinja2\compiler.py build\lib\jinja2\constants.py build\lib\jinja2\debug.py build\lib\jinja2\defaults.py build\lib\jinja2\environment.py build\lib\jinja2\exceptions.py build\lib\jinja2\ext.py build\lib\jinja2\filters.py build\lib\jinja2\lexer.py build\
+lib\jinja2\loaders.py build\lib\jinja2\meta.py build\lib\jinja2\nodes.py build\lib\jinja2\optimizer.py build\lib\jinja2\parser.py build\lib\jinja2\runtime.py build\lib\jinja2\sandbox.py build\lib\jinja2\tests.py build\lib\jinja2\utils.py build\lib\jinja2\visitor.py build\lib\jinja2\_stringdefs.py bu
+ild\lib\jinja2\__init__.py build\lib\jinja2\testsuite\api.py build\lib\jinja2\testsuite\core_tags.py build\lib\jinja2\testsuite\debug.py build\lib\jinja2\testsuite\doctests.py build\lib\jinja2\testsuite\ext.py build\lib\jinja2\testsuite\filters.py build\lib\jinja2\testsuite\imports.py build\lib\jinj
+a2\testsuite\inheritance.py build\lib\jinja2\testsuite\lexnparse.py build\lib\jinja2\testsuite\loader.py build\lib\jinja2\testsuite\regression.py build\lib\jinja2\testsuite\security.py build\lib\jinja2\testsuite\tests.py build\lib\jinja2\testsuite\utils.py build\lib\jinja2\testsuite\__init__.py buil
+d\lib\jinja2\testsuite\res\__init__.py build\lib\jinja2\_markupsafe\tests.py build\lib\jinja2\_markupsafe\_bundle.py build\lib\jinja2\_markupsafe\_constants.py build\lib\jinja2\_markupsafe\_native.py build\lib\jinja2\_markupsafe\__init__.py
+    Skipping implicit fixer: buffer
+    Skipping implicit fixer: idioms
+    Skipping implicit fixer: set_literal
+    Skipping implicit fixer: ws_comma
+Successfully installed jinja2
+Cleaning up...
+C:\Python33\Scripts>
+</pre>
+</p>
+</body>
+</html>

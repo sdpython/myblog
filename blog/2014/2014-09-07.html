@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Four issues I had when using IPython, R and rmagic</title>
+<meta content="python, R, ipython, rmagic, notebook" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+I wanted to use <i>R</i> through <i>IPython notebook</i> to mix Python and R.
+I did it on Windows and I guess it requires to be more careful.
+I went through four issues.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p><b>%load_ext rpy2.ipython, not %rmagic</b></p>
+<p>
+I'm using the latest version of IPython 2.2. Many examples on the web use <tt>%rmagic</tt>.
+But it only works with <tt>%load_ext rpy2.ipython</tt>.
+</p>
+
+<p><b>ImportError: DLL load failed</b></p>
+<p>
+<a href="http://starship.python.net/crew/mhammond/win32/Downloads.html">pywin32</a> sometimes
+fails to find a DLL. A path is missing in the environment variable <tt>PATH</tt>.
+So I made a function which fixes that:
+<a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/pyquickhelper/helpgen/utils_pywin32.html#helpgen.utils_pywin32.import_pywin32">import_pywin32</a>.
+Just look at the code to see what is missing.
+The function must be called before calling R.
+</p>
+
+<p><b>PermissionError</b></p>
+<p>
+Versions of <a href="http://rpy.sourceforge.net/">rpy2</a>, Python, R must match.
+On Windows, we install setup most of the time to avoid compilation issues.
+The setup of <a href="http://rpy.sourceforge.net/">rpy2</a> is built for a specific version
+of Python and R. They must match. On Windows, check <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#rpy2">#rpy2</a>.
+</p>
+
+<p><b>Missing packages</b></p>
+<p>
+I needed a package not installed by default with R (ie <a href="http://cran.r-project.org/web/packages/actuar/index.html">actuar</a>).
+The instruction <tt>library ("actuar")</tt> does not raise an exception when it fails.
+The output is just missing if you have any expected prints or graphs.
+That's why the following instruction must be ran once just to install it: <tt>install.packages("actuar")</tt>.
+So if you use a package and if you see unexpected things, just check all packages you need are installed.
+</p>
+
+<p><b>Missing output</b></p>
+<p>
+The R function <tt>print</tt> displays information in server command windows and not in the notebook.
+I did not find a way to get it back by redirecting it unless it is in a file with the package <tt>sink</tt>.
+</p>
+
+</body>
+</html>

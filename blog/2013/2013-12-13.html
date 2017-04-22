@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Quelques exercices de préparation à l'examen (3)</title>
+<meta content="python, ENSAE, programmation, exercice" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+On veut calculer la longueur moyenne des mots ayant le même nombre de voyelles. Le résultat
+est un dictionnaire où chaque élément vérifie :
+<ul>
+<li>La clé est le nombre de voyelles.</li>
+<li>La valeur est la moyenne des mots du texte ayant le même nombre de voyelles.</li>
+</ul>
+La fonction qui compte le nombre de voyelles d'un mot est décrite sur cette page :
+<a href="http://www.xavierdupre.fr/blog/2013-12-12_nojs.html">exercice 2</a>.
+</p>
+<pre class="brush: py">
+# source du texte : http://www.gutenberg.org/files/1567/1567-h/1567-h.htm#link2H_4_0017
+texte = """They are rattling breakfast plates in basement kitchens,
+And along the trampled edges of the street
+I am aware of the damp souls of housemaids
+Sprouting despondently at area gates.
+The brown waves of fog toss up to me
+Twisted faces from the bottom of the street,
+And tear from a passer-by with muddy skirts
+An aimless smile that hovers in the air
+And vanishes along the level of the roofs.""".replace("\n"," ").lower().split()
+
+def moyenne_longueur_pour_chaque_nombre_de_voyelles(mots) :
+    ...
+    return un dictionnaire 
+</pre>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p><b>Solution proposée</b></p>
+
+<p>
+On utilise les fonctions de l'article précédent : 
+<a href="http://www.xavierdupre.fr/blog/2013-12-12_nojs.html">2013-12-12_nojs.html</a>.
+</p>
+
+<pre class="brush: py">
+# source du texte : http://www.gutenberg.org/files/1567/1567-h/1567-h.htm#link2H_4_0017
+texte = """They are rattling breakfast plates in basement kitchens,
+And along the trampled edges of the street
+I am aware of the damp souls of housemaids
+Sprouting despondently at area gates.
+The brown waves of fog toss up to me
+Twisted faces from the bottom of the street,
+And tear from a passer-by with muddy skirts
+An aimless smile that hovers in the air
+And vanishes along the level of the roofs.""".replace("\n"," ").lower().split()
+
+def est_voyelle(c):
+    d = { "a":1, "e":1, "i":1, "o":1, "u":1, "y":1 }
+    return d.get(c, 0)
+    
+def compte_voyelles(mot):
+    nb = 0
+    for c in mot :
+        nb += est_voyelle(c)
+    return nb
+
+def moyenne_longueur_pour_chaque_nombre_de_voyelles(mots) :
+    somme_longueur = {}
+    nombre_mots    = {}
+    for mot in mots :
+        n = compte_voyelles(mot)
+        somme_longueur[n] = somme_longueur.get(n, 0) + len(mot)
+        nombre_mots   [n] = nombre_mots   .get(n, 0) + 1
+    for k,v in nombre_mots.items():
+        somme_longueur[k] /= v
+    return somme_longueur
+    
+d = moyenne_longueur_pour_chaque_nombre_de_voyelles(texte)
+print (d)
+</pre>
+
+<p>
+Un dictionnaire stocke la somme des longueurs des mots,
+un autre stocke le nombre de mots pour chaque nombre
+de voyelles distinct. On peut n'utiliser qu'un dictionnaire
+qui stocke les deux informations dans une liste :
+</p>
+
+<pre class="brush: py">
+def moyenne_longueur_pour_chaque_nombre_de_voyelles(mots) :
+    somme_longueur = {}
+    for mot in mots :
+        n = compte_voyelles(mot)
+        if n in somme_longueur :
+            somme_longueur[n][0] += len(mot)
+            somme_longueur[n][1] += 1
+        else :
+            somme_longueur[n] = [ len(mot),1 ]
+    for k in somme_longueur :
+        somme_longueur[k] = somme_longueur[k][0] / somme_longueur[k][1]
+    return somme_longueur
+</pre>
+
+<p>
+On peut également accumuler les longueurs des mots dans une liste
+toujours pour chaque nombre de voyelles distinct :
+</p>
+
+<pre class="brush: py">
+def moyenne_longueur_pour_chaque_nombre_de_voyelles(mots) :
+    somme_longueur = {}
+    for mot in mots :
+        n = compte_voyelles(mot)
+        if n in somme_longueur :
+            somme_longueur[n].append(len(mot))
+        else :
+            somme_longueur[n] = [ len(mot) ]
+    for k in somme_longueur :
+        somme_longueur[k] = sum(somme_longueur[k]) / len(somme_longueur[k])
+    return somme_longueur
+</pre>
+
+
+
+
+</body>
+</html>
+

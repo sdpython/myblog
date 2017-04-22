@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Python, Annotation, Type Checking, mypy</title>
+<meta content="python, mypy, annotation, static typing" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Python is interpreted at runtime. Variables types are discovered during the 
+execution. That is also why it is so slow. It is difficult to anticipate
+what the type of variable will be even though projects such as 
+<a href="http://pypy.org/">pypy</a> or <a href="http://nuitka.net/">nuitka</a>
+aims at compiling a python script by doing so.
+They must do type infering.
+Python 3 has introduced a nice feature which helps doing that:
+<a href="http://legacy.python.org/dev/peps/pep-3107/">function annotations</a>.
+It specifies a static type to the parameters and/or the returned result.
+By doing this, it is easier to check types at runtime 
+(with module <a href="https://github.com/prechelt/typecheck-decorator">typecheck-decorator</a>):
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<pre class="brush: py">
+from typecheck import typecheck
+
+@typecheck
+def p(i:int) :
+    print('hello',i)
+
+@typecheck
+def inc(x) -> int :
+    return x+1
+
+a = p(5)    # no error
+a = p(5.5)  # error
+
+inc(1)      # no error
+inc(1.1)    # error
+</pre>
+
+<p>
+You can also check complex types such as dictionary of string.
+</p>
+
+<pre class="brush: py">
+from typecheck import typecheck
+import typecheck as tc
+
+@typecheck
+def count(text:str)->tc.dict_of(str, int):
+    words = text.split()
+    res = { }
+    for w in words:
+        res [ w ] = res.get(w,0) + 1
+    res[None] = 0  # will cause an error while checking the returned value
+    return res
+    
+count("a b c a")  # raises an exception
+</pre>
+
+<p>
+The other initiative based on the annotations is <a href="http://www.mypy-lang.org/">mypy</a>.
+It is a static compiler which leverages annotations to avoid
+infering types.
+It is scheduled to be released next year.
+</p>
+
+</body>
+</html>

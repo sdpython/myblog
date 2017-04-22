@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Custom Directive on Sphinx</title>
+<meta content="python, sphinx, directive, bokeh" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+<p>
+I recently discovered a nice way to integrate plots in 
+sphinx documentation with the custom directive
+<a href="http://bokeh.pydata.org/en/latest/docs/reference/sphinxext.html#id2">bokeh-plot</a>.
+I thought it would be quite easy to create mine to
+add a <a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/blog/main_0000.html#ap-main-0">simple blogging system</a>.
+However the documentation is pretty rare on that topic. 
+All my searches ended up at <a href="http://sphinx-doc.org/extdev/tutorial.html">Tutorial: Writing a simple extension</a>.
+So here are my finding about creating 
+a custom directive <a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/pyquickhelper/helpgen/sphinx_blog_extension.html?highlight=blog#pyquickhelper.helpgen.sphinx_blog_extension.BlogPostDirective">BlogPostDirective</a>
+to process something like:
+</p>
+<pre class="prettyprint">
+.. blogpost::
+    :title: Migration to IPython 3.1
+    :keywords: ipython, migration, jupyter, jenkins, pandoc
+    :date: 2015-04-16
+    :categories: ipython, documentation
+    
+    Any text this blog could contains and any RST tag::
+    
+        ...
+</pre>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p><b>Step 1: create a custom node</b></p>
+<p>
+Sphinx converts a RST files into a tree, each nodes contains some text
+and some information on how to process it. It also contains children.
+After being converted into HTML, the same structure appears.
+All nodes comes from 
+<a href="http://docutils.sourceforge.net/docs/ref/doctree.html">docutils.nodes</a>.
+</p>
+
+<pre class="brush: py">
+from docutils import nodes
+
+class blogpost_node(nodes.Structural, nodes.Element):
+    pass
+</pre>
+
+<p><b>Step 2: create a custom directive</b></p>
+
+<p>
+We define here the class which convert RST into a set of nodes.
+It contains static variables and overrides method 
+<tt>run</tt> which produces a list of nodes such 
+as <tt>blogpost_node</tt>.
+</p>
+
+<pre class="brush: py">
+from docutils.parsers.rst import Directive
+
+class BlogPostDirective(Directive):
+
+    # defines the parameter the directive expects
+    # directives.unchanged means you get the raw value from RST
+    required_arguments = 0
+    optional_arguments = 0
+    final_argument_whitespace = True
+    option_spec = {'date': directives.unchanged,
+                   'title': directives.unchanged,
+                   'keywords': directives.unchanged,
+                   'categories': directives.unchanged, }
+    has_content = True
+    add_index = True
+
+    def run(self):
+        sett = self.state.document.settings
+        language_code = sett.language_code
+        env = self.state.document.settings.env
+        
+        # gives you access to the parameter stored
+        # in the main configuration file (conf.py)
+        config = env.config
+        
+        # gives you access to the options of the directive
+        options = self.options
+        
+        # we create a section
+        idb = nodes.make_id("blog-" + options["date"] + "-" + options["title"])
+        section = nodes.section(ids=[idb])
+        
+        # we create a title and we add it to section
+        section += nodes.title(options["title"])
+        
+        # we create the content of the blog post
+        # because it contains any kind of RST
+        # we parse parse it with function nested_parse
+        par = nodes.paragraph()
+        self.state.nested_parse(content, self.content_offset, par)
+        
+        # we create a blogpost and we add the section
+        node = blogpost_node()
+        node += section
+        node += par
+        
+        # we return the result
+        return [ node ]
+</pre>
+
+<p>
+The important function is the method <tt>nested_parse</tt>
+which converts the raw RST into nodes for the documentation.
+Our method <tt>run</tt> just add a title before this conversion happens.
+You will discover others tricks in file
+<a href="https://github.com/sdpython/pyquickhelper/blob/master/src/pyquickhelper/helpgen/sphinx_blog_extension.py">sphinx_blog_extension.py</a>.
+</p>
+
+<p><b>Step 3: register the class and the nodes</b></p>
+
+<p>
+This takes places in file <i>conf.py</i>.
+</p>
+
+<pre class="brush: py">
+from somewhere import BlogPostDirective
+def setup(app):
+    app.add_node(blogpost_node)
+    app.add_directive('blogpost', BlogPostDirective)
+</pre>
+
+<p>
+It is all done but there are some others tricks you can use.
+</p>
+
+<p><b>Step 4: register a new variable in the documentation</b></p>
+
+<p>
+Still in the file <i>conf.py</i> (everything can be placed there).
+The value of the new variable can be retrieved from method <tt>run</tt>
+in the new directive.
+</p>
+
+<pre class="brush: py">
+def setup(app):
+    app.add_config_value('my_new_variable', 'default_value', 'env')
+    
+my_new_variable = "another value"
+</pre>
+
+<p><b>Step 5: post process HTML</b></p>
+
+<p>
+Imagine we now want to add HTML content before and after the blog
+was processed. We registered two functions Sphinx will call later
+during the process. For example, we add a link to something
+after the blog post content.
+</p>
+
+<pre class="brush: py">
+def visit_blogpost_node(self, node):
+    pass
+
+def depart_blogpost_node(self, node):
+    link = """&lt;p&gt;&lt;a class="reference internal" href="something.html" title="a title"&gt;a title&lt;/a&gt;&lt;/p&gt;"""
+    self.body.append(link)
+
+def setup(app):
+    app.add_node(blogpost_node, html=(visit_blogpost_node, depart_blogpost_node))
+</pre>   
+
+<p><b>Step 6: encapsulate a node into a div</b></p>
+
+<p>
+Sphinx offers simple commands to insert the blog into a div (HTML).
+</p>
+
+<pre class="brush: py">
+def visit_blogpost_node(self, node):
+    # this function adds "admonition" to the class name of tag div
+    # it will look like a warning or a note
+    self.visit_admonition(node)
+
+def depart_blogpost_node(self, node):
+    self.depart_admonition(node)
+</pre>
+
+<p>
+Good luck if you start your own directive, you will probably need a couple of tries before 
+getting it right. You can also try running your class using
+function <a href="http://code.nabla.net/doc/docutils/api/docutils/core/docutils.core.publish_programmatically.html">publish_programmatically</a>.
+That's what I did in the constructor of class 
+<a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/pyquickhelper/helpgen/blog_post.html?highlight=blogpost#pyquickhelper.helpgen.blog_post.BlogPost">BlogPost</a>.
+</p>
+
+
+</body>
+</html>

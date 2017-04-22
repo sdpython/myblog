@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Petites subtilités avec les expressions régulières en Python</title>
+<meta content="python, regular expression" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+Je me souviens rarement de la syntaxe des expressions régulières.
+J'utilise beaucoup la fonction
+<a href="https://docs.python.org/3.4/library/re.html#re.regex.findall">findall</a>. A tort je crois.
+</p>
+<pre class="brush: py">
+text = """ a ab ab ab ab c a ab ab ab"""
+exp = re.compile("a( ((ab)|(c)))+")
+found = exp.findall(text)
+for el in found:
+    print(el)
+</pre>
+<pre class="prettyprint">
+(' c', 'c', 'ab', 'c')
+(' ab', 'ab', 'ab', '')
+</pre>
+<p>
+Le premier élément de chaque ligne correspond au groupe inclus dans les premières parenthèses
+qui <i>matche</i> plusieurs sous-parties de la chaîne de caractères mais seule
+la dernière est conservée.
+</p>
+<pre class="brush: py">
+text = """ a ab ab ab ab c a ab ab ab"""
+exp = re.compile("a(( ((ab)|(c)))+)")
+found = exp.findall(text)
+for el in found:
+    print(el)
+</pre>
+<pre class="prettyprint">
+(' ab ab ab ab c', ' c', 'c', 'ab', 'c')
+(' ab ab ab', ' ab', 'ab', 'ab', '')
+</pre>
+<p>
+Si on ajoute des parenthèses autour de l'expression répétées (donc incluant le signe +),
+on récupère toutes les sous-parties <i>matchant</i> le motif répété par +.
+Naïvement, j'ai pensé que je les aurais toutes dans des éléments séparés.
+Mais si l'expression régulières contient <i>n</i> groupes de parenthèses,
+on récupère des tuples de <i>n</i> éléments. Un autre code permet de récupèrer les positions.
+</p>
+<pre class="brush: py">
+exp = re.compile("a(( ((ab)|(c)))+)")
+for m in exp.finditer(text):
+    print('%02d-%02d: %s' % (m.start(), m.end(), m.groups()))
+</pre>
+<pre class="prettyprint">
+01-16: (' c', 'c', 'ab', 'c')
+17-27: (' ab', 'ab', 'ab', None)
+</pre>
+<p>
+On se rend compte plus rapidement que quelque chose ne va pas.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Quelques exercices de préparation à l'examen (5)</title>
+<meta content="python, ENSAE, programmation, exercice" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+Lorsqu'on cherche un élément dans un tableau, c'est généralement pour retrouver sa position.
+Supposons maintenant que cet élément soit présent en plusieurs exemplaires et qu'on veuille
+toutes les positions où il est présent.
+</p>
+<pre class="brush: py">
+def positions(liste, element) :
+    ...
+    return une liste
+    
+l = [ 4,3,3,6,4,3 ]
+print ( positions(l, 3) ) # affiche [1,2,5]
+</pre>
+
+<p>
+Dans un second temps, on veut transformer la liste <tt>l</tt> en un dictionnaire 
+de sorte que la fonction <tt>positions</tt> ne contienne plus de boucle. Quelle est
+la solution la plus rapide ?
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+<p>
+<b>Solution proposée</b>
+</p>
+
+<p>
+La seule différence avec une recherche classique est que, même après avoir trouvé le premier 
+élément, il faut continuer la recherche pour être sûr de trouver toutes les positions.
+</p>
+
+<pre class="brush: py">
+def positions(liste, element) :
+    positions = [ ]
+    for i,el in enumerate(liste) :
+        if el == element : 
+            positions.append(i)
+    return positions
+    
+l = [ 4,3,3,6,4,3 ]
+print ( positions(l, 3) ) # affiche [1,2,5]
+</pre>
+
+<p>
+On peut écrire la fonction en une seule ligne :
+</p>
+
+<pre class="brush: py">
+def positions(liste, element) :
+    return [ i for i,el in enumerate(liste) if el == element ]
+</pre>
+
+<p>
+Un dictionnaire permet d'associer n'importe quelle valeur à une clé. L'objectif est ici de
+pouvoir retrouver toutes les positions d'un élément dans la liste d'origine (les valeurs)
+à cet élément (les clés). C'est ce que fait la fonction <tt>transformation</tt> qui suit :
+</p>
+
+
+<pre class="brush: py">
+def transformation(liste) :    
+    dictionnaire = { }
+    for i,el in enumerate(liste) :
+        if el in dictionnaire : 
+            dictionnaire[el].append(i)
+        else :
+            dictionnaire[el] = [ i ]
+    return dictionnaire
+            
+l = [ 4,3,3,6,4,3 ]
+d = transformation(l)
+print ( d[3] ) 
+</pre>
+
+<p>
+Les positions de l'élément <tt>3</tt> dans la liste d'origine est la valeur
+associée à l'élément <tt>3</tt> dans le dictionnare <tt>d</tt>.
+</p>
+
+<p>
+<b>Pour aller plus loin</b>
+</p>
+<p>
+Le module <a href="http://docs.python.org/3.3/library/itertools.html">itertools</a>
+propose diverses fonctions qui manipulent les itérateurs
+selon une logique qui n'est pas loin de celle du langage 
+<a href="http://fr.wikipedia.org/wiki/Structured_Query_Language">SQL</a>
+ou de la 
+<a href="http://fr.wikipedia.org/wiki/Programmation_fonctionnelle">programmation fonctionnelle</a>.
+</p>
+
+<pre class="brush: py">
+import itertools
+def transformation(liste) :    
+    lpos = [ (v,i) for i,v in enumerate(liste) ]
+    d = { k: [ e[1] for e in v ]  for k,v in itertools.groupby (sorted(lpos), key=lambda x : x[0] )  }
+    return d
+</pre>
+
+
+</body>
+</html>
+

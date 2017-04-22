@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>La nuit des temps n'est pas si loin</title>
+<meta content="python, speech recognition, reconnaissance de la parole" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+<p>
+Je l'ai lu il y a quelque temps mais j'ai dévoré
+<a href="http://fr.wikipedia.org/wiki/La_Nuit_des_temps">La nuit des temps</a> de 
+<a href="http://fr.wikipedia.org/wiki/Ren%C3%A9_Barjavel">Barjavel</a>.
+Au dela de l'histoire, c'est aussi cet ordinateur capable 
+de traduire toute langue en une autre qui m'a fasciné.
+Je ne sais pas ce que Barjavel aurait dit si on lui avait
+demandé quand ce serait effectivement possible.
+On n'en est probablement pas très loin... mais parlons d'abord de ce qui
+est accessible facilement aujourd'hui.
+</p>
+<p>
+J'écoutais France Inter il y a deux jours 
+<a href="http://www.franceinter.fr/emission-le-79-xavier-bertrand-francois-hollande-est-un-specialiste-du-reniement">Xavier Bertrand</a>.
+A vrai dire, j'ai oublié ce qu'il a dit, j'ai juste retenu 
+qu'il raisonnait non pas par rapport au contenu d'un propos
+mais par rapport à celui qui le prononçait. Peu importe,
+je voulais voir s'il était possible de décrypter des vieux podcasts
+du même bonhomme pour voir ce qu'il disait du président... 
+Je n'en ai pas trouvé, probablement trop vieux et effacés.
+Je n'ai trouvé que <a href="http://www.franceinter.fr/emission-tous-politiques-jean-francois-cope-ce-nest-pas-moi-qui-mens">Jean-François Coppé</a>.
+Sur la page de France Inter, on peut lire deux extraits dont on ne sait pas 
+quand dans l'émission ils ont été extraits. 
+Qu'à cela ne tienne, Barjavel n'est pas si loin...
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Pourquoi pas utiliser la reconnaissance
+de la parole pour retrouver la phrase dans le podcast pour vérifier.
+Après quelques recherches, je suis tombé sur le module
+<a href="https://pypi.python.org/pypi/dragonfly/0.6.5">dragonfly</a>
+que je n'ai pas utilisé. Ce module est capable 
+d'utiliser deux moteurs de reconnaissance de la parole : celui
+de <a href="http://windows.microsoft.com/fr-fr/windows/dictate-text-speech-recognition#1TC=windows-7">Windows</a> 
+et <a href="http://www.nuance.com/">Nuance</a>.
+Travaillant pour Microsoft, j'ai choisi Windows et aussi C# sans dragonfly.
+</p>
+<p>
+Quelques recherches plus loin, j'ai compris qu'il faudrait
+que je travaille sur une fichier <i>.wav</i> (celui des CD).
+Or, je n'ai qu'un MP3 (fichier compressé). Il faut traduire le MP3
+en WAV. J'ai trouvé le module <a href="https://pypi.python.org/pypi/pydub">pydub</a>
+qui a besoin de <a href="http://www.ffmpeg.org/">ffmpeg</a>.
+Sous Windows, il suffit de télécharger les fichiers 
+exécutables (<i>ffmpeg.exe</i>) et de les placer à côté de ce
+petit programme Python (en supposant que <i>pydub</i>
+a été installé et que vous utilisez la version 64 bit de Python) :
+</p>
+
+<pre class="brush: py">
+from pydub import AudioSegment
+sound = AudioSegment.from_mp3("something.mp3")
+sound.export("something.wav", format="wav")
+</pre>
+
+<p>
+Reste la transcription du texte librement inspirée de 
+<a href="http://msdn.microsoft.com/en-us/library/microsoft.speech.recognition.speechrecognitionengine.aspx">SpeechRecognitionEngine Class</a> :
+</p>
+
+<pre class="prettyprint">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+using System.Speech.Recognition;
+using System.Speech.AudioFormat;
+using System.Globalization;
+
+namespace SoundToText
+{
+    public class SpeechResult : Object
+    {
+        public double score ;
+        public string text ;
+        public override string ToString()
+        {
+ 	         return string.Format("{0:00} {1}", score, text) ;
+        }
+    }
+
+    public class SpeechResultArray : Object
+    {
+        public TimeSpan begin;
+        public TimeSpan duration ;
+        public SpeechResult [] options ;
+        public override string ToString()
+        {
+            return string.Format("{0:00}:{1:00} for {2:00}s -- {3}", begin.Minutes, begin.Seconds, duration.TotalSeconds, options[0].text);
+        }
+    }
+
+    public class SoundToTextASync
+    {
+        public static SoundToTextASync Create(string culture, string file, bool print = false)
+        {
+            return new SoundToTextASync(new CultureInfo(culture), file, print);
+        }
+
+        CultureInfo _info ;
+        string _file;
+        List&lt;SpeechResultArray&gt; _results;
+
+        bool _print;
+        bool _completed;
+
+        public SpeechResultArray[] Recognized { get { return _results.OrderBy(c =&gt; c.begin).ToArray(); } }
+
+        public SoundToTextASync(CultureInfo info, string file, bool print = false)
+        {
+            _info = info ;
+            _file = file;
+            _print = print;
+            _results = new List&lt;SpeechResultArray&gt;();
+        }
+
+        public void RunRecognition()
+        {
+            using (SpeechRecognitionEngine recognizer = new SpeechRecognitionEngine(_info))
+            {
+                Grammar dictation = new DictationGrammar();
+                dictation.Name = "Dictation Grammar";
+                recognizer.LoadGrammar(dictation);
+                recognizer.SetInputToWaveFile(_file);
+                recognizer.SpeechRecognized += new EventHandler&lt;SpeechRecognizedEventArgs&gt;(recognizer_SpeechRecognized);
+                recognizer.RecognizeCompleted += new EventHandler&lt;RecognizeCompletedEventArgs&gt;(recognizer_RecognizeCompleted);
+                _completed = false;
+                recognizer.RecognizeAsync(RecognizeMode.Multiple);
+                while (!_completed)
+                {
+                    System.Threading.Thread.Sleep(5000);
+                    //if (_print) Console.WriteLine("processing");
+                }
+            }
+        }
+
+        void recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            if (e.Result != null &amp;&amp; e.Result.Text != null)
+            {
+                List&lt;SpeechResult&gt; res = new List&lt;SpeechResult&gt;();
+                res.Add(new SpeechResult() { score = e.Result.Confidence, text = e.Result.Text });
+                foreach (var alt in e.Result.Alternates)
+                {
+                    res.Add(new SpeechResult() { score = alt.Confidence, text = alt.Text });
+                }
+
+                SpeechResultArray final = new SpeechResultArray() { 
+                            begin = e.Result.Audio.AudioPosition,
+                            duration = e.Result.Audio.Duration,
+                            options = res.ToArray() } ;
+                _results.Add(final);
+                if (_print) Console.WriteLine(final.ToString());
+            }
+        }
+
+        // Handle the RecognizeCompleted event.
+        void recognizer_RecognizeCompleted(object sender, RecognizeCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                if (_print) 
+                    Console.WriteLine("  Error encountered, {0}: {1}",
+                            e.Error.GetType().Name, e.Error.Message);
+            }
+            if (e.Cancelled)
+            {
+                if (_print)
+                    Console.WriteLine("  Operation cancelled.");
+            }
+            if (e.InputStreamEnded)
+            {
+                if (_print)
+                    Console.WriteLine("  End of stream encountered.");
+                _completed = true;
+            }
+        }
+    }
+}
+</pre>
+
+<p>
+Et pour l'utiliser :
+</p>
+
+<pre class="prettyprint">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using SoundToText;
+using System.Globalization;
+
+namespace exedebug
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string file = @"C:\username\__home_\_data\program\pyhome\pyhome3\_nrt\nrt_tools\temp_speech\eliacheff.wav";
+            var obj = new SoundToTextASync(new CultureInfo("fr-FR"), file, true);
+            obj.RunRecognition();
+            var res = obj.Recognized;
+            Console.WriteLine("------------------------------");
+            foreach (var r in res)
+            {
+                Console.WriteLine(r.ToString());
+            }
+        }
+    }
+}
+</pre>
+
+<p>
+Si vous utilisez le module <a href="http://pythonnet.sourceforge.net/">pythonnet</a>,
+il est possible d'appeler le premier code C# (sous forme de DLL) :
+</p>
+
+<pre class="brush: py">
+from pythonnet import clr as CLR   
+CLR.AddReference("SoundToText")
+from SoundToText import SoundToTextASync
+obj = SoundToTextASync.Create("fr-FR", "something.wav", True)
+obj.RunRecognition()
+res = obj.Recognized
+print (res)
+</pre>
+
+<p>
+La reconnaissance de Windows propose plusieurs alternatives.
+Vous pouvez voir le texte de ce podcast plus bas. Il n'y a pas 
+une phrase de correct mais on n'en est pas loin. Lorsque les personnes
+s'expriment plus lentement, la transcription n'est pas si loin 
+de la vérité. On ne distingue pas encore les différents locuteurs même si
+on sait comment faire (voir <a href="http://www.cs.berkeley.edu/~jordan/papers/sgp-jmlr.pdf">
+Learning Spectral Clustering With Application To Speech Separation</a>).
+J'ai réussi à retrouver la première citation à 2:10 minutes du début :
+<i>Je réponds aux insultes de Jean-Marc Ayrault...</i>.
+J'ai cherché le terme <i>Ayrault</i> dans la transcription
+complétement imparfaite du podcast qui suit. Je précise que ce ne sont pas
+les propos de Jean-François Coppé mais seulement le résultat
+d'un algorithme de reconnaissance de la parole
+appliqué au podcast obtenu à partir de l'émission citée plus haut.
+On rit un peu quand on découvre <i>Georges Clooney</i> au beau milieu
+de la traduction dû à quelque bégaiements autour de la phrase 
+"j'en... j'en ai pris...". Si ce moteur de reconnaissance avait été
+conçu par des francais, on aurait sans doute eu la bonne réponse
+ou Jean Dujardin.
+</p>
+
+<table>
+<tr><td style="background-color:#D59B5B;color:#FFFFFF;font-weight:bold;">temps</td><td style="background-color:#D59B5B;color:#FFFFFF;font-weight:bold;">texte</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:00:00</td><td style="background-color:#EED7BD;color:#0;">Un effet effet on y faire</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:00:06</td><td style="background-color:#F7EBDD;color:#0;">frf a fait leurs affaires en effet avons forage avons attendu les recevoir des adultes président, en effet d'avoir accepté l'invitation de transfert vers 11h00, parisien revendeur</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:00:36</td><td style="background-color:#EED7BD;color:#0;">se faire sans faille dans un instant votre action à jean-marc ayrault, filiale de affaire.</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:00:44</td><td style="background-color:#F7EBDD;color:#0;">Voilà Graf élèves union démocrate avant les effets néfastes et les a effectivement Marseille à lui assure la France assure la Centrafrique par Ses oeuvres à Monza le chef des ponts interrogés célèbres salvi parisien-aujourd'hui enfant devant sortir en voie de on attend bien sûr, selon le foot un appel aux réactions et reçoit ils savent qu'ils ont été arrêtés avant les plus folles nouveaux efforts question afp,</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:01:14</td><td style="background-color:#EED7BD;color:#0;">en fait en effet parisien-aujourd'hui a fait cette semaine aux allures ou jean-françois copé après la publication d'un point d'un rapport commandé par matignon sera</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:01:35</td><td style="background-color:#F7EBDD;color:#0;">l'intégration des rapports qui prenait notamment le retour du voile à l'école nous avaient interpellé le prologue. Le président de la republika en l'accusant de vouloir des construire la république et jean-marc ayrault vous a alors répondu écouter est dit</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:01:52</td><td style="background-color:#EED7BD;color:#0;">que la rue amiral France</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:01:54</td><td style="background-color:#F7EBDD;color:#0;">est un menteur</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:01:56</td><td style="background-color:#EED7BD;color:#0;">parce que selon le procès gouvernement</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:01:59</td><td style="background-color:#F7EBDD;color:#0;">de la république et je dirais que nous voulions abandonner le modèle républicain intégration cette mesure</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:02:07</td><td style="background-color:#EED7BD;color:#0;">alors avec être loin de faire en sorte que</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:02:10</td><td style="background-color:#F7EBDD;color:#0;">je répondrais an aux insultes jean-marc ayrault lui disant que je n'ai fait que mon devoir</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:02:16</td><td style="background-color:#EED7BD;color:#0;">mon devoir de président de l'opposition républicaine</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:02:20</td><td style="background-color:#F7EBDD;color:#0;">en charge de tirer la sonnette d'alarme</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:02:24</td><td style="background-color:#EED7BD;color:#0;">lorsque je découvre</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:02:27</td><td style="background-color:#F7EBDD;color:#0;">une opération de démantèlement de la république</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:02:31</td><td style="background-color:#EED7BD;color:#0;">et je sais bien heureux de l'avoir appris suffisamment tôt</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:02:34</td><td style="background-color:#F7EBDD;color:#0;">pour pouvoir le faire avant que ne soit trop tard</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:02:38</td><td style="background-color:#EED7BD;color:#0;">ses cinq rapport aux 816 ans ont été commandés au mois d'août</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:02:43</td><td style="background-color:#F7EBDD;color:#0;">ne sais pas moins d'une dizaine de ministres qui ont été associés aux lettres de commandes qui ont été faits pour ses rapporteurs avec à chaque fois des membres de cabinets ministériels présents aux côtés des rapporteurs</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:02:54</td><td style="background-color:#EED7BD;color:#0;">le 13 novembre dernier le premier ministre</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:02:58</td><td style="background-color:#F7EBDD;color:#0;">reçoit ses rapports il est qualifié de grande qualité se situait sur le site où elle dut de matignon de grande qualité ils serviront dit jean-marc ayrault de base</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:03:10</td><td style="background-color:#EED7BD;color:#0;">au travail que le gouvernement engage pour définir les grands axes de la nouvelle politique d'intégration notre pays</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:03:17</td><td style="background-color:#F7EBDD;color:#0;">le moins qu'on puisse dire c'est que c'est pas moi qui m'en</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:03:21</td><td style="background-color:#EED7BD;color:#0;">sait qu'en réalité eux derrière l'énervement un homme pas dire la panique précise Gaëlle et recettes commerciales conduit à</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:03:29</td><td style="background-color:#F7EBDD;color:#0;">à dire sa fonction assurions le chef de l'opposition républicaine le premier ministre fait un aveu terrible</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:03:37</td><td style="background-color:#EED7BD;color:#0;">d'être pris la main dans le sac</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:03:39</td><td style="background-color:#F7EBDD;color:#0;">de véritable plan de démantèlement des valeurs de la république parce que le monde des médias agissait-il d'ailleurs se sont focalisés sur la question du voile à l'école vient pas que cela</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:03:49</td><td style="background-color:#EED7BD;color:#0;">comme cela va bien au-delà il faut voir ce qu'il y a dans ses cinq rapports cela concerne George Clooney pris volontairement la liste ici</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:03:57</td><td style="background-color:#F7EBDD;color:#0;">oui ou non le gouvernement veut-il bannir le mont intégration du vocabulaire républicain ou juno gouvernement veut ils mettent l'enseignement du français</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:04:05</td><td style="background-color:#EED7BD;color:#0;">sur un pied d'égalité avec celui des langues étrangères veut-il de réécrire comme je l'ai des programmes d'histoire pour y faire la part belle des eaux histoire des pays d'origine des populations immigrées de relever place de l'histoire des grands hommes</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:04:18</td><td style="background-color:#F7EBDD;color:#0;">en est ainsi de suite fait adopter un colis ainsi en est en France comme il vous est pas rentable est vrai nom à président des juges longtemps cette des préconisations bège observe et c'est ça qui nous a fait réagir très fortement</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:04:31</td><td style="background-color:#EED7BD;color:#0;">que le premier ministre a dit que cela servira de base à la définition de la stratégie gouvernementale je viens de citer sur la politique de d'intégration ça veut dire quoi ça veut dire que canton commandé rapport</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:04:44</td><td style="background-color:#F7EBDD;color:#0;">de condé concert à paroisse qui sont mis sur le site de matignon ils sont mis sur le site ça ne s'agit pas de documents internes s'est donc bien pour qu'ils soient liés au débat public qu'il y a aucune autre proposition alternative que c'est là que je lis par exemple qu'il y a dans ses rapports</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:04:59</td><td style="background-color:#EED7BD;color:#0;">de une quinzaine de fois tout casser que le mot de voir et près de 400 fois le mot droit je comprends qu'il y a d'ailleurs cela, une tension qui vient s'associa tout ce qu'on a pu entendre par ailleurs sûre de vider donner le droit de vote aux étrangers</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:05:16</td><td style="background-color:#F7EBDD;color:#0;">de cette ce gouvernement qui on le voit bien accroît le nom de naturalisation accroît le nombre de régularisation des ces critères d'accès à la régularisation pour les étrangers en situation irrégulière comme à ceux qui veulent accéder à la nationalité française Jean France reste haussière dont il était indispensable par les</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:05:34</td><td style="background-color:#EED7BD;color:#0;">escortes de convois gouvernement a façonné manière cynique s'établirent mettre en ligne ce pré-rapport</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:05:40</td><td style="background-color:#F7EBDD;color:#0;">attente de sa façade de brume électrique tout ça pour faire gagner le détroit en front national à ce que bon une volonté délibérée de jouer avec le front sensuel à se persuader de ces valeurs des villas se persuader de ce que le gouvernement de appuyé par l'échec de sa politique économique qui mais les français dans un état d'inquiétudes extrême</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:06:00</td><td style="background-color:#EED7BD;color:#0;">de M. De se sauver la part des astres aide aux élections à venir et notamment aux élections municipales et européennes prend en excitant effectivement les peurs de élévation</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:06:14</td><td style="background-color:#F7EBDD;color:#0;">comme il le fait depuis le début de ce quinquennat avec un seul objectif de faire monter le fn ce que j'ai appris le décès des deux François hollande en métal avant ainsi François Mitterrand qu'il avait inventé avec jean-marie le Pen</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:06:26</td><td style="background-color:#EED7BD;color:#0;">j'observe qu'avec cela comme d'ailleurs avec tout le reste de la réforme que de Mme Temps dira qui vise à réduire le nombre de gens susceptibles d'aller en prison après avoir commis des délits tels le droit de vote des étrangers dans le sol en indiqué qu’il de le placer l'agenda après les élections municipales heures dans une majorité</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:06:43</td><td style="background-color:#F7EBDD;color:#0;">après les élections municipales tout ça montre quoi qu'en réalité on essaie de jouer sur les peurs des français d'exciter les passions mais c'est un vieux plants bien connue est du parti socialiste que je veux dénoncer car je pense à tous et françaises et français</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:06:59</td><td style="background-color:#EED7BD;color:#0;">profondément républicain profondément sincère qui vota gauche et doit savoir que leurs dirigeants en réalité sont dans une alliance dit-il avec l'extrême-droite et leur semble François hollande a dit depuis que ses pieds de compte dans ce rapport fait état de crise politique du gouvernement semaine homme fort le débat</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:07:14</td><td style="background-color:#F7EBDD;color:#0;">va s'impose comme un certain nombre de problèmes parce que de blessures en exil au courant de ce que fait son gouvernement</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:07:22</td><td style="background-color:#EED7BD;color:#0;">en ce sens que je le répète une dizaine de ministres qui ont passé les lettres de commandes pour ses rapports avec les japonais membres de cabinets ministériels dans les équipes qui ont travaillé sur ses rapports alors que dans certaines des ateliers que l'on reproche à François hollande trop concentrés les dossiers</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:07:39</td><td style="background-color:#F7EBDD;color:#0;">réalisés et voilà maintenant il y découvrit ne serait pas au courant et il se désolidarise de ce que je vois que derrière tout cela les deux phénomènes qui soit Marc de saint -je an de l'idéologie d'un côté et puis, de la compétence de l'ordre une confiance hollandaise cet aveu politique entre le bassin sincérité</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:07:57</td><td style="background-color:#EED7BD;color:#0;">la seule voix avoir et les ss elle est celui qui comment les rapports de celui qu'il faut les avoir reçu après en avoir dit du bien indice est pas la politique de ces avocats des français et jouer tous les tableaux à la fois et c'est ça qui paiera en réalité parce que derrière tout ça</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:08:11</td><td style="background-color:#F7EBDD;color:#0;">on comprend toujours pas ce qu'il faudrait faire pour améliorer l'intégration et pourtant à la baisse si nous avons donc détenait en aval des salades de l'intégration aujourd'hui de toutes les politiques successives et la roumaine impression qu'on oppose systématiquement communautarisme république était une voie médiane pour aujourd'hui</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:08:28</td><td style="background-color:#EED7BD;color:#0;">est bien trouver un trouver un juste milieu une voix et voire devrait être belle-il pas entre la république et le communautarisme</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:08:36</td><td style="background-color:#F7EBDD;color:#0;">elle est dans la république et elle peut pas être ailleurs</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:08:39</td><td style="background-color:#EED7BD;color:#0;">et c'est là la grande faute que cote de François hollande et jean-marc ayrault parce qu'ils mettent en avant une idéologie qui étant des connexions complètes avec que ce qu'attendent les français et les français quel que soit des logements, de Loudéac Laurent leur origine</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:08:54</td><td style="background-color:#F7EBDD;color:#0;">de malheur Bagdad à Paris en France de leur famille ce que nous souhaitons ce que tous les français souhaitent sait que ce soit l'intérieur de la république française que ça se passe et je voudrais vous dire à tous les trois comment français qui nous écoutent</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:09:08</td><td style="background-color:#EED7BD;color:#0;">il y a des solutions que avec beaucoup de mes amis je propose pour en avoir fait l'expérience comme maire de mots dans une ville qui est le reflet de cette diversité la société française ça passe par des mots clés éducation</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:09:21</td><td style="background-color:#F7EBDD;color:#0;">emploi rénovation urbaine et sécurité quatre thèmes qui ont été balayés complètement de l'action gouvernementale éducation vous pensez qu'avec des rythmes scolaires qui vont coûter une fortune aux collectivités locales et non pas le moindre l'éducatif va progresser pour l'intégration dans la rénovation en allemand et anglais. Marcel avait à ses interrogateurs sécurité</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:09:43</td><td style="background-color:#EED7BD;color:#0;">en a baissé les bras c'est vous dire combien dans ces domaines on est très loin d'un chemin intégré dans sa vie, selon des migrations vous avez vous-même présenter un sentiment de composition est à cette semaine sur l'immigration et de quatre thèmes que vous devez vous avez été passe du ressort et de façon la plus évidente de la suppression de la haine de file des médicaments tels hongrois tous les étrangers sont en France devait des limites assez sérieuse imposée au droit du sol</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:10:06</td><td style="background-color:#F7EBDD;color:#0;">et le regroupement familial est que si le mauvais temps sévissant il fallait dorade radicalisation ordre du jour pas du tout en s'intéressant de semonce avons posé la question en ces termes car c'est un des grands problèmes c'est cette manière de mélanger tous les maux</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:10:19</td><td style="background-color:#EED7BD;color:#0;">de cesser les sujets sur laquelle j'ai beaucoup travaillé depuis peu près d'une quinzaine d'années est en tant que praticiens contre les maires de villes britanniques tous les jours à réfléchir à ces questions vous avez vous-même mélanger le mot</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:10:33</td><td style="background-color:#F7EBDD;color:#0;">l'immigration intégration ce sont deux choses qui ont un lien et qui sont distincts la première étape séquelles politiques d'immigration vous pour notre pays la deuxième sait comment réussir l'intégration de ce type de manière légale sont entrés dans le territoire ce sont les 22 piliers d'une même action</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:10:53</td><td style="background-color:#EED7BD;color:#0;">sur le premier point que nous avons traité cette semaine que effet faire des propositions jaunes d'ailleurs le dans un sondage qui sortit de lierre chez nos confrères depuis télévision qu'ils sont tous temps que les propositions sont validés par une écrasante majorité de français de gauche comme de Denver des albanais du fn sur les marges de la voulait s'était révélé des états le salarié ouvert des amendes sassanides en exergue c'est le droit du sol au moment des colas engrais et les lycées</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:11:16</td><td style="background-color:#F7EBDD;color:#0;">France on ne touche pas vous me donne la mort jugés avec d'avoir d'abord je peux pas vous laisser bercer Mellick avait pas souvent programme fois dans sa lutte de validation un homme ses épouses de face dans la banlieue rouennaise on savait déjà que le sénat élevant à Sauzon deux concepts très important l'aide médicale d'etat mais nous sommes un certain nombre de gens fuient</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:11:34</td><td style="background-color:#EED7BD;color:#0;">pas dire que nous ne pouvons pas assurer la couverture maladie à 100 % de ce qui sont en situation illégale en lumière l'accord illégal sur le territoire pour les enceintes ou solo ces pays à se rendre pour coordonner cas d'urgence je préconise sa suppression ses valises que nous défendons deuxième exemple droit du sol</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:11:52</td><td style="background-color:#F7EBDD;color:#0;">qui se poursuit au droit du sol</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:11:54</td><td style="background-color:#EED7BD;color:#0;">les questions posées est une question</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:11:56</td><td style="background-color:#F7EBDD;color:#0;">est que lorsque l'on est issu de parents</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:11:59</td><td style="background-color:#EED7BD;color:#0;">d'illégaux</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:12:00</td><td style="background-color:#F7EBDD;color:#0;">éléments en France on doit R automatiquement si nécessaire des droits des sols et la monarchie moment et les amis des enfants affaires et la vraie en salle où il a ceci près que la question se pose bijoux la pause à tous ces lorsque l'on est issu de parents en France qu'il est également salué par la même chose que vendredi que l'issue de parents légalement en France de cesser la toute la différence de l'onu l'illégalité</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:12:22</td><td style="background-color:#EED7BD;color:#0;">ne doit pas être récompensé par la nationalité sinon ça veut dire quoi ça veut dire que n'importe qui peut Esparon l'encourager les filières d'immigration clandestine et ses symptômes voulons pas et pourquoi sont-ils tout simplement sa femme permettent de faire le lit à ce que ces fondamentales et ses à la grande différence avec l'extrême-droite et kono depuis le début des solutions vous proposons si crédit</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:12:43</td><td style="background-color:#F7EBDD;color:#0;">corp 1000 FRF à 10 000 rations zéro C fily que nous avons besoin d'immigration et simplement le regroupement familial audit cia réaliste et de la sibérie, supprimer un en revanche, condition qu'elle avait mis en oeuvre pour que ça réussissent des conditions de revenus on peut pas faire venir s'affaiblit sera pas les moyens et de les assurer de une vie décente c'est ça qui de sa synthèse entre les</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:13:06</td><td style="background-color:#EED7BD;color:#0;">liens de installé à une synthèse ses membres avaient en effet commun une droits de l'ancienne ville Oger dans le ciel. Les parents pauvres gens qui veulent côté émission votre site viacom Weston pour réussir l'immigration que le parcours d'intégration de ce qu'il mit en France</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:13:22</td><td style="background-color:#F7EBDD;color:#0;">moi je n'oublie pas que la France est une terre d'immigration</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:13:25</td><td style="background-color:#EED7BD;color:#0;">elle s'est faite de cela est pourtant aujourd'hui à 13h00 pour des faits, avocat de envolée des en France avant les ventes déviations et je le dis que mon discours jeudi leurs discours annuel des bts qui fait aujourd'hui l'immigration est synonyme d'échec de ces doublettes un problème pourquoi ne pas se compter sur un modèle du 21 au général</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:13:44</td><td style="background-color:#F7EBDD;color:#0;">des conditions à modalités dessinées 20e siècle fonds et fonctionner sur l'immigration économique or avec le danser domination sociale sans tabou les rations choisi un bilan est un produit comme ananas comment des éclats d'arroser en asie à 10h00 il le faut s'inspirer des bonnes pratiques qui existent ailleurs pas leurs avoirs en a pas l'énergie en baisse pour ça que je vous dis comparaison avec la réserve et les armées des</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:14:07</td><td style="background-color:#EED7BD;color:#0;">pour autant les choses intéressantes lorsque je vois que le Canada a mis en place des programmes qui deux sont très exigeants qui consiste à aider les exigé de ce qui est inhérent au Canada</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:14:19</td><td style="background-color:#F7EBDD;color:#0;">d'avoir un métier d'autre part d'adhérer ou valeur de ce grand pays pourront est en est pas capable non d'imaginer que je propose un débat au parlement pour des entretiens voilà de ce que l'on peut le nom de 10 000 compatriotes voient la limite des</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:14:35</td><td style="background-color:#EED7BD;color:#0;">données voilà les parcours qui peuvent permet une réussite pour la personne d'immigrants France et pour la France fasse des années passées dans les livres personne n'a jusqu'à présent pour le faire dans les temps les sept et c'est la raison pour laquelle je dis plutôt que d'en faire des grands départs c'est un sujet pour une élection présidentielle pour faire un pacte présidentiel avec les français et ont levé en oeuvre des élections</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:14:55</td><td style="background-color:#F7EBDD;color:#0;">est par ordonnances tout de suite sa ses arriérés envers lequel on assume immédiatement de mettre en oeuvre les choses vous parler des antennes la veille un instant vous avez des propos en présentant ses ces propositions sûres éliminations avait dit la France doit susciter l'amour en sommes au courant en prison en dansant massacre à savoir comment maintenant comme on mesure l'amour d'un candidat à la finalité française est libre</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:15:16</td><td style="background-color:#EED7BD;color:#0;">de remplir des vitesses dire qu'il aime la France, la culture française et questions à la candidature de M par la France</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:15:22</td><td style="background-color:#F7EBDD;color:#0;">estime est pas mettre en France étaient souvent penser que ces pages des elus en était besoin dans le bon sens est-ce que ça des composés qu'aux etats-unis si vous remplissez un formulaire. Vers 11 des tests les etats-unis et servit de Servigny invités ont pensé que ses états plus est un français qui, par la France voulait retirer la nationalité d'évacuation par dans ses ambitions de francs que le sujet dépenses été à ce propos se compliquer suffisamment sérieux pour qu'on aille jusqu'au bout des choses</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:15:45</td><td style="background-color:#EED7BD;color:#0;">quand je parle d'amour de la France s'est tout simplement parce qu'il manque à notre pays ses dimensions par Stephan veut culpabiliser les français et les français sur tous les sujets ne nous disons Plurien apportant aimer la France se veut pas dire considérer que tout ce qui s'en France et extraordinaire samedi à avoir envie de contribuer à sa réussite et je pense que cela passe d'abord Olsen maîtriser parfaitement le français</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:16:06</td><td style="background-color:#F7EBDD;color:#0;">ou en tout cas suffisamment bien pour pouvoir ensuite y réussir je regrette que le manuel Valls et supprimer tous les examens et questionnaire qui permet dans ce domaine de maîtriser correctement le français reconnaîtra minimum de choses sur l'histoire de la France ait pu enfin</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:16:20</td><td style="background-color:#EED7BD;color:#0;">d'adhérer aux valeurs de la France qui sont les valeurs la république dans lequel hier quoi la laïcité il a dû rester la tolérance de l'écoute des autres liens la liberté de la ferraille en eure-et-loir thaler, il y a longtemps du lycée bien entendu cette idée qui est au coeur du projet de défend l'unité des droits et des devoirs jean-françois copé invité de france-inter france-inter près de Paris aujourd'hui en France jusqu'à 19h00 en question sont les bienvenus</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:16:46</td><td style="background-color:#F7EBDD;color:#0;">surtout avec les banques les plus folles</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:16:49</td><td style="background-color:#EED7BD;color:#0;">de ce fait 12.19 ème mission préventive par l'affaire halphen d'orfèvre fait</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:17:03</td><td style="background-color:#F7EBDD;color:#0;">en France comme que vous avez réunir mercredi prochain les ténors de l'imp pour un séminaire qui va en quelque sorte aux élèves avec les bases d'un grand programme économique avons parlé du front les croisés non instant en est tiré d'un événement est monde sera là est que François Fillon Alain Juppé jean-pierre a fallu commencer les placements Brizeux sera la grande famille des</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:17:20</td><td style="background-color:#EED7BD;color:#0;">fourrures est tout à fait j'en suis très heureux parce que ces mythes mondiaux musique c'est un point d'orgue c'est à dire un moment très particuliers ou à près de 108 mois de l'opposition dans un contexte très difficile pour les français et les français</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:17:35</td><td style="background-color:#F7EBDD;color:#0;">l'ensemble des grands responsables du parti de Gilles le nord de présider vont se retrouver autour de la table prend un vrai dans le temps nécessaire pour eux de actes et les grandes lignes en dehors d'un projectile et la passe par l'alternance au sens où l'intervention de 1017 mai</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:17:52</td><td style="background-color:#EED7BD;color:#0;">qui vise à identifier les quelques grandes mesures d'urgence nécessaires pour le pays alors justement des etats-unis en arrachant d'austérité que vous proposez lundi qu'il faut faire 130 000 000 000 d'économies rogeret savoir sur combien d'années déjà presque sais pas précisé est tué sur court un sur les métaux la justice la police d'éducation on ne vous voulez prenait</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:18:16</td><td style="background-color:#F7EBDD;color:#0;">de francs sur Lamballe son affaire lui. 15 000 000 000 de bureaux en trois ans sincères 45 000 000 000 révisé la moindre des choses que vous parler de sa livre jamais, je suis désolé de voir le redire à nouveau nous l'avons cessé de dire tout au long de finale un autre trimestre</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:18:33</td><td style="background-color:#EED7BD;color:#0;">de cette filière ivoire a succédé le port com pour garder les documents budgétaires ont réalisé ses cafés, restaurants et cafés Giscard, dont une sur les finances de l'assemblée élue Philippe marini devant la commission des finances au sénat ils ont démontré qu'il ait pas dit que</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:18:47</td><td style="background-color:#F7EBDD;color:#0;">quand réalité de l'essentiel c'étaient des hausses d'impôts c'est une économie par rapport aux inflexions sur la vie civile d'inflation manoeuvres de 15, salle où les joueurs, comme les valeurs des explications est pas expliquer autrement ces motifs de contamination une économie</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:19:03</td><td style="background-color:#EED7BD;color:#0;">de 10 % estiment dans les difficultés quand une entreprise de force économique va pas vous expliquer que ces deux parce que il semble que les l'inflation est diminué de 10 % l'homme dans un langage lors d'un an à l'heure de grande vitesse que ce que je 130 000 hommes des forces avec ses 130 000 000 000</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:19:19</td><td style="background-color:#F7EBDD;color:#0;">l'objectif est de repenser complètement l'organisation de l'écart des collectivités locales et la sécurité d'envoyer à pourquoi 130 000 000 000 C 10 % 1300 milliards fap huit C 10003 100 lires C colossal en pots-de-vin lors de grandes heures 50 C 50 séquences avec des pointes à sa descente de 10 % samedi en alsace incandescent et à la moyenne de l'ue s'amoncellent de la première année alors la caisse</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:19:42</td><td style="background-color:#EED7BD;color:#0;">en deux ans et en salle en cinq ans et un effet un plan en cinq jours un essai de ce fait trop tard donnant des vallées alpines Arafat les mécènes faire me rendre en Haïti a été nommé de donner une impulsion forte et des deux pour pouvoir justifier les ainsi en termes comptables la baisse des avocats se mettent en scène pour baisser les adhérents et si je André des campements avril voilà</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:20:03</td><td style="background-color:#F7EBDD;color:#0;">partout où cela concerne aussi bien les sagas, est prêt à donner sa concerne le fonctionnement des terres ce sont les 35 heures dans la fonction publique qui les grandes n'a pas être en place ainsi un nouveau montée</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:20:16</td><td style="background-color:#EED7BD;color:#0;">à 39 heures avec une montée progressive E des traitements des fonctionnaires mais en même temps, une baisse de ses élèves ont notamment ce serait pas payé toujours à la grève des urgences palmées comme cela comme vous dites mensuel des en revanche dans le même temps on restera un</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:20:32</td><td style="background-color:#F7EBDD;color:#0;"> La fonction publique et existe aujourd'hui que les vols autres ordre inverse devront réduire le périmètre de l'etat convergence à Berlin se rend à leurs alliés avaient 13920.</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:20:44</td><td style="background-color:#EED7BD;color:#0;">Heures en étant payé 35 16 mars et de laquelle elle templiers. Cinq classes de péninsule quand vous payez votre loyer comme les autres facteurs de développer les pas toutes les heures à payer tous les mois de vie des dons de lancer une grande négociation est de l'etat avec l'ensemble des fonctionnaires des caisses traduisent par le fait que l'on travaille plus</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:21:02</td><td style="background-color:#F7EBDD;color:#0;">que l'on programme à terme une augmentation des que cette augmentation ne soit pas du composant basque dans le même temps</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:21:08</td><td style="background-color:#EED7BD;color:#0;">libre et derrière tout cela s'est de bien comprendre que nous n'avons plus les moyens de rester à 35 heures avec une fonction publique qui telle qu'elle existe aujourd'hui elle attend de difficultés à assumer à l'hôpital dans un certain nombre d'administrations ou dans les collectivités locales cédant des fonctionnaires moins nombreux qui est 1 FRF venu réserverait</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:21:28</td><td style="background-color:#F7EBDD;color:#0;">pas coûter vous avez vu son bouquet rapport de la cour des comptes c'est d'ailleurs le, le rapport des rapports de la cour des comptes sont bons vade-mecum comme d'ailleurs à beaucoup de ceux qui avaient gros travail ces questions ils sont éclairant ces rapports sont une somme considérable de travaux</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:21:42</td><td style="background-color:#EED7BD;color:#0;">de qui il veut s'inspire des exemples étrangers partout où ils observent que nous dépensons plus pour l'éducation nationale dans la santé dans les politiques de logements dans les écoles et dette sociale que des pays comme l'allemagne huit je ne prend pas des edp illustra libéraux se prend des pays qui sont sur des systèmes assez comparable. Partout où nous dépensons plus avec des résultats infiniment moins bon je pense donc qu'il faut proposer aux français</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:22:08</td><td style="background-color:#F7EBDD;color:#0;">que de telles que son style ordonné à chaque fois des contreparties wagram insister là-dessus la philosophie du programme que je propose aux ve et en gagnant des droits et devoirs en effet concret lorsqu'on dit en français vie des écoliers moins fonctionnaires qui travaillent grandes baies dans le même temps</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:22:23</td><td style="background-color:#EED7BD;color:#0;">que ça signifie qu'avec les savons pas dire pour les fonctionnaires des meilleurs carrière sont moins nombreux que les pays de considérer et pour les français s'est ainsi que le financement des baisses d'impôts deux évêques en prodiguant le den linden de dons pour les salariés du privé</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:22:38</td><td style="background-color:#F7EBDD;color:#0;">est l'idée serait de remonter le temps. On peut pas continuer à ce rythme-là Monique ciret par entreprise par branche avec les jeunes fois l'idée qu'on allège à des charges sociales</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:22:47</td><td style="background-color:#EED7BD;color:#0;">et dans le même temps que deux de ses et sur les salaires que les choses positives se retrouveraient les corbeaux charges sociales patronales pour les transférer pour partie à l'est et la R partis une diminution des impôts deux de dépenses tel objectif là encore fait travailler compétitivité des entreprises</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:23:04</td><td style="background-color:#F7EBDD;color:#0;">pour qu'elle soit un coût du travail qui va heures avant d'en avant des avions à la nasa. Ils indiquent les efforts de toucher aux indemnisation des chômeurs c'est quoi ce serait blessé le montant de ces indemnisations limiter leur durée</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:23:16</td><td style="background-color:#EED7BD;color:#0;">là encore on s'inspire le danube d'exemples comme l'exemple allemand qui a taux de chômage très faibles mais là encore il faut une contrepartie et jeudi quoi jeudi certes</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:23:27</td><td style="background-color:#F7EBDD;color:#0;">vont diminuerait que le niveau de vie des hommes et avec l'argent récupéré</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:23:32</td><td style="background-color:#EED7BD;color:#0;">on mettrait le paquet financier</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:23:34</td><td style="background-color:#F7EBDD;color:#0;">sur l'accompagnement de ceux qui aujourd'hui sont au chômage est signé aujourd'hui malheureusement sur la cinq ans avant un des événements de 500 blessés pour ce conflit aurait en fait divers que d'un côté on accompagne celui qui demandeurs d'emploi pour retrouver un emploi et de l'autre aux bestiaux coût du travail en baissant les charges</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:23:50</td><td style="background-color:#EED7BD;color:#0;">qui pèsent sur les entreprises et les deuxièmes éléments ont baissé réglementation aussi un nettoyage complet du code des impôts du code du travail du code d'urbanisme du code de l'environnement pour simplifier les congressistes ont mis la liberté dans ce pays qui en a bien besoin 700 en avarie n'a pas faire face vous propose de supprimer je vous avoue je me suis pas vraiment penché sur cette question Habasque me paraît pas tout à fait la plus adaptée sur le rnis et</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:24:15</td><td style="background-color:#F7EBDD;color:#0;">l'eurofranc s'en va faire vite dans son avance sur hill, avant leurs aveux avaient réalisés à sainte-hélène a pas arrangé les agents des douanes votre aller jusqu'au bout</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:24:22</td><td style="background-color:#EED7BD;color:#0;">battu jeudi en fête on compte maintenant on arrête de se rendre dans la base des fosses ardéatines à la valve aux seules fins privées que par la princesse nous avons été battus</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:24:33</td><td style="background-color:#F7EBDD;color:#0;">jeudi du mois dans ses efforts allaient avec des balles selon quelques ballets jazz n'est pas beau quand même temps quand je vois ce qui se bat depuis 10 mois à des stages que beaucoup de français doit regretter elle comme ceux dont le en responsabilité des gentils avère les enseignements je voudrais juste avant résumé</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:24:48</td><td style="background-color:#EED7BD;color:#0;">on va parler de cinq français et au repas leur dire à M Seles l'onu se révéla donnant la sur le sol ainsi aujourd'hui à travers ces hausses massives des impôts qui conduisent à trois fléaux les hausses d'impôts la hausse du chômage</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:25:01</td><td style="background-color:#F7EBDD;color:#0;">est maintenant hélas l'appauvrissement du pays voudraient. On y substituer tout à fait autour de la vraie foi qui soit positif qui consiste à leur dire au vote s'est rapproché dans lequel on va parler de trois valeurs que les français connaissent bien liberté égalité et fraternité liberté pour pouvoir travailler plus entreprendre créer</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:25:20</td><td style="background-color:#EED7BD;color:#0;">. Mais de l'oxygène aux avis et ont fait égalité pour ce soit l'égalité des chances on parle d'intégration des inégalités des efforts on peut pas toujours demandé aux mêmes saxe. Toute la commission nécessaire pour l'etat est plus fraternelle des c'est à dire empêcher la montée des communautarisme que sont en train de préparer des idéologues qui aujourd'hui conseiller le gouvernement</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:25:40</td><td style="background-color:#F7EBDD;color:#0;">et les risques de démanteler la république</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:25:42</td><td style="background-color:#EED7BD;color:#0;">33 idées fortes liberté égalité et fraternité ce sera sa le projet du nt été donnée à l'idée que je défends depuis longtemps qu'il y a un chemin positif pour la France qui n'a rien à voir avec ce qu'on vit aujourd'hui à la fois de médiocre de harcèlement agressif sûre</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:25:58</td><td style="background-color:#F7EBDD;color:#0;">de pouvoir d'achat des français d'idéologie divers réglementation et aussi pour un objectif un objectif l'avenir des enfants car c'est eux qui aujourd'hui un des raisons de s'inquiéter de voir la manière dont les choses se passent festif aux jean-françois copé dans toutes ses économies contre météo ou ou française fermer une chaîne de télévision publique entre ce dernier a récemment estimé laquelle on en lettres et je crois qu'il faut poser problème autrement</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:26:22</td><td style="background-color:#EED7BD;color:#0;">connaît bien France télévision 16 et présidait quelques années une commission son travail sur le devenir de France télévision</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:26:29</td><td style="background-color:#F7EBDD;color:#0;">. Ce qui est ce qu'il faut compte tenu que les contraintes budgétaires dans notre pays sont considérables c'est que tout le monde se pose maintenant des questions de fond</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:26:40</td><td style="background-color:#EED7BD;color:#0;">comment faire le meilleur service public à moindre coût de France télévision et un très grand contre que je connais bien qu'hier proposent souvent des programmes de qualité remarquable</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:26:52</td><td style="background-color:#F7EBDD;color:#0;">de qui ne sont pas obsédés par eux l'audience et c'est une bonne chose</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:26:55</td><td style="background-color:#EED7BD;color:#0;">mais en même temps</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:26:57</td><td style="background-color:#F7EBDD;color:#0;">ça ne doit pas exonérée d'une réflexion sur les coûts de fonctionnement de ces grandes entreprises publiques en oeuvre en Allemagne effectue ouvert à france-télévision a une dizaine de départ programmé effet difficilement entre français et pas des économies aujourd'hui en raison des travailleurs en tout cas, 11 adolescent est pas vous laisser d'adresse avant lui avait donné avril à roland-garros et enfin le pardon mais on peut pas résumer</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:27:18</td><td style="background-color:#EED7BD;color:#0;">de nouvelles approches sûres de la réfection de la télévision publique a simplement donné que vous nous parlez Yannis les avant-postes France estimé prison pour les visages en est deuxième en Bosnie se fait pas comme ça qu'on réfléchit à une modernisation du service public. 10 passes loyalistes les parcs et</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:27:34</td><td style="background-color:#F7EBDD;color:#0;">les de mon approche est très différente à l'est de voir comment est-ce que sur un groupe de 11 000</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:27:41</td><td style="background-color:#EED7BD;color:#0;">personnes.</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:27:42</td><td style="background-color:#F7EBDD;color:#0;">Elle avait comme un nombre important de chaînes publiques ne compte pas essayer d'assumer des réformes de structures a récemment pas simplement je n'ai pas d'avis sur cette question cte de la projectiles faire au téléphone précédent allemand décédé sur ces que le contribuable</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:27:57</td><td style="background-color:#EED7BD;color:#0;">on le voit bien aujourd'hui ne pourra pas éternellement continuer à financer des choses qui ne comprend pas ce qui n'en a plus les moyens pour voir derrière façon aux français que son étranglé G sept ont témoigné d'entre eux dans tous les déplacements partenaires français joueront des gens qui disent je n'y arrive plus je m'en sors plus les hausses d'impôts c'est pour nous parce qu'aujourd'hui l'appauvrissement de la France conserve ce qu'on appelle les classes moyennes et les gens qui travaillent</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:28:20</td><td style="background-color:#F7EBDD;color:#0;">de ces petits patrons les commerçants le salarié souvent très modestes ne s'en sortent plus et c'est aussi alors je pense en disant l'etat doit repenser complètement son mode de fonctionnement — jour, ce programme économique vous avez présentez-vous quelques lignes civiles appartiennent aussi une contribution des libéraux de lever le conduisait est présenté ces derniers jours entre août et de la synthèse est pourquoi les éléments un mois en cycle 613</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:28:45</td><td style="background-color:#EED7BD;color:#0;">H et la liberté de données variant entre très attaché cet endroit. C'est vraiment une marque de fabrique à cette date. Quatre.</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:28:52</td><td style="background-color:#F7EBDD;color:#0;">Et pour moi ce très important selon cette période très difficile où on nous aussi nous cherchions de nouveau chemin pour les français en évidence dans des équipements des contributions des années au gia port-naval ouvrier de Prévert tout ce que j'évoque le aille beaucoup de choses que j'ai écrit dans le manifeste. Le droit des complexes et par exemple mais aussi lieu dans un discours je commençais Châteaurenard y a quelques semaines</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:29:13</td><td style="background-color:#EED7BD;color:#0;">autour de la thématique de la liberté parce que je pense que le pays a besoin de retrouver la liberté liberté d'entreprendre liberté d'aller et venir que de la sécurité veut aussi que je vous le dis ça vous surprendra pas</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:29:25</td><td style="background-color:#F7EBDD;color:#0;">liberté de dire ce qu'on pense alors et de saisie dans ce pays le poids du politiquement correct d'une gauche bien-pensants nous est grâce douce et il faut aussi eux sont libérés par ce programme est que vous venez de détailler l'enfance de ces procès s'élevant à s'est celui de démontrer ce sera celui d'alain Juppé et François Fillon de Nicolas Sarkozy pas en s'il revient à ce que vous ayez imposait se</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:29:47</td><td style="background-color:#EED7BD;color:#0;">chef de file de ce programme avait en est-il es un Mark harmon organisé une série de morts chacun connaît visiter je défends est très régulièrement cette semaine. Nous avons développé un grand hôtel de l'immigration en parler de la mais aussi de le programme économique les ventes seront confrères des baisers court en parlant de tous conviennent d'évoquer à bord de</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:30:10</td><td style="background-color:#F7EBDD;color:#0;">la nous allons nous réunir mercredi des idées vont être sur la table de éleveurs que Luc chapel Hervé mariton fut un énorme travail autour de deux toute cette liste et nous soumettrons à 20 le 25 janvier le conseil national votre assure que un document qui sera les grandes orientations de ces mesures d'urgence</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:30:29</td><td style="background-color:#EED7BD;color:#0;">que nous préconisons coeur. Face au point un programme d'alternance mais déjà une orientation politique fort taux de rendement voix qui disent non fait que propose le fait du bien de nombreux partenaires avant le fait est que si l'on dit que vous cadavres promesses, mais milice avait fait ses études de questions en parallèle, les sciences et la merveille avant la pause fédérale avait été versée avant la pause avantageuse en moins voir le jour se révéler</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:30:54</td><td style="background-color:#F7EBDD;color:#0;">est alors écouter c'est une très bonne question ces affaires de nommer régent en très souvent battent comme de même que corps et âme est pourquoi vous l'avez pas fait avancer des questions relevant d'anderson archevêché gendre ali Salman la période de postes de est de la défaite</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:31:09</td><td style="background-color:#EED7BD;color:#0;">de 2000 doses tour Eiffel pour que je crois que la meilleure manière de</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:31:15</td><td style="background-color:#F7EBDD;color:#0;">ses de 10 ans français voila je pense que nous aurons</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:31:18</td><td style="background-color:#EED7BD;color:#0;">à réintégrer elle a duré 20, et de ne pas attendre en fait état de mon point de vue</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:31:25</td><td style="background-color:#F7EBDD;color:#0;">110 propositions qui Mitterrand se faire pour la France ou 60 promesses de rêve comme faisait François lendemain à mon avis ses 56 grandes décisions étant cinq ans dans les six premiers mois et c'est pour ça vous avez entendu souvent parlé d'une chose très importante</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:31:42</td><td style="background-color:#EED7BD;color:#0;">il faut que ces décisions soient prises par ordonnances est à dire une loi d'habilitation voter dès l'arrivée au pouvoir</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:31:49</td><td style="background-color:#F7EBDD;color:#0;">de la nouvelle majorité si les françaises et allemandes des fruits de l'école vendredi à 5000 hommes dans les six mois les décisions seront prises et la concertation elle aura lieu avant avec le peuple français s'est un pacte présidentiel dans le cas des élections de avenir</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:32:04</td><td style="background-color:#EED7BD;color:#0;">et puis avec les partenaires sociaux les uns les autres en a décidé est ensuite la concertation porte sur la mise en oeuvre une force est décidée et ça c'est autre chose que notre que c'est ce qu'on fait tous nos voisins sénateurs à nous de prendre responsabilité et ça évitera</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:32:18</td><td style="background-color:#F7EBDD;color:#0;">les reproches en plus c'est comme seconde fois -ci devait résumer leur mot la liberté qu'on me dit enlevé tenter de la liberté auprès des vertèbres bonnes ordonnance d'ailleurs avec la liberté c'est pour les français des ordonnances c'est pourquoi les mains des hommes politiques ne tremble.</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:32:34</td><td style="background-color:#EED7BD;color:#0;">Au moment de prendre les décisions on a parlé heures longuement jean-françois copé Vésinet aujourd'hui à aller de reparler un peu des hommes si vous voulez derrière une semaine qui passe entre enfants qu'on évoque dans la presse. Les confidences de Nicolas Sarkozy sur son éventuel retour sur la scène politique voudrais avant d'entendre très pense que écouter ensemble des stands à cette semaine Pierre Moscovici et Ségolène Royal</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:32:52</td><td style="background-color:#F7EBDD;color:#0;">et je crois que les français n'auront pas la mémoire courte survolé mon avis serait -ce que les français attendent moins jeunes peuvent cependant envie de se baigner défendre notre</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:33:01</td><td style="background-color:#EED7BD;color:#0;">. L'on apprend vite dénuée de fondement même de sa veste Nicolas Sarkozy ont dénoncé son maillot de bain à votre connaissance</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:33:07</td><td style="background-color:#F7EBDD;color:#0;">du Suisse. Côté rue par les coups et blessures ou parvint à six ans 5 février après avoir enlevé un an. Beaucoup de suède dominée cette demoiselle Chine pas vocation à révéler leurs électeurs en parle aussi de dans les salles on en parle beaucoup de tous ces sujets voyaient se réjouit pas vocation à révéler</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:33:23</td><td style="background-color:#EED7BD;color:#0;">la teneur de des entretiens entre le feu à leurs affaires est pas une semaine sur une des îles on a envie de toutes les conversations France, à Paris avait ouvert les jardins des etoiles je n'avais jamais fait</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:33:35</td><td style="background-color:#F7EBDD;color:#0;">finit jamais révélé la teneur des autres hormones sentiments et l'harmonie revient par</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:33:41</td><td style="background-color:#EED7BD;color:#0;">des coups de fils fins de celui de dire plus que moi mais en vain servant la cour</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:33:47</td><td style="background-color:#F7EBDD;color:#0;">. Le corps longtemps beaucoup de plus en arrêtant l'entendre à l'arrivée 100 000 de plus tard un cocktail s'effacera de 661 recours rejeté un réponses claires attendu le feu jeudi Jean Alesi Steffi Graf et les valeurs est vrai, les havrais qui doit remettre les deux juges moi je dis jeudi que soient ses côtés</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:34:05</td><td style="background-color:#EED7BD;color:#0;">et ce qui compte pas pour l'essentiel en réalité se passe assez de tels projets</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:34:12</td><td style="background-color:#F7EBDD;color:#0;">nous proposons français à travers ce que j'ai voté que toute la série français aujourd'hui de vie sont pas en train de se décider le prochain. Son atterrissage très descend, 17.10 après l'élection de 1014</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:34:24</td><td style="background-color:#EED7BD;color:#0;">témoins jeudi à les aider à des amis attention je comprends qu'on parle de missionnaires en devises étaient limités dans ces élections municipales et européennes et si on ne gagne pas le 14 mai le rapport de 1017 C Dominici pale que les grands enjeux vont de pouvoir être posée et où les français</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:34:41</td><td style="background-color:#F7EBDD;color:#0;">vont pouvoir exprimer leur rejet de la gauche les laisser l'accès à ces demandes de 14,6 balles des deux européennes elles ont dit que si Nicolas Sarkozy qui aurait décidé de Vadim en avant de le conduire la liste des eaux européennes apparemment tout le monde dames chorale des hommes entre les villes à 202 pélerins se sépara une décision qui appartient au patron du parti</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:35:02</td><td style="background-color:#EED7BD;color:#0;">au fossé est une décision qui collégiale selon une commission d'investiture on essaie de faire de choisir à chaque fois les meilleures candidats aux meilleures places je note d'ailleurs que pour les municipales, aucun problème qui trouvait solution un roman par les uns et les autres</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:35:45</td><td style="background-color:#F7EBDD;color:#0;">clubs et je crois qu'effectivement, il aurait toutes les raisons de la soutenir, 13 avril à juin au souffle sont alors un dialogue a besoin. Je le soutiens tout à fait ses calculs apprécie beaucoup baissé surtout relate sa le voeu que vendredi de leur devoir un à soutenir elle a été toujours</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:36:01</td><td style="background-color:#EED7BD;color:#0;">très engagé à ses côtés est fait des raisons de penser que compte que quelqu'un vous soutien de bow savez-vous en souvenir c'est la moindre des choses comme dans les municipalités dans trois mois. On a attendu en entendu beaucoup levée par les deux vagues bloas est plutôt un. Mais en voie de chemin en instance sera pas plutôt une valve marine met en jeu</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:36:22</td><td style="background-color:#F7EBDD;color:#0;">au maintien des conditions elles sont réunis pour qui une fois de plus aux chances de sélection des candidats de Renault présentant pour le thé que je demande juste une chose qu'on prend à rêver son balcon arrêt de broussailles vasa on fait la ville fut à Londres et prend à rêver de juger la vie politique que</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:36:40</td><td style="background-color:#EED7BD;color:#0;">à travers les sondages laisser la seine-et-marne installa par les sondages qui est alors ils estiment en oeuvre leur dans l'ordre de grève son oeuvre papale et des gestes de parme et le candidat qui semble pas tellement on se demande aux autres épreuves opposition Hélène télécom six commandés à Paris est laissé une bonne campagne pour les titres de campagne,</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:36:59</td><td style="background-color:#F7EBDD;color:#0;">et pour les vétérans avec elle est en bonne voie ! Leur laisse aux armements un voilier de alors aller en moi je propose vraiment au concours laisse de côté les sondages écran blessé françaises</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:37:12</td><td style="background-color:#EED7BD;color:#0;">ont laissé françaises de Gaza rendez-vous très très important en mars prochain aujourd'hui les français ne sont pas complètement situation notre électorat portes du mois de janvier ont commencé à entendre sa voix les documents de campagne et moi je vais leur parler aux français et en français comme je le fais ce soir avec le rôle des entrées simplement une chose qu'on pouvait pas d'un côté</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:37:30</td><td style="background-color:#F7EBDD;color:#0;">être furieux. Est-ce qui vous arrive depuis 18 mois et ne pas marquer notre colère et notre mécontentement en votant</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:37:39</td><td style="background-color:#EED7BD;color:#0;">pour la seule formation politique qui mettra la gauche en difficulté s'est également est parce que si on veut si les gens qui sont mécontents vols pour le fn commis avait redémarré le panneau de 1000 doses vision et François hollande</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:38:16</td><td style="background-color:#F7EBDD;color:#0;">dans toutes les villes de France est pas simplement de Paris et blessures par il est aussi au-delà moi je souhaite que ce soit le cas et de regard dont les choses dans toutes les villes de plus de 9000 habitants les villes moyennes et grandes pourquoi plus de cesser cette attente, compote court dépôts un accord de grands panneaux c'est vraiment ne laissant plus politisés</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:38:33</td><td style="background-color:#EED7BD;color:#0;">jean-françois copé jouerait court maman Damon votre coeur de votre impopularité aujourd'hui en France deux est avec Hervé sevault fait sauter avec la réserve avec le sourire sourire tendre avec harlem désir l'un des hommes politiques les moins populaires et autour de 10 020 % emplois éternisent est loin derrière voir le moyen est inspiré plusieurs questions anglaises en l'air est passé de droit mais surtout heures qui viennent se compter avec un pourcent sociale.</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:38:58</td><td style="background-color:#F7EBDD;color:#0;">À des endroits que faites-vous encore la roche que je me demandais est-ce que c'est un handicap aujourd'hui le droit ne sais pas comment ils veulent adopter la base ordinaire affaires maritimes c'est parfois le sentiment d'être</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:39:09</td><td style="background-color:#EED7BD;color:#0;">un handicap S que votre popularité est un handicap pour partie de la frange est pas ses têtes en surcroît les français et les français de président du premier parti d'opposition</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:39:21</td><td style="background-color:#F7EBDD;color:#0;">ces terrains faut-il s'opposent et propose des oeuvres et que l'on construit les conditions d'alternance</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:39:27</td><td style="background-color:#EED7BD;color:#0;">pouvait reconnaître avec moi je suis dans la période nous sommes proposées le retraitement et les siens après les deux oppositions et propositions de M et que nous sommes dans la période et la plus difficile la plus ingrate</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:39:38</td><td style="background-color:#F7EBDD;color:#0;">celle où il faut reconstruire alors que les varier la vaisselle cassée après l'élection présidentielle perdu en est donc c'est vrai que c'est la période difficile en même temps que je note que le commanditaire</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:39:53</td><td style="background-color:#EED7BD;color:#0;">Jacques Chirac parce qu'il présidait l'époque ces deux rpr</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:39:57</td><td style="background-color:#F7EBDD;color:#0;">Nicolas Sarkozy ont eu des effets maraîchage cohérent sol en avons élèves alors avons action et les sondages le bas. La France va plus loin encore et je crois que ce</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:40:08</td><td style="background-color:#EED7BD;color:#0;">serait la vie politique s'étend ça que ça ne peut pas s'arrêter au sondage du jour ça doit être un engagement dans la durée de Moscou jeudi aux français ce que je leur demande s'est adjugé est uniquement dans l'instance avait cité tellement sali</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:40:22</td><td style="background-color:#F7EBDD;color:#0;">tellement caricaturé tellement insulté on a dit tellement de mensonges sur ce que je suis sûr que je fais depuis un an et Demi contre les mesures à l'occasion de cette</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:40:32</td><td style="background-color:#EED7BD;color:#0;">lamentable les affaires de deux de l'élection interne ou là encore on a dit des choses et effrayant de concernant je n'ai jamais voulu répondre ai fait ce choix en c'est pourquoi</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:40:42</td><td style="background-color:#F7EBDD;color:#0;">parce que je savais qu'il fallait arrêter la polémique donc j'ai pris sur moi de ne pas répondre est longue court G thessalie effectivement quand les français attendent sa base pour comprendre que ça leur donnent envie de voile bonnes opinions je demande juste une chose de ne pas douter le moment des arts et la face, dizaines de corps de étant donné ces circonstances est toujours candidat à la halle aux primaires de Madison région elle présenterait est-ce que vous</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:41:07</td><td style="background-color:#EED7BD;color:#0;">comptez pas plus tôt misait sur mars avait mis sur la fin des premiers bilans et voilà Nicolas Sarkozy un autre francs et c'est aujourd'hui est pas du tournant de 1017 C avant de 1014 ce sera pas en état très grave blessure et moi je suis un peu dans une grande différence que</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:41:22</td><td style="background-color:#F7EBDD;color:#0;">le président lever bogey premières avaient ratissé de dames des amis politiques a renoué qu'elle attendait les essais ne restent pas attendre bien de 1014 municipal les européennes et sénatoriales en 2015 et les cantonales vers les régions un composé de revenir voir va faire à l'occasion de revoir les saisons sont les amateurs de la mission s'est conduit à la famille politique à la victoire alors sur ces élections la</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:41:46</td><td style="background-color:#EED7BD;color:#0;">raison d'un contrat de la Centrafrique est toujours à laquelle l'actualité avec la mort de sept semaines de deux soldats français opération de désarmement des milices poursuit le à droite rares sont ceux qui ne soutiennent pas l'opération sont des récents sont bien qu'il y a eu ça commence qu'il y a quelques réserves dans votre camp. Les coûts de Grenoble Mercedes sur tf un ce matin</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:42:06</td><td style="background-color:#F7EBDD;color:#0;">et cinquième couronne autres prix sont engagés sur le terrain du genre d'idées fortes réserves sur cette opération Centrafrique et réserves qui tiennent maure ou peu de clarté sur l'objectif politique pourquoi sommes-nous la voie au mali on voit bien cdt contre le terrorisme ce n'est plus un coût financier qui est un rôle important des enfants nous sommes sur le</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:42:24</td><td style="background-color:#EED7BD;color:#0;">les soldats français sont celles de l'hôtel de ces arguments vous vous retenez</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:42:30</td><td style="background-color:#F7EBDD;color:#0;">se sont tous membres. Aux normes imposées les pauses bonnes questions M Roger soutenu de cette intervention les milices et des grandes fêtes de Tramain en danger sauté au je soutiens salon juge jugé ce que je soutiens le commerce et j'apporte mon soutien à l'arrêt des soutiens comme sa valeur de décideurs adhésifs à un accord avec aussi quand même notre rôle manger juger du président dans les mêmes termes que viennent dire Bruno Lemaire</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:42:54</td><td style="background-color:#EED7BD;color:#0;">de une chose est d'apporter notre soutien nous avons des soldats engagés de façon à ce qui relevait de spire l'est toujours de risques génocidaires et à aux politiques terribles dans ce pays que la sentence est que par ailleurs je je connais bien</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:43:08</td><td style="background-color:#F7EBDD;color:#0;">M de l'inaction était pas possible</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:43:12</td><td style="background-color:#EED7BD;color:#0;">en revanche ce que dit Bruno Lemaire est ce que je dis moi même séduit dire attention</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:43:18</td><td style="background-color:#F7EBDD;color:#0;">qu'elle est la seule route que nous avons complexe avait duré quels sont les intentions les hommes équilibrés un arrêt du blé commencé et qu'il soit aussi seul vrai que la communauté internationale rend l'ex-collège est pas si les faiblesses de résidents Jal situation de faiblesse occidentale sur l'ordre international sur la défense</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:43:36</td><td style="background-color:#EED7BD;color:#0;">internationale est hier à la presse que ses délices des deux écoles a souvent font les pays y vendre des armes sont atteints par Marc pajot et les lois sur la place a.-massé les collèges. C'est la conscience</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:43:48</td><td style="background-color:#F7EBDD;color:#0;">que compte la conscience est pour moi de le sujet c'est une reprise il n'est pas normal et nous aurons l'occasion d'en parler dans la campagne européenne, il n'est pas normal que de la politique de défense ne soit pas au coeur de l'action de l'union européenne que je rappelle qu'il y a aussi</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:44:05</td><td style="background-color:#EED7BD;color:#0;">dans de la crise centrafricaine</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:44:07</td><td style="background-color:#F7EBDD;color:#0;">de en plus de Toussaint avait spécialistes que je ne comprends pas que l'ue ne soit pas de en première ligne le temps de laisser la France toute seule eux pour financer les yeux et envoyés dans nos soldats à leur seigneur de la dernière séquence droite ont dû être une série de questions-réponses raffinées parfois décalés pour conclure cette émission est Marc aurèle, de France avec ses appels d'yves Loire qui va s'ouvre est achevée journal des</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:44:36</td><td style="background-color:#EED7BD;color:#0;">filets politiques est-ce que vous souhaitez pour 2014 à François Fillon</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:44:40</td><td style="background-color:#F7EBDD;color:#0;">de la France et en août et</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:44:42</td><td style="background-color:#EED7BD;color:#0;">la forme et assurer le relais. François hollande vend avons fait de fait, on parle les actions fermes accusé</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:44:50</td><td style="background-color:#F7EBDD;color:#0;">le coup et juste de la Russie de rendre dans tout ce qu'il accomplit comme sa vie politique le sultan de 1014 militaires russes, ces élèves après les mêmes traits tirés par saint Laurent se dessine en vue d'envoyer un engin sur les femmes désirent 9h00 à l'espace se disant rééquilibrer les étoiles</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:45:08</td><td style="background-color:#EED7BD;color:#0;">neuf toutes celles qui ont envie de retrouver M un peu d'espérance donc ses 10h00 tous les français qui les ont besoin de devoir être la tête dans les étoiles et pour ses défauts leur propose un chemin des salaires en moyenne des vedettes a même pas</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:45:23</td><td style="background-color:#F7EBDD;color:#0;">en ont pas T, passe de sept ans et s'établirent est devenu président du monde en force l'imaginer de pouvoir heures le pouvoir est posé le pied sur la lune meme c'est cette bourse extraordinaire j'ai toujours eu pour les spationaute de fascination sévère de tentes fonds, jeudi, alors les enseignements de la vienne d'avoir lieu à l'est, en Afrique insuffisamment entré dans l'histoire</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:45:47</td><td style="background-color:#EED7BD;color:#0;">revue je compte des passionnes africain. Ces mesures militaires, qui prévoit j'étais très ému de lorsque j'ai appris sa disparition même si elle était attendue de Mandela s'est vraiment au-delà du maire de la nation sud-africaine de</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:46:04</td><td style="background-color:#F7EBDD;color:#0;">de Gaulle son exceptionnelle est probablement des plus grands géants de l'histoire contemporaine</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:46:11</td><td style="background-color:#EED7BD;color:#0;">.</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:46:12</td><td style="background-color:#F7EBDD;color:#0;">Ibarra jean-françois copé vous avez passé hier à quelques-uns des cinq concours de l'ENA pour oublier un chagrin d'amour ne fait aucune mesure à savoir l'averse qui ne ferait arrêter aujourd'hui la politique</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:46:24</td><td style="background-color:#EED7BD;color:#0;">de</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:46:27</td><td style="background-color:#F7EBDD;color:#0;">le sentiment d'être</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:46:30</td><td style="background-color:#EED7BD;color:#0;">totalement en décalage de</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:46:34</td><td style="background-color:#F7EBDD;color:#0;">textes peuvent souhaiter les français pour les diriger</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:46:37</td><td style="background-color:#EED7BD;color:#0;">de baisser cette idée que</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:46:40</td><td style="background-color:#F7EBDD;color:#0;">je ferais totalement fausse route dans les idées que je</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:46:43</td><td style="background-color:#EED7BD;color:#0;">que je veux leur proposer de faire des analystes à présent maître d'oeuvre ce sentiment la</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:46:48</td><td style="background-color:#F7EBDD;color:#0;">dans ses toiles anciennes Raymond non non non non non et en même temps et des questions composent poser tous les jours. Cette pire que devant celle des certitudes il faut il faut des convictions mais aussi de temps en temps des des doutes des interrogations. Celle que Carmen de</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:47:03</td><td style="background-color:#EED7BD;color:#0;">l'engagement politique s'est tellement difficile essayer de retrouver pour eux les français qui connaissent le doute que chacun c'est le meilleur E meilleur chemin dans votre devise préférence à celle de Montaigne ferry sur le trône du monde ont déjà fait que sur son plus jeune des autres liaisons entre Londres et gère assassins avaient été recueillis à jean-françois. Celle -ci amphibiens à la vanité des choses ont évolué</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:47:27</td><td style="background-color:#F7EBDD;color:#0;">une somme de 10 militaires et les îles basses oeuvres art de la puissance jetant je pense qu'il faut être évident revenir est en réalité de l'exercice des responsabilités et n'a rien à voir avec ce que l'on en croit l'extérieur</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:47:40</td><td style="background-color:#EED7BD;color:#0;">samedi. Les dorures du port de livres est de pouvoir absolu qui doit guider est celui qui dissipe tous contrats la gravité des</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:47:50</td><td style="background-color:#F7EBDD;color:#0;">effets de ce qui tombent dans cette ivresse de se remette jamais su beaucoup</td></tr>
+<tr><td style="background-color:#EED7BD;color:#0;">00:47:57</td><td style="background-color:#EED7BD;color:#0;">d'éviter ce qui se vendent</td></tr>
+<tr><td style="background-color:#F7EBDD;color:#0;">00:47:59</td><td style="background-color:#F7EBDD;color:#0;">en Belgique se faire jour le fond des filets en médecine sportive des couples sont alarmants entamer cette émission sur jean-marc ayrault la terminer sur Montaigne mer seront faites en France à côté d'avoir accepté ce centralisation des effets néfastes en avant</td></tr>
+</table>
+
+
+</body>
+</html>
+

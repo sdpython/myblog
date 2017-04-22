@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>string.format</title>
+<meta content="python, string, format" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+It is just a trick about reducing the number of parameters to send to 
+function <a href="https://docs.python.org/3.4/library/functions.html#format">format</a>.
+Let's assume we have a class like the following:
+</p>
+<pre class="brush: py">
+class Entity:
+    def __init__(self, name, city):
+        self.name = name
+        self.city = city
+school = Entity("ENSAE", "Paris")
+</pre>
+<p>
+And we want to build a string like the following:
+</p>
+<pre class="brush: py">
+message = "school:{0} city:{1}".format(school.name, school.city)
+# two parameters
+</pre>
+<p>
+But it could be rewritten as:
+</p>
+<pre class="brush: py">
+# one parameter
+message = "school:{0.name} city:{0.city}".format(school)
+
+</pre>
+
+</body>
+</html>

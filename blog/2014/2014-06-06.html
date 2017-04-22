@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>De l'usage de Python pour réduire le nombre de régions</title>
+<meta content="python, région, clustering" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+C'est un article qui a été repris dans Le Monde d'aujourd'hui où on expose ce que pourraient être
+les régions si on tenait compte des déplacements à l'intérieur de la métropole :
+<a href="http://www.data-publica.com/content/2014/06/reforme-des-regions-et-si-hollande-avait-laisse-les-bigdata-decider-decouvrez-le-regionator3000/#">Réforme des régions : et si Hollande avait laissé les bigdata décider ? Découvrez le Régionator3000 !</a>
+La méthode s'appuie sur des données produites par l'INSEE : 
+<a href="http://www.insee.fr/fr/themes/detail.asp?reg_id=99&amp;ref_id=mobilite-professionnelle-10">Base sur les flux de mobilité : mobilités professionnelles (déplacements domicile - lieu de travail)</a>.
+L'idée est simple : faire en sorte que la majorité des français habitent et travaillent au sein de la même région et 
+donc réduire le nombre de français qui habitent et travaillent dans deux régions différentes.
+Je n'aime pas trop le titre qui cite les Big Data alors que ce n'en sont pas vraiment : le résultat
+est produit avec un script Python et le module <a href="http://scikit-learn.org/stable/">scikit-learn</a> et les 
+données ne pèsent pas plus de 8 Mo. Mon propos n'est pas de dire que cette répartition est meilleure qu'une autre.
+Elle ne prend qu'une donnée en compte - les déplacements quotidien des gens -. C'est également une photo du présent qui
+n'est pas nécessairement celle qu'on pourrait avoir dans dix ans.
+Il eut été intéressant d'étudier l'évolution des résultats sur quelques décennies.
+On constate aussi que la Bretagne et la Corse font partie de la même région. 
+Mon propos est plus de dire que c'est un élément de réflexion qui est devenu tout aussi accessible
+que les autres même s'il repose sur une méthode complexe : un clustering dans un graphe.
+Qui plus est, cela a été réalisé en Python.
+</p>
+<p>
+Ce qu'on reproche probablement à la solution du gouvernement est qu'elle 
+n'est pas expliquée. En cela, elle apparaît arbitraire. Puisqu'elle
+utilise une méthode qu'on ne peut accuser d'un quelconque biais, 
+l'approche scientifique paraît plus objective, plus équitable et donc plus acceptable.
+Cela dit, il est vrai qu'on peut trafiquer les données en amont.
+</p>
+
+
+</body>
+</html>

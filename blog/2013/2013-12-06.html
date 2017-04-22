@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Extend the exception stack in Python</title>
+<meta content="python, exception, stack" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+Most of the time, message given by exception are not enough precise
+to quickly understand the error. To add more information, I used to 
+catch it and throw a new one:
+</p>
+<pre class="brush: py">
+try :
+    # something
+except Exception as e :
+    message = "my message with more information \n" + str(e)
+    raise Exception(message) 
+</pre>
+<p>
+However, it is possible to do this:
+</p>
+<pre class="brush: py">
+try :
+    # something
+except Exception as e :
+    message = "my message with more information"
+    raise Exception(message) from e
+</pre>
+<p>
+It does not break the exception stack as before. The new exception
+is just added to it.
+</p>
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+<p>
+In the following example, I added a message 
+which shows the content of variable <tt>x</tt> and <tt>y</tt>.
+</p>
+<pre class="brush: py">
+x,y = 5,3
+try :
+    z = 1 / (y**2 -2*y + 1 - (y-1)**2)
+except Exception as e :
+    message = "computation error with number x={0}, y={1}".format(x,y)
+    raise Exception(message) from e
+</pre>
+
+<p>
+The exception stack is:
+</p>
+
+<pre class="prettyprint">
+Traceback (most recent call last):
+  File "y.py", line 3, in &lt;module&gt;
+    z = 1 / (y**2 -2*y + 1 - (y-1)**2)
+ZeroDivisionError: division by zero
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "y.py", line 6, in &lt;module&gt;
+    raise Exception(message) from e
+Exception: computation error with number x=5, y=3
+</pre>
+
+</body>
+</html>

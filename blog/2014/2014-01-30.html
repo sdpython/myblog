@@ -1,0 +1,760 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Equation différentielle stochastique sous Excel avec VBA</title>
+<meta content="VBA, Excel, Black and Scholes, équation différentielle stochastique, finance" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+
+<p>
+C'est un TD que je donnais à l'ENSAE il y a quelques années. Mais 
+le VBA n'a pas trop changé depuis cette époque, tout du moins
+comparé à d'autres langages.
+L'équation différentielle stochastique de Black et Scholes apparaît souvent lorsqu'on parle de finance :
+</p>
+
+<!--
+<div lang="latex_help">
+\frac{dY_t}{Y_t} = r dt + \sigma dW_t
+</div>
+-->
+<p class="latexcenter">
+<img src="giflatex/blog_2014_2014-01-30.html__fracdYtYtrdtsigmadWt.gif" alt=" \frac{dY_t}{Y_t} = r dt + \sigma dW_t " title=" \frac{dY_t}{Y_t} = r dt + \sigma dW_t " />
+</p>
+
+
+
+<p>
+Avec :
+
+<ul>
+<li><!--
+<div lang="latex_help_inline">Y_t</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__Yt.gif" alt="Y_t" title="Y_t" />  : est le prix à l'instant <i>t</i> d'une action</li>
+<li><!--
+<div lang="latex_help_inline">r</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__r.gif" alt="r" title="r" />  : est le taux d'intérêt sans risque</li>
+<li><!--
+<div lang="latex_help_inline">\sigma</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__sigma.gif" alt="\sigma" title="\sigma" />  : est la volatilité du prix de l'action</li>
+<li><i>t</i> : représente le temps</li>
+<li><!--
+<div lang="latex_help_inline">dt</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__dt.gif" alt="dt" title="dt" />  : un petit intervalle de temps</li>
+<li><!--
+<div lang="latex_help_inline">W_t</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__Wt.gif" alt="W_t" title="W_t" />  : est un mouvement brownien</li>
+<li><!--
+<div lang="latex_help_inline">dW_t</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__dWt.gif" alt="dW_t" title="dW_t" />  : est une variable aléatoire normale de moyenne nulle et de variance <i>dt</i> </li>
+</ul>
+On cherche à résoudre numériquement cette équation avec Excel. C'est un peu
+le début de l'implémentation d'un pricer sous Excel.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+
+<p>
+Quelques remarques en préambule, il ne faut pas hésiter à se promener dans l'aide de Microsoft concernant VBA, 
+en appuyant sur la touche F1 par exemple. Internet est également une bonne source, 
+il suffit parfois de recopier un message d'erreur obscur dans Google ou Bing pour obtenir une réponse. 
+Une autre méthode simple consiste à enregistrer sous forme de macro l'action que vous voulez programmer. 
+Microsoft convertit toute macro sous la forme d'un code écrit en VBA dont il est facile de s'inspirer.
+Je garderai pour cet article la forme d'un TD, c'est-à-dire des questions avec la solution
+disponible à la fin.
+</p>
+
+<p>
+Cette équation différentielle, si on la résoud sans tenir compte de sa partie stochastique donne 
+<!--
+<div lang="latex_help_inline">Y_t = Y_0 e^{rt}</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__YtY0ert.gif" alt="Y_t = Y_0 e^{rt}" title="Y_t = Y_0 e^{rt}" /> .
+Avec un taux d'intérêt positif, le prix d'une action augmente. Mais cela n'est jamais beau et 
+on est obligé de tenir compte des aléas plus ou moins importants selon 
+la valeur de <!--
+<div lang="latex_help_inline">\sigma</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__sigma.gif" alt="\sigma" title="\sigma" /> . 
+Plus on avance dans le temps, plus la part du hasard est importante et plus la probabilité 
+que le prix de l'action suive la courbe <!--
+<div lang="latex_help_inline">Y_t = Y_0 e^{rt}</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__YtY0ert.gif" alt="Y_t = Y_0 e^{rt}" title="Y_t = Y_0 e^{rt}" /> 
+est faible.
+</p>
+
+<p>
+Si on cherche à résoudre l'équation différentielle stochastique de manière numérique 
+entre les temps <i>0</i> et <i>T</i>, on procède comme pour une équation différentielle classique. 
+On considère donc que <i>dt</i> est un petit intervalle de temps et on écrit l'équation comme ceci :
+</p>
+
+<!--
+<div lang="latex_help">
+Y_{t+dt} = Y_t \left( 1 + r dt + \sigma dW_t \right)
+</div>
+-->
+<p class="latexcenter">
+<img src="giflatex/blog_2014_2014-01-30.html__YtdtYtleft1rdtsigmadWtright.gif" alt=" Y_{t+dt} = Y_t \left( 1 + r dt + \sigma dW_t \right) " title=" Y_{t+dt} = Y_t \left( 1 + r dt + \sigma dW_t \right) " />
+</p>
+
+
+
+
+<p>
+Ensuite, à partir de <!--
+<div lang="latex_help_inline">Y_0</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__Y0.gif" alt="Y_0" title="Y_0" />  qui est connu, on calcule les valeurs 
+<!--
+<div lang="latex_help_inline">Y_{dt}, Y_{2dt}, Y_{3dt}</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__YdtY2dtY3dt.gif" alt="Y_{dt}, Y_{2dt}, Y_{3dt}" title="Y_{dt}, Y_{2dt}, Y_{3dt}" /> , ..., 
+<!--
+<div lang="latex_help_inline">Y_{T-dt}, Y_{T}</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__YTdtYT.gif" alt="Y_{T-dt}, Y_{T}" title="Y_{T-dt}, Y_{T}" /> . 
+La différence avec une équation différentielle non stochastique est qu'il n'y a plus une 
+seule solution mais une infinité : à chaque itération pour calculer, 
+<!--
+<div lang="latex_help_inline">Y_{(n+1)dt}</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__Yn1dt.gif" alt="Y_{(n+1)dt}" title="Y_{(n+1)dt}" />  en fonction de 
+<!--
+<div lang="latex_help_inline">Y_{ndt}</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__Yndt.gif" alt="Y_{ndt}" title="Y_{ndt}" /> , on utilise un 
+<!--
+<div lang="latex_help_inline">dW_t</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__dWt.gif" alt="dW_t" title="dW_t" />  différent pris au hasard. 
+</p>
+
+<p>
+Ceci signifie que <i>Y<sub>T</sub></i> n'est pas une constante mais une variable aléatoire. 
+Il faut donc calculer un grand nombre de solutions pour obtenir sa moyenne, 
+sa variance, son maximum, son minimum... Et c'est l'objectif de cet article.
+</p>
+
+<h3>1</h3>
+<p>
+Pour commencer, il faut lancer l'application Excel accessible depuis le menu 
+Démarrer (ou Start) de Windows. Ensuite, il faut recopier exactement ce qu'il y a 
+dans la figure qui suit. 
+Il est préférable de ne pas se tromper de ligne ou de colonne pour que la 
+suite de l'énoncé soit cohérente avec votre travail. 
+N'oubliez pas de sauver le fichier avec un nom de votre choix. 
+Par la suite, sauvez régulièrement au cas où la mauvaise humeur 
+d'Excel l'amènerait à <i>planter</i> en pleine programmation (ce ne devrait normalement 
+pas vous fort heureusement).
+</p>
+
+<center><img src="documents/vbatd1_1.png" alt="figure 1" /></center>
+
+
+<h3>2</h3>
+
+<p>
+La suite va se passer dans une autre fenêtre : celle où l'on écrit 
+les programme en VBA. La figure <i>2</i> montre comment ouvrir l'éditeur VBA qui 
+est aussi accessible grâce au raccourci ALT+F11. Il faut ensuite ouvrir une fenêtre ou 
+<i>module</i> permettant de saisir le programme VBA 
+(seconde image de la figure 2).
+</p>
+
+
+
+<center>
+<img src="documents/vbatd1_2.png" alt="figure 2a : Création d'un module : fenêtre où va être écrit le programme VBA" />
+<img src="documents/vbatd1_3.png" alt="figure 2b : Création d'un module : fenêtre où va être écrit le programme VBA" />
+</center>
+
+<p>
+Une nouvelle fenêtre apparaît. Il faut maintenant saisir le programme de 
+la figure 3.
+</p>
+
+<center><img src="documents/vbatd1_4.png" alt="figure 3 : Prémisses d'un programme" /></center>
+
+<p>
+L'instruction <tt>Option Explicit</tt> indique au langage VBA 
+qu'il doit être plus stricte lors de sa compréhension du programme, 
+cela évite qu'il interprète mal une instruction, il détectera une erreur à la place. 
+Une fois que ce petit programme est tapé, on écrit à l'intérieur de la 
+procédure (entre les instructions <tt>Sub</tt> et <tt>End Sub</tt> la ligne :
+</p>
+
+<pre class="brush: vb">
+MsgBox "boîte à message"
+</pre>
+
+<p>
+Placez ensuite le curseur sur cette ligne et cliquez sur l'icône en forme 
+de triange orienté vers la droite dans la barre d'outils. 
+Une boîte à message doit normalement apparaître à l'écran : 
+le programme est en train de tourner et vous demande de presser le bouton 
+<i>Ok</i> pour conclure.
+</p>
+
+
+<h3>3</h3>
+
+<p>
+On cherche maintenant à récupérer les valeurs présentes dans la feuille Excel de la question 1. 
+Il y a 5 informations, on doit donc créer 5 variables. 
+On considère que ce sont toutes des variables réelles et pour en déclarer une, 
+on écrit :
+</p>
+
+<pre class="brush: vb">
+    Dim r As Double
+</pre>
+
+<p><b>Aparté :</b>
+Le nom des variables, comme celui des fonctions ne peut inclure ni espace, ni accent. 
+Aucune distinction n'est faite entre minuscules et majuscules. 
+Il n'est pas besoin d'être très rigoureux sur les minuscules et majuscules, 
+VBA les corrige lorsqu'elles ne correspondent pas au nom utilisé lors de 
+la déclaration de la variable.
+</p>
+
+<p>
+On appelle les 5 variables à récupérer <tt>r</tt>, <tt>sigma</tt>, <tt>x0</tt>, <tt>dt</tt>, <tt>T</tt>. 
+Une fois que celle-ci sont créées, on peut leur affecter une valeur en récupérant 
+celles présentes dans la feuille Excel
+Pour récupérer le contenu d'une case, on utilise :
+</p>
+
+<pre class="brush: vb">
+r = Worksheets("Sheet1").Cells(4, 1).Value
+</pre>
+
+<p><b>Aparté :</b>
+Avec l'instruction <tt>Option Explicit</tt>, 
+il est impossible d'utiliser une variable sans que celle-ci ait été préalablement déclarée.
+</p>
+
+<p>
+N'oubliez de déclarer vos variables avant de leur affecter une valeur. 
+Il en sera de même plus tard pour les variables utilisées dans les boucles <tt>For</tt>.
+<tt>Sheet1</tt> est le nom de la feuille. Si la version d'Excel que vous utilisez 
+est française, ce sera un autre nom comme <tt>Feuil1</tt>. 
+L'instruction précédente récupère donc la valeur de la case ligne 4, colonne 1 de la feuille 
+<tt>Sheet1</tt>. On procède de même pour <tt>sigma</tt>, <tt>x0</tt>, <tt>dt</tt>, <tt>T</tt>.
+</p>
+
+
+<h3>4</h3>
+
+<p>
+On va maintenant créer une fonction permettant de calculer une solution de l'équation
+différentielle stochastique de Black et Scholes. Elle prend comme paramètres :
+<ul>
+<li><!--
+<div lang="latex_help_inline">r</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__r.gif" alt="r" title="r" />  : un réel ou <tt>Double</tt> en VBA</li>
+<li><!--
+<div lang="latex_help_inline">sigma</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__sigma.gif" alt="sigma" title="sigma" />  : un réel ou <tt>Double</tt> en VBA</li>
+<li><!--
+<div lang="latex_help_inline">x0</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__x0.gif" alt="x0" title="x0" />  : un réel ou...</li>
+<li><!--
+<div lang="latex_help_inline">dt</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__dt.gif" alt="dt" title="dt" />  : un réel ou...</li>
+<li><!--
+<div lang="latex_help_inline">T</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__T.gif" alt="T" title="T" />  : un entier ou...</li>
+</ul>
+
+Elle retournera un tableau de valeurs correspondant au vecteur 
+<!--
+<div lang="latex_help_inline">\left(Y_0, Y_{dt}, Y_{2dt}, ..., Y_T\right)</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__leftY0YdtY2dtYTright.gif" alt="\left(Y_0, Y_{dt}, Y_{2dt}, ..., Y_T\right)" title="\left(Y_0, Y_{dt}, Y_{2dt}, ..., Y_T\right)" /> . 
+Le type de résultat en VBA est un <tt>Variant</tt>. 
+Pour déclarer la fonction, on utilise la syntaxe suivante :
+</p>
+
+<pre class="brush: vb">
+Function Simulation(ByVal r As Double, ByVal sigma As Double, ByVal x0 As Double, _
+            ByVal dt As Double, ByVal T As Long) As Variant
+            
+    '  code de la fonction            
+   
+    ' Lorsqu'on connaît le résultat de la fonction, on écrit
+    Simulation = résultat
+   
+End Function
+</pre>
+
+<p>
+Le blanc souligné <tt>\_</tt> à la fin de la première ligne permet d'écrire une instruction 
+sur deux lignes et non sur une seule comme le langage VBA l'impose. 
+Le blanc souligné doit toujours être précédé d'un <b>espace</b>. Le mot-clé <tt>ByVal</tt> signifie 
+qu'on passe les paramètres par valeur : ils sont recopiés. 
+L'inverse est <tt>ByRef</tt> qui signifie un passage par adresse : ils ne sont pas 
+recopiés et peuvent être modifiés dans la fonction. Le type du résultat apparaît 
+en fin de ligne. L'apostrophe sert à insérer un commentaire dans le programme. 
+Cette fonction doit être insérée juste après <tt>Option Explicit</tt> et avant la procédure 
+qui suit et qui devra faire appel à cette fonction. 
+</p>
+
+<h3>5</h3>
+
+
+<p>
+On cherche à calculer une solution de l'équation de Black et Scholes. 
+Cette solution est un tableau qui contient
+<!--
+<div lang="latex_help_inline">n = \frac{T}{dt}+1</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__nfracTdt1.gif" alt="n = \frac{T}{dt}+1" title="n = \frac{T}{dt}+1" />  valeurs
+</p>
+
+<pre class="brush: vb">
+    Dim n as Long
+    n = T / dt + 1
+</pre>
+
+<p>
+On déclare un tableau de réels dont les indices vont de 0 à <tt>n</tt>. 
+La première valeur est <tt>x0</tt>.
+</p>
+<pre class="brush: vb">
+    Dim res() As Double
+    ReDim res(n)
+    res (0) = x0
+</pre>
+<p>
+Pour simuler une variable normale de moyenne nulle et de 
+variance <tt>dt</tt>, on utilise le code suivant :
+</p>
+<pre class="brush: vb">
+    Dim w As Double
+    w = Rnd     ' nombre aléatoire de loi uniforme [0,1]
+    w = Application.WorksheetFunction.NormSInv(w) * dt ^ 0.5
+</pre>
+
+<p>
+La fonction <tt>NormSInv</tt> est une fonction d'Excel, il suffit d'aller 
+voir l'aide pour savoir ce qu'elle fait. D'une manière générale, 
+pour utiliser une fonction dans un programme VBA alors qu'on a 
+l'habitude de se servir dans une feuille de calcul, 
+il faut utiliser le préfixe : <tt>Application.WorksheetFunction.</tt>
+Il ne reste plus qu'à savoir comment faire une boucle pour terminer la fonction :
+</p>
+<pre class="brush: vb">
+    For i = 1 To nb
+       res (i) = res(i-1) * ... à compléter
+    Next i
+</pre>
+
+<p>
+Enfin, lorsque le tableau est complet et qu'il est le résultat de la fonction 
+<tt>Simulation</tt>, il ne reste plus qu'à ajouter à la fin la ligne :
+</p>
+<pre class="brush: vb">
+    Simulation = res
+</pre>
+
+<p>
+Il ne reste plus qu'à écrire le code complet de cette fonction. 
+Un dernier indice toutefois, intéressez-vous particulièrement à l'emplacement des 
+deux lignes qui génère un nombre aléatoire.
+</p>
+
+
+
+
+
+<h3>6</h3>
+
+
+<p>
+On désire maintenant recopier les valeurs d'une solution dans la feuille Excel de départ. 
+La première étape consiste à récupérer le tableau calculé par la fonction de la question précédente :
+</p>
+<pre class="brush: vb">
+    Dim solution As Variant
+    solution = Simulation(r, sigma, x0, dt, T)
+</pre>
+
+<p>
+On récupère le nombre d'éléments dans \codes{solution} :
+</p>
+<pre class="brush: vb">
+    Dim nb as Long
+    nb = UBound (solution)
+</pre>
+
+<p>
+On recopie les valeurs dans la feuille, celles-ci doivent être réparties sur deux colonnes : 
+le temps <i>t</i> et <!--
+<div lang="latex_help_inline">Y_t</div>
+-->
+ <img src="giflatex/blog_2014_2014-01-30.html__Yt.gif" alt="Y_t" title="Y_t" />  :
+</p>
+<pre class="brush: vb">
+    For i = 0 To nb
+        Worksheets("Sheet1").Cells(7 + i, 1) = ... ' temps t
+        Worksheets("Sheet1").Cells(7 + i, 2) = ... ' Y_t
+    Next i
+</pre>
+
+<p>
+Une fois que tout cela est fait, on place le curseur dans la procédure principale et 
+on clique sur le même triangle que tout-à-l'heure. Si tout se passe bien, 
+la résultat apparaît sur la feuille Excel. Sinon, le <i>debugger</i> permet d'afficher le contenu 
+des variables en cours d'exécution.
+</p>
+
+<h3>7</h3>
+
+
+<p>
+C'est le petit moment de détente avant de retourner à la programmation : 
+on veut associer un bouton de la barre d'outils à la procédure (ou macro) 
+qu'on vient de créer. Un clic droit dans la barre d'outils fait apparaître 
+l'image de la figure 4. On clic sur <i>Customize</i>. La seconde image de la figure 
+4 apparaît. Il faut s'arranger pour faire apparaître <i>Custom Button</i>. 
+En maintenant le bouton gauche appuyé, on fait glisser le bouton jusqu'à 
+la barre d'outils où il s'insère. Une fois posé, on presse le bouton droit dessus 
+et on voir apparaître le troisième image de la figure 4.
+</p>
+
+<center>
+<img src="documents/vbatd1_5.png" alt="figure 4 : Barre d'outils et macro" />
+<img src="documents/vbatd1_6.png" alt="figure 4 : Barre d'outils et macro" />
+<img src="documents/vbatd1_7.png" alt="figure 4 : Barre d'outils et macro" />
+</center>
+
+<p>
+La fenêtre de la figure 5 apparaît. 
+Il ne reste plus qu'à sélectionner votre macro et à cliquer sur <i>Ok</i>. 
+On ferme ensuite la première fenêtre. Et, enfin, on clique sur le bouton ajouté.
+Normalement, le contenu de la feuille Excel change : une nouvelle solution apparaît. 
+Les valeurs de la solution précédente ont été remplacées par une autre, 
+un second graphique apparaît.
+</p>
+
+
+<center>
+<img src="documents/vbatd1_8.png" alt="figure 4 : Barre d'outils et macro" />
+</center>
+
+
+<h3>8</h3>
+
+<p>
+La dernière épreuve consiste à créer un graphe à partir de la solution précédemment 
+calculée. On récupère d'abord la plage contenant les données pour le graphe.
+</p>
+
+<pre class="brush: vb">
+    Dim plage As Range
+    Set plage = Worksheets("Sheet1").Range(_
+                       Worksheets("Sheet1").Cells(7, 1), _
+                       Worksheets("Sheet1").Cells(8, 2) _
+                   )
+</pre>
+
+<p>
+L'instruction <tt>Set plage = ...</tt> permet d'associer à <tt>plage</tt> une partie 
+de la feuille Excel sans la recopier. 
+Dans ce cas, sans le mot-clé <tt>Set</tt>, l'affectation est impossible. 
+En fait, le type <tt>Range</tt> désigne une partie d'une feuille Excel, 
+toute variable de ce type doit faire référence à un ensemble de vraies cases, 
+c'est pourquoi on ne peut pas les recopier. Il en va de même pour de nombreux 
+objets d'Excel tels que les graphes. L'instruction <tt>Set</tt> permet en faire de donner 
+un nom plus court à quelque chose de long.
+On créé ensuite un graphe dans la feuille <tt>Sheet1</tt> :
+</p>
+<pre class="brush: vb">
+    Dim graphe_in As ChartObject
+    Dim graphe As Chart
+    Set graphe_in = Worksheets("Sheet1").ChartObjects.Add(100, 30, 400, 250)
+    Set graphe = graphe_in.Chart
+</pre>
+
+<p>
+100, 30, 400, 250 sont les coordonnées du graphe dans la feuille. 
+Le graphe est désigné par la variable <tt>graphe</tt>. 
+On spécifie maintenant son type : XY.
+</p>
+<pre class="brush: vb">
+    graphe.ChartType = xlXYScatterLines
+</pre>
+
+<p>
+On précise quelles sont les données et qu'elles sont présentées en colonnes :
+</p>
+<pre class="brush: vb">
+    graphe.SetSourceData plage, xlColumns
+</pre>
+
+<p>
+On précise qu'il a un titre et quel est-il.
+</p>
+<pre class="brush: vb">
+    graphe.HasTitle = True
+    graphe.ChartTitle.Text = "Black Scholes"
+</pre>
+
+<p>
+On précise qu'il a des axes et la légende de ces axes.
+</p>
+<pre class="brush: vb">
+    graphe.Axes(xlValue, xlPrimary).HasTitle = True
+    graphe.Axes(xlValue, xlPrimary).AxisTitle.Text = "Xt"
+    
+    graphe.Axes(xlCategory, xlPrimary).HasTitle = True
+    graphe.Axes(xlCategory, xlPrimary).AxisTitle.Text = "temps (jour)"
+</pre>
+
+<p>
+On modifie le titre de la série et son apparence :
+</p>
+<pre class="brush: vb">
+    graphe.SeriesCollection(1).Name = "Courbe1"
+    graphe.SeriesCollection(1).Border.Color = RGB(0, 0, 255)
+    graphe.SeriesCollection(1).MarkerStyle = xlMarkerStyleNone
+</pre>
+
+<p>
+Et c'est fini ou presque pour les plus courageux qui peuvent essayer de tracer plusieurs 
+solutions dans un même graphe et pour y arriver, voici quelques lignes qui permettent 
+d'ajouter une série à un graphe.
+</p>
+
+<pre class="brush: vb">
+        Dim serie
+        Set serie = graphe.SeriesCollection.NewSeries
+        serie.XValues = Worksheets("Sheet1").Range(Worksheets("Sheet1").Cells(7, 1), _
+                            Worksheets("Sheet1").Cells(7 + nb, 1))
+        serie.Values = Worksheets("Sheet1").Range(Worksheets("Sheet1").Cells(7, 1 + i), _
+                            Worksheets("Sheet1").Cells(7 + nb, 1 + i))
+        serie.Name = "nouvelle série"
+</pre>
+
+<p>
+Lorsqu'on ne connaît le type de la variable à déclarer comme pour 
+<tt>serie</tt>, <tt>Dim serie</tt> suffit sans indication de type. 
+Néanmoins, pour des types simples (<tt>Long</tt>, <tt>String</tt>, <tt>Double</tt>, 
+il est préférable de préciser ce type, le programme est plus rapide.
+</p>
+
+
+
+
+<!-- PROGRAMME COMPLET -->
+
+
+<h3>Programme complet</h3>
+
+<pre class="brush: vb">
+
+' il est préférable de mettre cette ligne en haut du fichier
+' afin de préciser à VBA qu'il ne doit rien faire de manière
+' implicite comme utiliser une variable non déclarée
+Option Explicit
+
+
+'
+' cette fonction prend 5 paramètres qui permettent de simuler
+' l'équation stochastique de Black Scholes
+'
+' elle retourne un tableau de réels
+'
+'
+Function Simulation(ByVal r As Double, ByVal sigma As Double, ByVal x0 As Double, _
+            ByVal dt As Double, ByVal T As Long) As Variant
+
+
+    Dim res() As Double
+    Dim X As Double
+    Dim i As Long
+    Dim w As Double
+    Dim nb As Long
+    
+    nb = T / dt + 1
+    
+    ReDim res(nb)
+    X = x0
+    res(0) = X
+    
+    For i = 1 To nb
+        w = Rnd
+        w = Application.WorksheetFunction.NormSInv(w) * dt
+        X = X * (1 + r * dt + sigma * w)
+        res(i) = X
+    Next i
+    
+    Simulation = res
+    
+End Function
+
+
+
+'
+' définition de la macro Simulation_macro
+'
+Sub Simulation_macro()
+
+    Dim r As Double
+    Dim sigma As Double
+    Dim x0 As Double
+    Dim dt As Double
+    Dim T As Double
+    
+    ' on récupère les informations depuis la feuille Excel
+    r = Worksheets("Sheet1").Cells(4, 1).Value
+    sigma = Worksheets("Sheet1").Cells(4, 2).Value
+    x0 = Worksheets("Sheet1").Cells(4, 3).Value
+    dt = Worksheets("Sheet1").Cells(4, 4).Value
+    T = Worksheets("Sheet1").Cells(4, 5).Value
+    
+    ' on appelle la fonction simulation 5 fois
+    Dim i As Long
+    Dim marche(5) As Variant
+    For i = 1 To 5
+        marche(i) = Simulation(r, sigma, x0, dt, T)
+    Next i
+    
+    ' on trace la courbe avec r = 0
+    Dim non_stochastique As Variant
+    non_stochastique = Simulation(r, 0, x0, dt, T)
+    
+    ' on récupère le nombre de points dans une solution
+    Dim nb As Long
+    nb = UBound(non_stochastique)
+    
+    
+    ' on recopie les valeurs de temps et le résultats de la fonction Simulation
+    Dim k As Long
+    For i = 0 To nb
+        Worksheets("Sheet1").Cells(7 + i, 1) = dt * i
+        For k = 1 To 5
+            Worksheets("Sheet1").Cells(7 + i, 1 + k) = marche(k)(i)
+        Next k
+    Next i
+    
+    ' on recopie la solution non stochastique
+    k = 6
+    For i = 0 To nb
+        Worksheets("Sheet1").Cells(7 + i, 1 + k) = non_stochastique(i)
+    Next i
+    
+    
+    ' on met une légende
+    Worksheets("Sheet1").Cells(6, 1) = "temps"
+    Worksheets("Sheet1").Cells(6, 7) = "non stochastique"
+    For k = 1 To 5
+        Worksheets("Sheet1").Cells(6, 1 + k) = "Simulation " &amp; k
+    Next k
+    
+    
+    '
+    ' deuxième partie
+    ' on crée le graphique s'il n'existe pas
+    '
+    
+    Dim nb_graphe As Long
+    
+    ' on compte le nombre de graphes de la feuille Sheet1
+    nb_graphe = Worksheets("Sheet1").ChartObjects.Count
+    
+    If nb_graphe = 0 Then
+        ' s'il n'y a pas alors...
+    
+        Dim plage As Range
+        
+        ' on récupère les données liées à la feuille (2 colonnes)
+        Set plage = Worksheets("Sheet1").Range(Worksheets("Sheet1").Cells(7, 1), _
+                           Worksheets("Sheet1").Cells(7 + nb, 2))
+        
+        ' on crée un graphe
+        Dim graphe_in As ChartObject
+        Dim graphe As Chart
+        Set graphe_in = Worksheets("Sheet1").ChartObjects.Add(100, 30, 400, 250)
+        Set graphe = graphe_in.Chart
+        
+        ' on spécifie son type
+        graphe.ChartType = xlXYScatterLines
+        
+        ' on lui dit quelles sont les données à dessiner,
+        ' le second paramètres précise qu'elles sont organisées en colonnes
+        graphe.SetSourceData plage, xlColumns
+        
+        ' on lui met un titre
+        graphe.HasTitle = True
+        graphe.ChartTitle.Text = "Black Scholes"
+        
+        ' on met un titre sur l'axe des Y
+        graphe.Axes(xlValue, xlPrimary).HasTitle = True
+        graphe.Axes(xlValue, xlPrimary).AxisTitle.Text = "Xt"
+        
+        ' on met un titre sur l'axe des X
+        graphe.Axes(xlCategory, xlPrimary).HasTitle = True
+        graphe.Axes(xlCategory, xlPrimary).AxisTitle.Text = "temps (jour)"
+        
+        ' on modifie le nom de la première série
+        graphe.SeriesCollection(1).Name = "Courbe1"
+        graphe.SeriesCollection(1).Border.Color = RGB(0, 0, 255)
+        graphe.SeriesCollection(1).MarkerStyle = xlMarkerStyleNone
+        
+        ' on ajoute les séries suivantes
+        Dim serie As Series
+        For i = 2 To 5
+            Set serie = graphe.SeriesCollection.NewSeries
+            serie.XValues = Worksheets("Sheet1").Range(Worksheets("Sheet1").Cells(7, 1), _
+                           Worksheets("Sheet1").Cells(7 + nb, 1))
+            serie.Values = Worksheets("Sheet1").Range(Worksheets("Sheet1").Cells(7, 1 + i), _
+                           Worksheets("Sheet1").Cells(7 + nb, 1 + i))
+            serie.Name = "Courbe" &amp; i
+            serie.Border.Color = RGB(0, 0, 255)
+            serie.MarkerStyle = xlMarkerStyleNone
+        Next i
+        
+        ' on ajoute la solution non stochastique
+        i = 6
+        Set serie = graphe.SeriesCollection.NewSeries
+        serie.XValues = Worksheets("Sheet1").Range(Worksheets("Sheet1").Cells(7, 1), _
+                            Worksheets("Sheet1").Cells(7 + nb, 1))
+        serie.Values = Worksheets("Sheet1").Range(Worksheets("Sheet1").Cells(7, 1 + i), _
+                            Worksheets("Sheet1").Cells(7 + nb, 1 + i))
+        serie.Name = "non stochastique" &amp; i
+        serie.Border.Color = RGB(255, 0, 0)
+        serie.MarkerStyle = xlMarkerStyleNone
+        serie.Border.Weight = xlMedium
+    
+    End If
+    
+End Sub
+</pre>
+
+<p>
+La feuille Excel est accessible ici : <a href="documents/td_vba1.xlsm">td_vba1.xlsm</a>.
+</p>
+
+</body>
+</html>

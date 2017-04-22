@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Quelques exercices de préparation à l'examen (2)</title>
+<meta content="python, ENSAE, programmation, exercice" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+On veut écrire une fonction qui compte le nombre de voyelles dans un mot.
+</p>
+<pre class="brush: py">
+def compte_voyelles(mot):
+    ...
+    return le nombre de voyelles
+    
+print (compte_voyelles("oui"))  # doit afficher 3
+print (compte_voyelles("non"))  # doit afficher 1
+</pre>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p><b>Solution proposée</b></p>
+
+<p>
+On utilise la fonction de l'article précédent : 
+<a href="http://www.xavierdupre.fr/blog/2013-12-11_nojs.html">2013-12-11_nojs.html</a>.
+</p>
+
+<pre class="brush: py">
+def est_voyelle(c):
+    d = { "a":1, "e":1, "i":1, "o":1, "u":1, "y":1 }
+    return d.get(c, 0)
+    
+def compte_voyelles(mot):
+    nb = 0
+    for c in mot :
+        if est_voyelle(c): nb += 1
+    return nb
+     
+print (compte_voyelles("oui"))  # afficher 3
+print (compte_voyelles("non"))  # afficher 1
+</pre>
+
+<p>
+Comme la fonction <tt>est_voyelle</tt> retourne un entier. 
+On peut simplifier la fonction précédente :
+</p>
+
+<pre class="brush: py">
+def compte_voyelles(mot):
+    nb = 0
+    for c in mot :
+        nb += est_voyelle(c)
+    return nb
+</pre>
+
+<p>
+Pour l'écrire de façon agrégée :
+</p>
+
+<pre class="brush: py">
+def compte_voyelles(mot):
+    return sum ( [ est_voyelle(c) for c in mot ] )    
+</pre>
+
+
+</body>
+</html>
+

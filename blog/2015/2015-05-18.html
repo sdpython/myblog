@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Ordonner les onglets sous Excel</title>
+<meta content="Excel, onglets, VBA" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+On me demandait récemment comment ordonner les onglets 
+sous Excel. Mon premier réflexe de chercher sur un moteur 
+de recherche <i>ordonner les onglets sous Excel</i>.
+Je recopie ici le code trouver sur le site de Microsoft :
+<a href="https://support.microsoft.com/fr-fr/kb/463321/fr">Comment trier les onglets d'un classeur</a>
+</p>
+<p>
+Pour s'en servir, il suffit de recopier ce code dans l'éditeur VBA
+qui apparaît dès qu'on utilise la combinaison <i>ALT+F11</i>.
+Il faut le recopier dans la fenêtre associée à l'intitulé
+<i>ThisWorkbook</i>.
+</p>
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<pre class="brush: vb">
+Sub trie_onglets()
+
+'Déclarations des variables
+Dim nbr_onglets As Integer
+Dim compteur As Integer
+Dim noms_onglet()
+compteur = 1
+
+'Récuperation du nombre d'onglets du classeur
+nbr_onglets = ActiveWorkbook.Sheets.Count
+ReDim noms_onglets(1 To nbr_onglets)
+
+
+'Récupération des noms des onglets
+For Each onglet In ActiveWorkbook.Sheets
+    noms_onglets(compteur) = LCase(onglet.Name)
+    compteur = compteur + 1
+Next
+
+'Tri des nom des onglets
+For i = nbr_onglets - 1 To 1 Step -1
+    For j = 1 To i
+        If noms_onglets(j) > noms_onglets(j + 1) Then
+            var_tampon = noms_onglets(j)
+            noms_onglets(j) = noms_onglets(j + 1)
+            noms_onglets(j + 1) = var_tampon
+        End If
+    Next
+Next
+
+'Classement des onglets
+For i = 1 To nbr_onglets
+    Sheets(noms_onglets(i)).Select
+    Sheets(noms_onglets(i)).Move Sheets(i)
+Next
+
+End Sub
+</pre>
+
+<p>
+Pour terminer, on place son curseur au milieu du code récopié puis on
+l'exécute (il faut cliquer sur le petit triangle vert).
+Quand on retourne dans le tableur les onglets sont triés.
+Il faut noter qu'ils sont triés par ordre alphabétique sans faire 
+de différence entre les minuscules et les majuscules. Dernière remarque, 
+la fonction n'aime pas trop qu'on soit en train de renommer un onglet
+pendant qu'on l'exécute.
+</p>
+
+</body>
+</html>

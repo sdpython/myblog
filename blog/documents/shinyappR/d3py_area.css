@@ -1,0 +1,36 @@
+#chart {
+	font-family: 'Asap'; sans-serif;
+	width: 420;
+	height: 215;
+}
+
+
+.xaxis line {
+	fill: none;
+	stroke: #000;
+}
+
+.xaxis path {
+	fill: none;
+	stroke: #000;
+}
+
+.yaxis path {
+	fill: none;
+	stroke: #000;
+}
+
+.geom_area {
+	fill: MediumSeaGreen;
+	stroke-width: 1px;
+	stroke: black;
+}
+
+#area_x_y_y0 {
+}
+
+.yaxis line {
+	fill: none;
+	stroke: #000;
+}
+

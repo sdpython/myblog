@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Apprendre à coder en Python : illustration</title>
+<meta content="Python, references, teaching, initiation à la programmation" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+Je suis tombé sur un site très intéressant d'un point de vue pédagogique : 
+<a href="http://www.pythontutor.com/">PythonTutor</a>.
+Il permet de représenter visuellement l'exécution pas à pas d'un programme
+comme celui-ci par exemple qui effectue un tri bulle :
+<pre class="prettyprint">
+l = [4, 6, 3, -2, 6, 9, 3]
+for i in range(0, len(l)) :
+    for j in range(0,len(l)-1) :
+        if l[j] > l[j+1] :
+            a      = l[j+1]
+            l[j+1] = l[j]
+            l[j]   = a
+</pre>
+Le suivant permet de bien visualiser ce que fait Python
+lorsqu'il interprète une affectation, une copie, un tri :
+<pre class="prettyprint">
+l = [ [ 0, 1, 2 ], [ 4, 5, 6], [ -1, -2, -3 ] ]
+m = l
+n = list(l)
+n.sort()
+</pre>
+L'image qui suit est une copie d'écran du programme dans son état final.
+</p>
+<p>
+<img src="documents/pythontutor_img1.png" />
+</p>
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+<p>
+Mais le site propose même de générer du code HTML/javascript pour inclure le programme
+dans une page HTML :
+</p>
+<p>
+<iframe width="800" height="500" frameborder="0" 
+        src="http://pythontutor.com/iframe-embed.html#code=l+%3D+%5B+%5B+0,+1,+2+%5D,+%5B+4,+5,+6%5D,+%5B+-1,+-2,+-3+%5D+%5D%0Am+%3D+l%0An+%3D+list(l)%0An.sort()%0A%0A%0A&amp;cumulative=false&amp;heapPrimitives=false&amp;drawParentPointers=false&amp;textReferences=false&amp;py=3&amp;curInstr=4"> 
+</iframe>
+</p>
+<p>
+Le projet est open source et disponible sur
+<a href="https://github.com/pgbovine/OnlinePythonTutor">github</a>.
+C'est un pas vers la démocratisation de la programmation. Même 
+s'il paraît difficile de visualiser l'état d'un programme complexe,
+c'est tout de même un bel effort de pédagogie que d'avoir
+commencer ce projet.
+</p>
+<p>
+Dans le même genre, <i>Microsoft</i> a developpé
+<a href="https://www.touchdevelop.com/">TouchDevelop</a> qui permet
+de réaliser rapidement une application mobile. Je ne l'ai pas encore
+essayé mais il ne paraît très compliqué de 
+réaliser une petite application qui réagit à un bouton
+ou qui affiche une carte. Ecrire un programme restera toujours 
+un travail de longue haleine mais passé les premiers pas,
+il est difficile de s'arrêter avant d'avoir obtenu ce 
+qu'on voulait vraiment. Ce sont ces premiers pas que cet
+environnement semble avoir facilités, tout comme
+Python dont la syntaxe intuitive accélère la lecture
+d'un programme.
+</p>
+</body>
+</html>

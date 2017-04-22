@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Insérer des formules en code Latex dans un blog</title>
+<meta content="Latex, Javascript, blog" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="Petit exemple pour illuster comment insérer du code Latex dans un blog." name="description"/>
+<meta content="2013-02-04" name="date"/></head>
+<body>
+<p>
+Ce blog est plus pour moi. Je cherchais un moyen de transcrire des documents Latex au format HTML.
+Je n'avais pas pensé à écrire mes formules directement dans un blog. J'ai suivi
+les instructions de ce <a href="http://www.codecogs.com/latex/htmlequations.php">site</a>. On insère
+un lien vers un script au début du document :
+
+
+<pre>
+&lt;html&gt;
+&lt;head&gt;
+<span class="style2">&lt;script type=&quot;text/javascript&quot; src=&quot;
+<strong>http://latex.codecogs.com/latexit.js</strong>&quot;&gt;&lt;/script&gt;</span>
+&lt;/head&gt;
+&lt;body&gt;
+</pre>
+
+Puis on insère une formule :
+
+<pre>
+&lt;div <span class="style2">lang=&quot;latex&quot;</span>&gt;
+\frac{1+sin(x)}{y}
+&lt;/div&gt;
+</pre>
+
+Et on regarde si ça marche :
+
+<div lang="latex">
+\frac{1+sin(x)}{y}
+</div>
+</p>
+
+
+<p>Et si ça marche aussi lorsqu'on veut l'insérer dans le texte 
+<span lang="latex">\frac{1+sin(x)}{x^3}</span> en utilisant le code suivant :
+<pre>
+&lt;span lang="latex"&gt;\frac{1+sin(x)}{x^3}&lt;/span&gt;
+</pre>
+Dans quelques boîtes, il est désormais possible d'écrire ses propres blogs comme si finalement on avait
+abandonné l'idée de structurer l'information interne dans une société. Chaque employé peut maintenant 
+faire circuler de l'information qu'on récupère en faisant des recherches par mots-clés. Quoiqu'il en soit, 
+on découvre la date à laquelle chacun à commencer à blogger car le premier blog s'appelle invariablement 
+<i>Welcome to my blog</i>, ce à quoi ce blog m'a fait penser.
+</p>
+
+</body>
+</html>

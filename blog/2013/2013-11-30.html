@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>More about interactive graphs using Python, d3.js, R, shiny, IPython, vincent, d3py, python-nvd3</title>
+<meta content="R, python, d3.js, shiny, d3py, vincent, ipython, nvd3, python-nvd3, ENSAE" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+I recently found this url <a href="http://christopheviau.com/d3list/">The Big List of D3.js Examples</a>.
+As <a href="http://d3js.org/">d3.js</a> is getting popular - their website is pretty nice  -, 
+I was curious if I could easily use it through Python. After a couple of searches (many in fact), 
+I discovered <a href="https://github.com/wrobstory/vincent">vincent</a> and some others.
+It ended up doing a quick review. Every script was tested with Python 3.
+</p>
+
+<p>
+<b>Contents:</b>
+<ul>
+<li><a href="#qtconsole">Graphs with IPython and QtConsole</a></li>
+<li><a href="#notebook">Graphs with IPython Notebook</a></li>
+<li><a href="#notebookd3">Graph with d3.js and IPython Notebook</a></li>
+<li><a href="#vincent">Graphs with Python and vincent</a></li>
+<li><a href="#d3py">Graphs with Python and d3py</a></li>
+<li><a href="#nvd3">Graphs with IPython and nvd3</a></li>
+<li><a href="#shiny">R with shiny</a></li>
+<li><a href="#next">Alternatives</a></li>
+</ul>
+
+If you want to easily produce a html file including javascript (to publish it on
+your website for example),
+you only need to look at sections <a href="#d3py">Graphs with Python and d3py</a>,
+<a href="#nvd3">Graphs with IPython and nvd3</a>. 
+I tested the solution introduced below. If you need some guidelines to choose which one suits
+your needs, I would recommend asking the two following question:
+<ul>
+<li>How will you share the graph? (no share, image, web + HTML and Javascript, web + R)</li>
+<li>Can you see the graph you want to do in galleries?</li>
+</ul>
+</p>
+
+Before going on, if you speak French and if you do not know much 
+about <a href="http://d3js.org/">d3.js</a>, you can watch this presentation
+<a href="http://www.infoq.com/fr/presentations/visualisation-donnees-web-d3js">Visualisation de données pour le web avec D3.js</a>
+which introduces the concepts of this library.
+
+<p id="qtconsole">
+<font size="5"><br />
+<b>Use of <a href="http://ipython.org/ipython-doc/stable/interactive/qtconsole.html">IPython (qt)console</a></b>
+</font>
+</p>
+<p>
+The <i>QtConsole</i> looks like a command line window but is able to display images inline using 
+<a href="http://matplotlib.org/">matplotlib</a>:
+</p>
+<center><img src="documents/ipython_inline.png" /></center>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+
+<p>
+You can enable it by using the following steps:
+<ul>
+<li>Install <a href="http://www.riverbankcomputing.co.uk/software/pyqt/intro">pyqt</a> (only once, Windows users can go <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyqt">there</a>)</li>
+<li>Go to <i>&lt;Python folder&gt;/Scripts</i> and type <tt>ipython3 qtconsole</tt></li>
+<li>In the console, type <tt>%matplotlib inline</tt></li>
+</ul>
+To test it is working, you can type and press enter:
+</p>
+<pre class="prettyprint">
+%load http://matplotlib.org/plot_directive/mpl_examples/mplot3d/contour3d_demo.py
+</pre>
+
+
+
+<p id="notebook">
+<font size="5"><br />
+<b>Use of <a href="http://ipython.org/ipython-doc/dev/interactive/notebook.html">IPython notebook</a></b>
+</font>
+</p>
+<p>
+The <i>Notebook</i> still looks like the same as the <i>QtConsole</i> but with some changes:
+<ul>
+<li>You can save a workspace (and retrieve your past sessions).</li>
+<li>You can replay a command inline instead of running it again below (for example after you import a missing module).</li>
+<li>You can inline HTML and Javascript inline (and images too). This feature is very interesting if your program
+produces web pages.</li>
+<li>It works through a browser.</li>
+</ul>
+</p>
+<p>
+<center><img src="documents/ipython_notebook.png" width="500" /></center>
+<p>
+</p>
+It requires
+some <a href="http://ipython.org/ipython-doc/dev/install/install.html#installnotebook">installation</a> first.
+A couple of modules are needed but it is rather well explained (except you need to 
+replace <i>jinja</i> by <i>jinja2</i> for Python 3). Other than that, it works well too:
+<ul>
+<li>Go to <i>&lt;Python folder&gt;/Scripts</i> and type <tt>ipython3 notebook mynotebook.ipynb</tt></li>
+</ul>
+
+You can then type:
+</p>
+
+<pre class="brush: py">
+from IPython.display import YouTubeVideo
+YouTubeVideo('1j_HxD4iLn8')
+</pre>
+<p>
+And press <tt>Shift + Enter</tt> to run it. I like the following too:
+</p>
+<pre class="brush: py">
+from IPython.display import Math
+Math(r'F(k) = \int_{-\infty}^{\infty} f(x) e^{2\pi i k} dx')
+</pre>
+
+<center><img src="documents/ipythonnb_math.png" /></center>
+
+<p>
+If you are using matplotlib, you might need to type this one:
+</p>
+<pre class="brush: py">
+matplotlib.rcParams['backend'] = 'QtAgg'
+</pre>
+<p>
+And restart the kernel. You will be able to see a graph appear if you type:
+</p>
+<pre class="brush: py">
+%matplotlib inline
+import numpy as np
+import matplotlib.pyplot as plt
+x = np.linspace(0,5,1000)
+y = np.sin(x)
+plt.plot(x,y)
+</pre>
+
+<center><img src="documents/ipythonnb_matpl.png" /></center>
+
+<p id="notebookd3">
+<font size="5"><br />
+<b>Use of d3.js in <a href="http://ipython.org/ipython-doc/dev/interactive/notebook.html">IPython notebook</a></b>
+</font>
+</p>
+<p>
+After you opened a notebook using the command line <tt>ipython3 notebook mynotebook.ipynb</tt>,
+you can directly see the result of a javascript. You can directly copy/paste the 
+following example into a notebook:
+</p>
+
+
+<pre class="brush: py">
+html_src = """
+                &lt;h2&gt;Simple D3 plot&lt;/h2&gt;
+                &lt;div id="chart"&gt;&lt;/div&gt;
+           """
+
+test_d3_js = """
+                    var width = 600;
+                    var height = 100;
+                    var root = d3.select('#chart').append('svg')
+                        .attr({
+                          'width': width,
+                          'height': height,
+                        })
+                        .style('border', '1px solid black');
+                    
+                    var evenNumbers = [0, 2, 4, 6, 8, 10];
+                    var maxDataValue = d3.max(evenNumbers);
+                    var barHeight = height / evenNumbers.length;
+                    var barWidth = function(datum) {
+                      return datum * (width / maxDataValue);
+                    };
+                    var barX = 0;
+                    var barY = function(datum, index) {
+                      return index * barHeight;
+                    };
+                    root.selectAll('rect.number')
+                        .data(evenNumbers).enter()
+                      .append('rect')
+                        .attr({
+                          'class': 'number',
+                          'x': barX,
+                          'y': barY,
+                          'width': barWidth,
+                          'height': barHeight,
+                          'fill': '#A6D854',
+                          'stroke': '#444',
+                     });    
+             """
+
+js_libs = ['http://rawgithub.com/mbostock/d3/master/d3.min.js']
+
+import IPython
+from IPython.core.display import display_html, display_javascript, Javascript
+display_html(IPython.core.display.HTML(data=html_src))
+display_javascript( Javascript(data=test_d3_js, lib= js_libs))
+</pre>
+
+<center><img src="documents/ipythonnb_matd3.png" width="500" /></center>
+
+
+<p>
+It works pretty well. Just be careful to change the div id when trying a new graph otherwise
+the new graph will be added to the previous one. However, the nice feature here is to
+be able to replay your graph and to reply the code to see your modifications.
+The notebook can take some time to install because it requires 
+a couple of modules not easy to install with <tt>pip</tt>.
+The best way is maybe to install <a href="http://winpython.sourceforge.net/">WinPython</a>.
+It contains everything you need (Python, IPython, Notebook) and even more. 
+</p>
+
+<p><b>2015/05/08</b> 
+<a href="http://dongweiming.github.io/divingintoipynb_nikola/posts/nbconvert.html">nbconvert + javascript</a>
+</p>
+
+<p id="vincent">
+<font size="5"><br />
+<b>Graphics with <a href="https://github.com/wrobstory/vincent">vincent</a></b>
+</font>
+</p>
+<p>
+The module can be installed using <tt>pip install vincent</tt> and it works
+with <a href="http://ipython.org/ipython-doc/dev/interactive/notebook.html">IPython notebook</a>.
+Once you started a new notebook, you need to type the following lines:
+</p>
+<pre class="brush: py">
+import vincent
+vincent.core.initialize_notebook()
+</pre>
+<p>
+You can check everything is working fine by running the following examples:
+</p>
+<pre class="brush: py">
+list_data = [10, 20, 30, 20, 15, 30, 45]
+import vincent
+bar = vincent.Bar(list_data)
+bar.display()  # each time you type this, the graph appears
+</pre>
+
+<center><img src="documents/ipythonnb_vincent.png" width="500" /></center>
+
+<p>
+I did not find an easy way to store the graph into an image. The only export
+is done through json for <a href="http://trifacta.github.io/vega/">vega</a> (you cannot import yet).
+The parameter <tt>encoding</tt> does not seem to be implemented yet.
+It could be annoying for non English languages. Otherwise, it sounds nice.
+</p>
+
+
+<p id="d3py">
+<font size="5"><br />
+<b>d3.js with Python and <a href="https://github.com/sdpython/d3py">d3py</a></b>
+</font>
+</p>
+<p>
+This first module is very light. It does not seem to be developped anymore. However, it 
+should not be too difficult to continue its implementation for your needs.
+It is easy to fork it on <a href="https://github.com/">GitHub</a> and to go on with your changes.
+This is a nexample of what you can do with it:
+</p>
+
+
+<pre class="brush: py">
+import d3py
+import networkx as nx    
+G=nx.Graph()
+G.add_edge(1,2)
+G.add_edge(1,3)
+G.add_edge(3,2)
+G.add_edge(3,4)
+G.add_edge(4,2)
+
+with d3py.NetworkXFigure(G, name="graph",width=200, height=200) as p:
+    p += d3py.ForceLayout()
+    p.css['.node'] = {'fill': 'blue', 'stroke': 'magenta'}
+    p.save_to_files()
+    p.show() 
+</pre>    
+
+<p>
+Which gives (check the source this page):
+</p>
+
+<center>
+<iframe frameborder="0" height="400" src="documents/graph_blog_20131130.html" width="500"> 
+</iframe>
+</center>
+
+<p>
+One feature I like with this module is the possibility to easily test the result.
+The last instruction <tt>p.show()</tt> starts a python server (see below). You just have to copy paste
+the url to a browser to see the graph. Developping a graph means switching
+between your editor and your browser as follows:
+</p>
+
+<pre class="prettyprint">
+&lt;iframe frameborder="0" height="200" src="documents/graph_blog_20131130.html" width="500"&gt; 
+&lt;/iframe&gt;
+</pre>
+
+<p>
+What you can see after type <tt>p.show()</tt>:
+</p>
+
+<pre class="prettyprint">
+You can find your chart at http://localhost:8000/graph.html
+Ctrl-C to stop serving the chart and quit!
+</pre>
+
+<p>
+You should not run it with the <i>notebook</i>, you will have to restart the kernel or
+the following icon will stay for ever.
+</p>
+
+<center><img src="documents/ipythonnb_busy.png" /></center>
+
+
+<p id="nvd3">
+<font size="5"><br />
+<b>d3.js with Python, IPython and <a href="https://github.com/areski/python-nvd3/">Python-nvd3</a></b>
+</font>
+</p>
+
+<p>
+The module can be installed using <tt>pip install python-nvd3</tt>. It is based on
+d3.js and on <a href="http://nvd3.org/">nvd3</a> (<a href="https://github.com/novus/nvd3">github</a>).
+It is very easy if you consider using IPython notebook. I made a quick tweak
+to be able to use scripts from <a href="https://github.com/">github</a>. 
+You can install the module 
+from <a href="https://github.com/sdpython/python-nvd3">python-nvd3</a>.
+</p>
+
+<pre class="brush: py">
+from numpy import sin, pi, linspace
+from nvd3 import lineChart, scatterChart
+import random
+
+type = "scatterChart"
+# I modified the example at the end of the following line
+chart = scatterChart(name=type, height=350, x_is_date=False, assets_directory="rawgithub")
+chart.set_containerheader("\n\n&lt;h2&gt;" + type + "&lt;/h2&gt;\n\n")
+nb_element = 50
+xdata = [i + random.randint(1, 10) for i in range(nb_element)]
+ydata = [i * random.randint(1, 10) for i in range(nb_element)]
+ydata2 = [x * 2 for x in ydata]
+ydata3 = [x * 5 for x in ydata]
+
+kwargs1 = {'shape': 'circle', 'size': '1'}
+kwargs2 = {'shape': 'cross', 'size': '10'}
+kwargs3 = {'shape': 'triangle-up', 'size': '100'}
+
+extra_serie = {"tooltip": {"y_start": "", "y_end": " calls"}}
+chart.add_serie(name="serie 1", y=ydata, x=xdata, extra=extra_serie, **kwargs1)
+chart.add_serie(name="serie 2", y=ydata2, x=xdata, extra=extra_serie, **kwargs2)
+chart.add_serie(name="serie 3", y=ydata3, x=xdata, extra=extra_serie, **kwargs3)
+
+chart.buildhtml()
+output_file = open('test_scatterChart.html', 'w')
+output_file.write(chart.htmlcontent)
+output_file.close()
+</pre>
+<p>
+And to display it using IPython notebook:
+</p>
+
+<pre class="brush: py">
+from IPython.core.display import HTML
+HTML("test_scatterChart.html")
+</pre>
+
+<p>
+Something, IPython displays nothing on the first try because I assume the
+javascript takes time to load. After a short time (one minute), it perfectly works:
+</p>
+
+<center><img src="documents/ipythonnb_nvd3.png" width="500" /></center>
+
+
+
+<p id="shiny">
+<font size="5"><br />
+<b>R with <a href="http://www.rstudio.com/shiny/">shiny</a></b>
+</font>
+</p>
+<p>
+<a href="http://www.rstudio.com/shiny/">shiny</a> is published by the same team
+which produces <a href="http://www.rstudio.com/">RStudio</a>. It is nicely
+packaged and after all these pythonic short program, I must confess
+that it only took me a couple of minutes to make the example work.
+</p>
+<p>
+You first need to install shiny (<tt>install.packages('shiny')</tt>). 
+It is designed in a way you need to create two files
+you need to place in the same folder.
+<ul>
+<li>ui.R</li>
+<li>server.R</li>
+</ul>
+
+For example, <tt>ui.R</tt>:
+</p>
+<pre class="prettyprint">
+library(shiny)
+
+# Define UI for application that plots random distributions 
+shinyUI(pageWithSidebar(
+
+  # Application title
+  headerPanel("Hello Shiny!"),
+
+  # Sidebar with a slider input for number of observations
+  sidebarPanel(
+    sliderInput("obs", 
+                "Number of observations:", 
+                min = 1,
+                max = 1000, 
+                value = 500)
+  ),
+
+  # Show a plot of the generated distribution
+  mainPanel(
+    plotOutput("distPlot")
+  )
+))
+</pre>
+<p>
+And <tt>server.R</tt>:
+</p>
+<pre class="prettyprint">
+library(shiny)
+
+# Define server logic required to generate and plot a random distribution
+shinyServer(function(input, output) {
+
+  # Expression that generates a plot of the distribution. The expression
+  # is wrapped in a call to renderPlot to indicate that:
+  #
+  #  1) It is "reactive" and therefore should be automatically 
+  #     re-executed when inputs change
+  #  2) Its output type is a plot 
+  #
+  output$distPlot &lt;- renderPlot({
+
+    # generate an rnorm distribution and plot it
+    dist &lt;- rnorm(input$obs)
+    hist(dist)
+  })
+})
+</pre>
+<p>
+To see your graph, you need to type:
+</p>
+
+<pre class="prettyprint">
+library(shiny)
+runApp("&lt;your_folder&gt;")
+</pre>
+<p>
+The following page <a href="http://www.rstudio.com/shiny/showcase/">gallery</a> 
+contains some examples of what you can do with this library. However,
+it does not seem easy to convert this graph into HTML/Javascript. 
+Shiny proposes to deploy a shiny application through a 
+<a href="http://rstudio.github.io/shiny/tutorial/#deployment-web">Shiny Server</a>
+working on Linux. You do only R.
+</p>
+
+<center><img src="documents/ipythonnb_shiny.png" width="500" /></center>
+
+<p id="next">
+<font size="5"><br />
+<b>Alternatives</b>
+</font>
+</p>
+
+<p>
+Another solution I recently found is <a href="http://mpld3.github.io/">MPLD3</a> which
+takes a <i>matplotlib</i> and cnoverts it into another graph using <i>d3.js</i>.
+You will find more on this page:
+<a href="http://nbviewer.ipython.org/github/plotly/IPython-plotly/blob/master/See%20more/Plotly%20and%20mpld3.ipynb">Plotly, matplotlib, and mplexporter</a>.
+</p>
+
+</body>
+</html>

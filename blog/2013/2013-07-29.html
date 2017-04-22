@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Starting a coding projet</title>
+<meta content="programming, coding, tools, reference" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+When I was young, I was writing code, running, fixing bugs and going on
+to something else to code. After I joined my first company, I realized
+many people were doing that. There were very different styles of coding,
+spaces anywhere, indentation not following a single rule and always 
+some resistance to follow one set of rules. I started to work in a company
+with various cultures and styles. People usually write code following
+the style which is the clearest for them, the easiest to understand for them.
+I'm usually skeptical when somebody explains everybody should do this or this
+because it makes more sense. As a teacher, I saw too many different logics, 
+each of them writing in their own style. And if you do different, it is because
+it is more simple that way for you. For example, I usually choose small variables
+name for a loop (n, i, t, u) because I read it as a mathematical loop 
+(<i>\sigma_{i=1}^n ...</i>). I add a space before semicolon because you do this in French.
+One rule I follow is when I modify something written by somebody else: 
+I try to follow the same style. I remember some code review which came back
+with many comments because my spaces were not good. 
+I think there should be a tool for that.
+</p>
+<p>
+Anyway, when you work on a big project, I'm not sure about the importance 
+of the style but I know some tools and practice are unavoidables:
+<ul>
+<li>unit tests: that should be the first thing you write,</li>
+<li>source repository: 
+<a href="http://en.wikipedia.org/wiki/Git_(software)">Git</a> seemed to be one of the best choices,</li>
+<li>code review: they make it easy to share pieces of code (see <a href="http://www.reviewboard.org/">ReviewBoard</a>).</li>
+<li>automated help generation: it can be useful if it is started soon enough</li>
+</ul>
+If there are specific guidelines to follow, I usually implement them in unit tests:
+you cannot submit a modification if one fails. I prefer an explicit error message
+than a document to read explaining how I should code. And every repetitive task should 
+be automated.
+</p>
+
+
+</body>
+</html>

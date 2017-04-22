@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Répéter les mêmes modifications sur une table</title>
+<meta content="Excel, formules, Python" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="Excel est très pratique pour tracer des graphiques,        écrire des formules dans une table. La seule contrainte vient parfois du        fait qu'on se retrouve à faire la même chose plusieurs fois de suite.        On doit produire les mêmes statistiques sur les mêmes données ou presque les mêmes :        la matrice a deux colonnes en plus et trois lignes en moins.        Ce n'est pas toujours évident d'adapter ses feuilles Excel.        Aujourd'hui, je devais répéter la même formule sur dix colonnes différentes..." name="description"/>
+<meta content="2013-01-28" name="date"/></head>      
+<body>
+<p>
+Excel est très pratique pour tracer des graphiques, écrire des formules dans 
+une table. La seule contrainte vient parfois du fait qu'on se retrouve à 
+faire la même chose plusieurs fois de suite. On doit
+produire les mêmes statistiques sur les mêmes données ou presque les mêmes :
+la matrice a deux colonnes en plus et trois lignes en moins. Ce n'est pas 
+toujours évident d'adapter ses feuilles Excel. Aujourd'hui, je devais
+répéter la même formule sur dix colonnes différentes. J'ai donc décider 
+de faire ça en Python. Je voulais écrire quelque chose comme ça :
+<pre class="prettyprint">
+table.add_column ( "has_A" + k, lambda v : 1 if "prenom" in v["name"] else 0 )
+</pre>
+L'avantage est que je peux maintenant écrire quelque chose comme :
+<pre class="prettyprint">
+for name in selection_colonnes :
+    table.add_column ( "has_" + name, lambda v : 1 if "mot clé" in v[name] else 0 )
+</pre>
+ou encore
+<pre class="prettyprint">
+group = table.groupby ( lambda v: v["name"],
+                        [ lambda v: v["d_a"], 
+                          lambda v: v["d_b"] ],
+                        [ "name", "sum_d_a", "sum_d_b"] )
+</pre>
+et
+<pre class="prettyprint">
+innerjoin = table.innerjoin (group, lambda v : v["name"], 
+                                    lambda v : v["name"], "group" )
+</pre>
+</p>
+Il ne me reste plus qu'à récupérer le tout sous Excel pour faire des graphiques
+ou faire de la mise en page. J'ai dû le coder plusieurs fois sous différentes
+formes. Voici la <a href="documents/tableformula.html">dernière</a>.
+
+</body>
+</html>

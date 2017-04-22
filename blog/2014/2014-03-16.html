@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Laisser l'utilisateur définir ses propres paramètres</title>
+<meta content="python, ligne de commande, tkinter" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Chaque année, à la fin de l'année scolaire, je dois exécuter les projets 
+de mes étudiants. Assez souvent, je me retrouve à répondre à des questions 
+simples et parfois nombreuses : nom du premier joueur, nom du second joueur,
+niveau de jeu... Bien souvent, la première exécution ne fonctionne pas,
+la plupart du temps à cause d'un nom absolu de fichier qui ne trouve
+pas à l'endroit attendu. Une fois corrigé, je relance le programme et je dois
+de nouveau répondre à tous les questions.
+</p>
+
+<p>
+Je pourrais leur imposer une façon de faire, mais lorsqu'un projet
+s'étire sur plusieurs mois, n'importe quel directive insérée dans un mail
+finit aux oubliettes. Je pourrais leur demander de modifier leur programme mais
+lorsque je suis face au problème à une heure très matinale,
+quelques heures avant leur soutenance, j'ai quelques doutes sur la réussite
+de l'entrerprise. Reste peut-être la possibilité de coder une fonction
+qui peut peut-être devenir aussi utile pour eux que pour moi.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+La fonction que je propose ouvre une fenêtre <tt>tkinter</tt> sur une liste 
+de paramètres avec des valeurs par défaut. A la seconde exécution, la fonction
+récupère les valeurs utilisées lors de la précédente exécution. Simple.
+</p>
+
+<pre class="brush: py">
+from pyquickhelper import open_window_params
+
+p = { "joueur1": "manuel", "joueur2":"ordinateur", "niveau":3 }
+r = open_window_params(p, help_string="joueur1 ou 2 à choisir entre manuel et ordinateur," \
+                        " niveau entre 1 et 5")
+print(r)  # affiche {'niveau': 5, 'joueur2': 'ordinateur', 'joueur1': 'manuel'}
+</pre>
+
+<p>
+La fonction affiche la fenêtre suivante :
+</p>
+
+<center>
+<img src="documents/openwinpar.png" />
+</center>
+
+<p>
+Lorsque le bouton <tt>cancel</tt> est pressé, le résultat contient la 
+paire clé:valeur <tt>'__cancel__': True</tt>. Il est même possible en appuyant
+sur les boutons <tt>Up</tt> ou <tt>Down</tt> de retrouver des valeurs
+de paramètres utilisées bien avant. Pour l'utiliser, il suffit
+d'utiliser le module <a href="https://pypi.python.org/pypi/pyquickhelper/">pyquickhelper</a>.
+</p>
+
+
+</body>
+</html>

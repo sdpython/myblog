@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Map / Reduce</title>
+<meta content="map reduce, programming, big data, data skew" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+I wish sometimes bugs could let me go. I'm working on an map/reduce algorithm. 
+The problem would be smaller I would not hesitate to avoid map/reduce but it is not.
+Any fast it can be, I find it very slow and impossible to run. 
+So I polish. I wake up in the morning and a detail strikes me up. 
+Shit, shit, shit, I should have written it that way. 
+It works on a small sample but this sample is resistant to many mistakes. 
+I see this algorithm working in my head from the beginning. 
+But I missed this case, as if a train would hide another 
+one and get me killed when I cross. 
+That kind of stuff always happens with big data. 
+Pruning, scaling...
+</p>
+<p>
+Most of the time, the issue comes from <i>skewed data</i>.
+<a href="http://en.wikipedia.org/wiki/Skewness">Skewness</a> is a way to say
+that the data is not uniformly distributed. Precisely, when reducing a table 
+or joining two tables, we group data sharing the same key (as we do
+a <tt>GROUP BY</tt> or a <tt>JOIN</tt> on SQL).
+People research about it: 
+<a href="http://nuage.cs.washington.edu/pubs/opencirrus2011.pdf">A Study of Skew in MapReduce Applications</a>.
+But let's see on a example what it means: <a href="notebooks/skewdata_reduce.html">notebook on Reduce skew data</a>.
+</p>
+
+
+</body>
+</html>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Big Data, Data Scientist, quelques repères</title>
+<meta content="big data, data scientist, references" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="2013-03-11" name="date"/></head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+En rejoignant Yahoo il y a déjà cinq ans, j'ai découvert le langage
+<a href="http://en.wikipedia.org/wiki/Pig_(programming_tool)">PIG</a>. Ce n'était
+pour moi qu'un nouveau langage très proche de SQL dont le seul attrait était de 
+pouvoir accéder aux logs de recherches puis de les aggréger de
+différentes manières avant de pouvoir enfin les poser sur une machine 
+isolée où je pouvais travailler simplement et rapidement. Aujourd'hui,
+cette technique est étiqueté <i>Big Data</i> et s'est considérablement
+étoffée. En passant chez Microsoft, j'ai découvert son équivalent
+chez Microsoft
+avec <a href="http://research.microsoft.com/en-us/um/people/jrzhou/pub/Scope.pdf">Scope</a>.
+Google a developpé un langage 
+<a href="http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/sv//archive/sawzall-sciprog.pdf">Sawzall</a>
+dont la syntaxe est plus proche d'un langage fonctionnel.
+Aujourd'hui, au fur et à mesure de mes discussions sur le Big Data, 
+je garde quelques références
+sur le sujet, des idées. Cela n'a rien d'exhaustif mais je suis étonné
+qu'autant de projets fleurissent étant donné l'investissement que chacun
+d'entre eux nécessite. Ce billet rassemble quelques idées, termes, liens.
+</p>
+<!-- SUMMARY ENDS -->
+
+<p><b>Quelques remarques sur l'utilité de ces techniques</b></p>
+<p>
+<ul>
+<li>
+Les données Big Data sont souvent plus bruitées que d'autres données 
+car il n'est plus possible de les nettoyer manuellement. Le nettoyage est forcément 
+statistique ou il nécessite l'utilisation de modèles robustes au bruit. 
+</li>
+<li>
+Le machine learning est souvent associé à BigData (voir plus bas). 
+Machine learning = apprentissage statistique en français. 
+La raison est qu'il est quasiment impossible de visualiser les données sans un traitement préalable. 
+</li>
+<li>
+Il est aussi une chose qui rend le BigData très attractif,
+c'est la possibilité de croiser les données : données clients avec clics internet. 
+Ces croisements n'étaient pas possibles avant tout à cause de la taille des bases concernées. 
+Il devient maintenant possible en un temps raisonnable car il est distribué
+</li>
+<li>
+Les gens sont connectés en permanence (téléphone, tablette, recherche internet, connexion à un site internet), 
+il y a une accumulation de données variées sur les gens que les sociétés utilisent de plus en plus. 
+</li>
+</ul>
+</p>
+
+
+<p><b>Hadoop/PIG et ses extensions open sources</b></p>
+<!-- CUT PAGE HERE -->
+<p>
+Je reprends pour l'essentiel ici les informations présentes
+sur la page officiel du projet Hadoop <a href="http://hadoop.apache.org/">Hadoop</a>
+et le numéro 46 de <a href="http://www.ensae.org/gene/main.php">Variance</a>.
+<ul>
+<li><a href="http://hadoop.apache.org/">Hadoop</a>/<a href="http://pig.apache.org/">PIG</a>, 
+langage type Map/Reduce,
+projet open source initié par Yahoo, ressemble
+à un langage SQL distribué.</li>
+
+<li><a href="http://incubator.apache.org/ambari/">Ambari</a> un outil pour gérer les cluster Hadoop.</li>
+<li><a href="http://avro.apache.org/">Avro</a> un système de sérialisation de données.</li>
+<li><a href="http://www.cascading.org/">Cascading</a> un framework java pour écrire des processus map/reduce en java.</li>
+<li><a href="http://cassandra.apache.org/">Cassandra</a> un système de bases de données robustes 
+permettant les index alors qu'Hadoop n'a pas été conçu pour ça. Il esdt utilisé par beaucoup
+de compagnies ce qui devrait assurer sa pérennité.</li>
+<li><a href="http://incubator.apache.org/chukwa/">Chukwa</a> outil de monitoring et de reporting (la version 1.0 n'est toujours pas prête).</li>
+<li><a href="http://hbase.apache.org/">HBase</a> HBase permet le stockage de grosses bases de données (plusieurs milliars de lignes).</li>
+<li><a href="http://hive.apache.org/">Hive</a> facilite l'accès aux données stockées par Hadoop, propose un langage
+très proche du SQL (HiveQL) pour les parcourir.</li>
+<li><a href="http://mahout.apache.org/">Mahout</a> librairie de machine learning distribué.</li>
+<li><a href="http://zookeeper.apache.org/">ZooKeeper</a> un service pour déployer et coordiner d'autres services.</li>
+</ul>
+Pour démarrer sur toutes ces technologies, il est possible d'utiliser 
+une machine virtuelle 
+(<a href="http://www.vmware.com/products/player/">VMWare</a>)
+créée par <a href="https://ccp.cloudera.com/display/SUPPORT/Cloudera+QuickStart+VM">Cloudera</a> 
+(on trouvera quelques photos d'écran 
+<a href="http://www.zdnet.com/hadoop-on-your-pc-clouderas-cdh4-virtual-machine_p3-7000003096/#photo">ici</a>).
+</p>
+
+
+<p><b>Hadoop intégré par des solutions propriétaires</b></p>
+<p>
+<ul>
+<li>SAS
+    <ul>
+    <li><a href="http://www.sas.com/big-data/index.html">http://www.sas.com/big-data/index.html</a></li>
+    <li><a href="http://www.sas.com/reg/offer/fr/Congres_Big_Data_Paris_2012">http://www.sas.com/reg/offer/fr/Congres_Big_Data_Paris_2012</a></li>
+    <li><a href="http://www.lemondeinformatique.fr/actualites/lire-sas-ajoute-le-support-d-hadoop-dfs-a-son-appliance-d-analyse-in-memory-50844.html">http://www.lemondeinformatique.fr/actualites/lire-sas-ajoute-le-support-d-hadoop-dfs-a-son-appliance-d-analyse-in-memory-50844.html</a></li>
+    </ul></li>
+<li>Azure
+    <ul>
+    <li><a href="http://msdn.microsoft.com/en-us/magazine/jj190805.aspx">http://msdn.microsoft.com/en-us/magazine/jj190805.aspx</a></li>
+    <li><a href="http://www.lemondeducloud.fr/lire-microsoft-heberge-hadoop-dans-azure-47023.html">http://www.lemondeducloud.fr/lire-microsoft-heberge-hadoop-dans-azure-47023.html</a></li>
+    </ul></li>
+<li>R + Hadoop
+    <ul>
+    <li><a href="https://github.com/RevolutionAnalytics/RHadoop/wiki">https://github.com/RevolutionAnalytics/RHadoop/wiki</a></li>
+    <li><a href="http://www.mapr.com/">http://www.mapr.com/</a></li>
+    <li><a href="http://www.revolutionanalytics.com/">http://www.revolutionanalytics.com</a></li>
+    </ul></li>
+<li><a href="http://www.cloudera.com/">Cloudera</a>, 
+<a href="http://hortonworks.com/">HortonWorks</a>, cette société propose des solutions Hadoop clé en main.</li>
+<li><a href="http://aws.amazon.com/fr/">Amazon AWS</a>, il est possible d'utiliser Hadoop sans avoir de machines via les services 
+proposés par Amazon (<a href="http://aws.amazon.com/fr/elasticmapreduce/">Elastic Map Reduce</a>). Quelques livres sont parus sur le sujet
+(<a href="http://www.amazon.com/Python-AWS-Cookbook-Mitch-Garnaat/dp/144930544X">Python and AWS Cookbook</a>).</li>
+</ul>
+</p>
+
+
+<p><b>Solutions non Hadoop</b></p>
+<p>
+<ul>
+<li><a href="http://www.couchbase.com/">CouchBase</a>, c'est un système clé/valeur distribué, il permet de stocker de 
+grandes bases de données et d'y accéder rapidement. Il s'interface facilement avec Hadoop 
+(<a href="http://www.couchbase.com/develop/connectors/hadoop">ici</a>)</li>
+<li><a href="http://www.mongodb.org/">Mongo DB</a> stockage distribué de 
+documents décrits avec le format BSON (JSON binaire) beaucoup plus
+souple que celui des bases de données.</li>
+<li><a href="http://storm-project.net/">(Twitter) Storm</a> permet d'exécuter des jobs map/reduce,
+chaque modification d'une table est vu comme un événement 
+(semblable à <a href="http://incubator.apache.org/s4/">Yahoo S4</a> excepté que ce dernier
+ne garantit pas l'exécution de tous les événements). Contrairement à Hadoop, il 
+permet des traitements en temps réel comme la récupération des mots les plus fréquemment
+utilisés en temps réels.</li>
+<li><a href="http://incubator.apache.org/drill/">Apache Drill</a>, ce projet implémente
+les mêmes fonctionnalités que Google Dremmel (propriétaire). Il complémente MapReduce
+qui demeure malgré très lent quand il s'agit d'obtenir des données simples (moyennes, ...)
+sur une très grande base. Drill permet de faire cela en quelques secondes.</li>
+<li><a href="https://github.com/facebook/scribe">Scribe</a> solution permettant d'agréger des logs en temps réel 
+(utilisé par Facebook)</li>
+<li><a href="http://flume.apache.org/">Flume</a> similaire à Scribe.</li>
+<li><a href="http://www.project-voldemort.com/voldemort/">Voldermort</a> système clé/valeur distribué. </li>
+<li><a href="http://docs.basho.com/index.html">Riak</a> système permettant l'exécution de jobs map/reduce,
+il s'appuie sur le langage <a href="http://www.erlang.org/">Erlang</a>  qui permet entre autres de modifier
+le code d'un programme sans l'arrêter. C'est un langage fonctionnel qui impose la communication 
+via messages asynchrones entre différents processus.
+</li>
+<li><a href="http://kafka.apache.org/">Kafka</a> distributed publish-subscribe messaging system.</li>
+</ul>
+J'en oublie comme <i>cascalog</i>, <i>elephantdb</i> 
+ou encore <a href="http://en.wikipedia.org/wiki/Amazon_DynamoDB">Amazon DynamoDB</a>, 
+et d'autres apparaîtront sans doute. 
+Il n'existe pas de meilleur choix aujourd'hui, cela dépend du système existant s'il existe,
+de la possibilité de migrer vers le nouveau, cela dépend aussi de ce qu'on veut faire avec 
+(calcul batch, calcul temps réel, accès décalé aux données ou accès temps réel). 
+Il est bien souvent nécessaire d'avoir plusieurs systèmes en place pour faire aux
+différents usages qu'on souhaite faire avec les mêmes données.
+</p>
+<p>
+Demain, tout le monde laissera de plus en plus de traces numériques, les ordinateurs / téléphone / tablettes 
+ne seront que des supports, les données seront stockées sur des environnement virtuels, 
+les applications ne seront plus installées mais utilisées via le réseau.
+Changer d'ordinateur ne sera plus un problème, il suffira de se connecter à son espace virtuel 
+(DropBox, SkyDrive, GoogleDrive, OODrive) offrent des répertoires virtuels et synchronisés 
+avec un répertoire local de la machine, Microsoft propose la possibilité de sauver son bureau 
+et de le retrouver tel quel sur n'importe quel ordinateur).
+Il sera de plus en plus difficile de cacher des informations, il sera possible de savoir 
+les recherches que vous faites, les applications que vous utilisez, les documents que vous écrivez, 
+la musique que vous écoutez, les films que vous regardez, ce que vous acheter. Ces informations 
+seront détenues par plusieurs acteurs à la fois et ils auront de plus en plus de moyens de recouper ces informations.
+Et il est difficile de s'en passer car ils facilitent beaucoup l'usage qu'on a des ordinateurs.
+Les appareils électriques suivront le même chemin (même programmation des chaînes de télévisions, 
+des radios lorsqu'on change d'appareils).
+Pour fiabiliser ces informations, les grandes sociétés poussent l'identification 
+sécurisée des internautes et empêche la création de faux profils.
+On sait de moins en moins où sont stockées les données personnelles, sous quelle législation elles sont stockées.
+Sans doute verra-t-on l'apparition de clones virtuels, de monnaie virtuelle 
+(<a href="http://www.bitcoin.fr/">bitcoin</a>, adoptée par Wordpress). Il existe déjà
+un logiciel qui <a href="http://www.lemonde.fr/ameriques/article/2013/01/04/le-logiciel-qui-predit-les-delits_1812195_3222.html">prédit les délits</a>.
+</p>
+<p>
+Quelques termes que je détaillerai plus tard peut-être, 
+<i>lucene</i>, <i>clojure</i>, <i>scala</i>, <i>ACID</i>, <i>Complex Event Processing</i>,
+<i>OLAP</i>, <i>SAAS</i>, <i>NoSQL</i> ou encore <a href="https://github.com/">GitHub</a>
+qui permet de travailler à plusieurs sur un projets open source. Il en héberge la plupart.
+Pour repérer les techniques qui commencent à percer, il est possible d'utiliser
+<a href="http://www.google.fr/trends/">Google Trends</a> ou encore 
+<a href="http://www.itjobswatch.co.uk/jobs/uk/hadoop.do">IT Jobs Watch</a> 
+qui recence les offres d'embauches sur le marché anglais contenant certains mots-clés.
+</p>
+</body>
+</html>

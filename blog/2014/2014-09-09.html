@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>How to get version and license for installed modules</title>
+<meta content="python, version, license, module" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+I run into the package <a href="https://github.com/odiroot/license-info">license-info</a>.
+It did not work as it is but after a couple of modifications, it gives:
+</p>
+
+<pre class="prettyprint">
+sphinxjp.themes.revealjs==0.2.0 #MIT
+tessera-client==0.4.1 #Apache
+antlr4-python3-runtime==4.4.1 #BSD
+basemap==1.0.8 #OSI Approved
+cvxopt==1.1.6 #GNU GPL version 3
+Cython==0.20.2 #Apache Software License
+Flask==0.10.1 #BSD
+numpy==1.8.1 #BSD
+openpyxl==1.6.2 #MIT/Expat
+pymc==2.3.3 #Academic Free License
+pywin32==219 #PSA
+pyzmq==14.3.0 #LGPL+BSD
+selenium==2.42.1 #Apache Software License
+Sphinx==1.2.2 #BSD
+sphinxcontrib-fancybox==0.3.4 #BSD
+spyder==2.3.0 #MIT
+statsmodels==0.5.0 #BSD License
+tables==3.1.1 #http://www.opensource.org/licenses/bsd-license.php
+tornado==3.2.1 #http://www.apache.org/licenses/LICENSE-2.0
+</pre>
+
+<p>
+The code follows.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+
+<pre class="brush: py">
+from os import makedirs
+from os.path import join, isdir, dirname
+import sys
+import shelve
+import tempfile
+
+from pip import get_installed_distributions
+from pkgtools.pypi import PyPIXmlRpc
+try:
+    import termcolor
+    USE_TERMCOLOR = True
+except ImportError:
+    USE_TERMCOLOR = False
+try:
+    import appdirs
+    USE_APPDIRS = True
+except ImportError:
+    USE_APPDIRS = False
+
+api = PyPIXmlRpc()
+
+DEFAULT_STREAM = sys.stdout
+
+GOOD_LICENSES = set([
+    "Apache Software License",
+    "Apache",
+    "BSD License",
+    "BSD",
+    "MIT License",
+    "MIT",
+    # ...
+])
+
+UNKNOWN_STR = "UNKNOWN"
+
+def format_license(license, ok=True):
+    # Avoid sending garbage to the output when being piped.
+    if USE_TERMCOLOR and sys.stdout.isatty():
+        return termcolor.colored(
+            license, ok and "green" or "red", attrs=["bold"])
+    return license
+
+def get_license_line(name, version, license):
+    ok = license in GOOD_LICENSES
+    return ''.join([ "%s==%s #" % (name, version),
+        format_license(license, ok), ])
+
+def display(name, version, license, stream=None):
+    stream = stream or DEFAULT_STREAM
+    line = get_license_line(name, version, license)
+    try:
+        stream.write(line)
+    except UnicodeEncodeError as e :
+        stream.write("{0}=={1} #unicode error".format(name,version))
+    stream.write('\n')
+
+def find_classifier(classifiers):
+    for row in classifiers:
+        if row.startswith("License"):
+            return row
+
+def extract_license(pkg_info):
+    # 1st try: raw `license` field.
+    license = (pkg_info.get("license") or UNKNOWN_STR).strip()
+    if license != UNKNOWN_STR:
+        return license
+    # 2nd try: parsing classifiers.
+    matched = find_classifier(pkg_info.get("classifiers", []))
+    if matched:
+        return matched.split("::")[-1].strip()
+    return UNKNOWN_STR
+
+def fetch_package_info(name, version):
+    # 1st try: given name, version pair.
+    info = api.release_data(name, version)
+    if info:
+        return info
+    # 2nd try: newest version.
+    versions = api.package_releases(name)
+    if versions:
+        return api.release_data(name, versions[0])
+    # Simulate unknown package.
+    return {}
+
+def display_dist(dist, cache=None):
+    cache = {} if cache is None else cache
+    name, version = dist.project_name, dist.version
+    if (name, version) in cache:
+        license = cache[(name, version)]
+    else:
+        info = fetch_package_info(name, version)
+        license = extract_license(info)
+        cache[(name, version)] = license
+    display(name, version, license)
+
+def get_cache_path():
+    if USE_APPDIRS:
+        cache_dir = appdirs.user_cache_dir("license-info", "MO")
+    else:
+        cache_dir = tempfile.gettempdir()
+    return str(join(cache_dir, "li.db"))
+
+def open_cache_db():
+    cache_path = get_cache_path()
+    cache_dir = dirname(cache_path)
+    if not isdir(cache_dir):
+        makedirs(cache_dir)
+    return shelve.open(cache_path)
+
+def pack_cache(data):
+    return dict( (str(" ".join(k)), v) for k, v in data.items() )
+
+def unpack_cache(data):
+    return dict((tuple(k.split()), v) for k, v in data.items() )
+
+def write_cache(data):
+    cache = open_cache_db()
+    cache.update(pack_cache(data))
+    cache.close()
+
+def read_cache():
+    cache = open_cache_db()
+    data = dict(cache)
+    cache.close()
+    return unpack_cache(data)
+
+def main():
+    cache = read_cache()
+    for dist in get_installed_distributions():
+        display_dist(dist, cache=cache)
+    write_cache(cache)
+
+if __name__ == '__main__':
+    main()
+</pre>
+
+</body>
+</html>

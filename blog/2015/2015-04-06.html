@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Blog generator</title>
+<meta content="python, sphinx, generator" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+
+<p>
+I publish my teaching material as python module.
+I added some tricks to made that happen. Recently, I was wondering
+how to add some kind of blog posts inside the documentation.
+As I have several teaching going on, I did not want to merge
+all blog posts into a single one where students would have to 
+filter out what blog post is meant for them.
+So I thought about using a kind of blog generator written in Python
+on the top of Sphinx.
+I went through that blog post 
+<a href="http://www.quora.com/Whats-the-best-available-static-blog-website-generator-in-Python">What's the best available static blog/website generator in Python?</a>
+which gives a short list of them. It is possible to check their popularity
+by looking at 
+<a href="https://www.staticgen.com/">Top Open-Source Static Site Generators</a>.
+</p>
+<p>
+I wanted to follow the same design for my blog, same pattern. So I was looking for a 
+tool generated RST files and not directly HTML.
+<a href="http://tinkerer.me/">Tinkerer</a> seemed a good choice.
+Should I have to add the message <i>powered by Tinkerer</i> as every site
+using it is displaying that sentance? I also looked into
+<a href="http://docs.getpelican.com/en/3.5.0/">Pelican</a>,
+<a href="http://getnikola.com/">nykola</a>.
+I also found a very simple one with a French name:
+<a href="https://bitbucket.org/jibalamy/eclaircie">éClaircie</a>.
+</p>
+<p>
+I finally decided to write some code to process my own blog posts and to insert them
+in the documentation of a an existing python module.
+It is not finalized yet but it looks like that:
+<a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/blog/2015/2015-04-04_first_blogpost.html">An example of a blog post included in the documentation</a>.
+This process forces me to dig into <a href="http://sphinx-doc.org/extdev/">sphinx devext API</a>
+which I do not fully understand yet.
+It is quite difficult to find good examples on the web.
+What I have implemented is available here:
+<a href="https://github.com/sdpython/pyquickhelper/tree/master/src/pyquickhelper/helpgen">pyquickhelper.helpgen</a>.
+</p>
+<p>
+By implementing my own blog, I cannot have all the features the static generators have
+(good templating, many languages). I spent most of my time in implementing the blog post aggregations
+(categories, months) and the splitting (not more than 10 blog posts per pages). 
+But now, if I want to customize Sphinx a little bit, it is easier.
+</p>
+
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Open the notebook with a different browser</title>
+<meta content="python, jupyter, notebook" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+I was looking for an easy to launch the notebook
+server with a different browser than the default one.
+I created a batch file (for Windows but easily adaptable 
+to Linux):
+</p>
+<pre class="prettyprint">
+set PATH=%PATH%;C:\Python34_x64;C:\Python34_x64\Scripts
+set PYTHONPATH=&lt;extra_path&gt;;%PYTHONPATH%
+set BROWSER="C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+jupyter-notebook --notebook-dir=&lt;your_folder_for_notebooks&gt; --port=XXXX
+</pre>
+
+<p>
+The notebook opens on Chrome with the following url
+<i>http://localhost:XXXX</i>.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Convert a PDF into an image</title>
+<meta content="python, PDF, PNG, image" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Today, I just wanted to convert a PDF into a PNG image. I knew I already did it but
+I forgot to remember how (I only need it once every six months). I hope
+you don't mind if I use my own blog to avoid looking again for it. First, it requires 
+<a href="http://www.imagemagick.org/">ImageMagick</a>. The following script will do the trick:
+</p>
+
+<pre class="brush: py">
+from PythonMagick import Image
+
+os.environ["MAGICK_HOME"] = r"path_to_ImageMagick"
+
+file = "my.pdf"
+to = file.replace(".pdf",".png")
+
+p = PythonMagick.Image()    
+p.density('300')
+p.read(os.path.abspath(file))
+p.write(os.path.abspath(to))
+
+# the ImageMacgick command line to do it
+# cmd = "convert -density 300 -depth 8 -quality 85 {0} {1}".format(file, to)
+</pre>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+If you need to convert a specific page, you can build another PDF with this page
+by using module <a href="https://github.com/sdpython/PyPDF2">PyPDF2</a>. Instructions are described by this blog post:
+<a href="http://www.blog.pythonlibrary.org/2012/07/11/pypdf2-the-new-fork-of-pypdf/">PyPDF2: The New Fork of pyPdf</a>.
+The convert from PNG to PDF can be handle with the same code:
+</p>
+
+<pre class="brush: py">
+file = "my.png"
+to = file.replace(".png",".pdf")  # we switch the extension
+
+p = PythonMagick.Image()    
+p.density('300')
+p.read(os.path.abspath(file))
+p.write(os.path.abspath(to))
+</pre>
+<p>
+Now if you want to merge multiple PDF into one (for example all PDF in the current
+folder):
+</p>
+
+<pre class="brush: py">
+from PyPDF2 import PdfFileMerger, PdfFileReader
+
+filenames = [ file for file in os.listdir(".") if ".pdf" in file and "merged" not in file ]
+
+merger = PdfFileMerger()
+for filename in filenames:
+    merger.append(PdfFileReader(open(filename, 'rb')))
+merger.write("merged.pdf")  
+</pre>
+
+<p>
+For Windows, PythonMagick can be found here: <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#pythonmagick">PythonMagick</a>.
+</p>
+
+
+
+</body>
+</html>

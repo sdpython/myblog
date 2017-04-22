@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Créer une page de raccourcis en HTML/javascript</title>
+<meta content="javascript, paramètres, html, raccourci, frame" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+
+<p>
+Quand <a href="http://fr.wikipedia.org/wiki/Google_Reader">Google Reader</a> 
+a disparu, je me suis demandé s'il était compliqué
+d'implémenter rapidement une sorte de page HTML en local depuis laquelle
+je pourrais consulter les blogs. Même si j'ai finalement
+implémenté quelque chose d'un peu plus complexe (<a href="https://github.com/sdpython/pymmails">pymmails</a>),
+il est resté quelques essais et bouts de codes. Le code suivant permet de diviser la page
+en deux, d'avoir d'un côté une liste d'urls, de l'autre, une fenêtre dans laquelle
+s'affiche le site cliqué. Je m'en sers parfois pour faire des listes
+de raccourcis sur des outils internes plus facile à transférer d'un 
+ordinateur à un autre que les raccourcis d'un navigateur.
+Un exemple de ce que cela donne est plus bas.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Le code n'est pas très compliqué et mélange HTML et javascript. 
+Il y a quelques aspects superflus comme le fait que le fond des urls
+changent de couleur lorsque le curseur de la souris passe au-dessus.
+La fonction principale est <tt>change_navdiv</tt> qui récupère l'url en
+paramètre et modifie la section <tt>id=paneid</tt> de façon
+à afficher le site cliqué.
+</p>
+
+
+
+<pre class="prettyprint">
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Url shortcuts&lt;/title&gt;
+&lt;meta content="url, shortcuts" name="keywords"/&gt;
+&lt;meta content="text/html; charset=utf-8" http-equiv="Content-Type"/&gt;
+&lt;style&gt;
+html, body{
+    height: 100%;
+}
+iframe.iframeurl{
+    height: 100%;
+    width: 100%;
+}
+div.sidediv{
+    position:absolute; 
+    margin-left:1%; 
+    margin-top:0%; 
+    margin-right:1%;
+    width:16%;
+    text-align: left;
+    height:80%;
+    font-family:calibri;
+    font-size:90%;
+} 
+div.navdiv{
+    position:absolute; 
+    height:80%;
+    margin-left:18%; 
+    margin-top:0%; 
+    margin-right:5%;
+    width:80%;
+    text-align:left;
+    font-family:calibri;
+} 
+&lt;/style&gt;
+&lt;script&gt;
+
+function extractUrlParams()
+{
+	var t = location.search.substring(1).split('&amp;');
+	var f = [];
+	for (var i=0; i&lt;t.length; i++){
+		var x = t[ i ].split('=');
+		f[x[0]]=unescape (x[1]);
+	}
+	return f;
+}
+
+function change_navdiv(idpane)
+{
+    var place = document.getElementById(idpane);
+    var pars = extractUrlParams();
+    
+    if ('idu' in pars)
+    {
+        var url = document.getElementById(pars['idu']);
+        url.style.background = "#9999FF" ;
+    }
+    
+    if ('url' in pars)
+    {
+        var url = pars['url'];
+        var cl = "" ;
+        place.innerHTML = '&lt;iframe class="iframeurl" style="height:' + (window.innerHeight-120) + 'px;" src="' + url + '"&gt;&lt;/iframe&gt;' ;
+    }
+    else {
+        place.innerHTML = '&lt;p&gt;no selected blog&lt;/p&gt;' ;
+    }
+}
+
+function change_style(idurl, inout)
+{
+    var url = document.getElementById(idurl);
+    var pars = extractUrlParams();
+    url.style.background = inout ? "#DDDDDD" : (pars['idu'] == idurl ? "#9999FF" : "#FFFFFF") ;
+}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class="sidediv"&gt;
+&lt;h2&gt;Shortcuts&lt;/h2&gt;
+&lt;!-- SHORTCUTS BEGIN --&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a id="u1" onmouseover="change_style('u1',true)" 
+                        onmouseout="change_style('u1',false)" 
+    href="?idu=u1&amp;url=http://www.xavierdupre.fr/blog/xd_blog_nojs.html"&gt;XD blog&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a id="u2" onmouseover="change_style('u2',true)" 
+                        onmouseout="change_style('u2',false)" 
+    href="?idu=u2&amp;url=http://freakonometrics.hypotheses.org/"&gt;Freakonometrics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a id="u3" onmouseover="change_style('u3',true)" 
+                        onmouseout="change_style('u3',false)" 
+    href="?idu=u3&amp;url=http://andrewgelman.com/"&gt;Statistical Modeling, Causal Inference, and Social Science&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- SHORTCUTS END --&gt;
+
+
+&lt;/div&gt;
+
+&lt;div class="navdiv" id="idnavdiv"&gt;
+&lt;h2&gt;View&lt;/h2&gt;
+&lt;div id="paneid"&gt;
+&lt;p&gt;no selected blog&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+change_navdiv('paneid');
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+
+</pre>
+
+<iframe src="twopanes.html" width="100%" height="400px"></iframe>
+
+
+</body>
+</html>

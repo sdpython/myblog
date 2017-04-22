@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Copie d'écran automatique avec Selenium ou Splinter</title>
+<meta content="python, selenium, splinter, screenshot" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+<p>
+On a parfois besoin de faire des copies d'écran, régulièrement, et cela
+devient toujours la même routine : aller sur un site internet,
+faire une copie d'écran et la copier dans un fichier. Et si on a le courage,
+limiter la zone à celle désirée. Lorsqu'il s'agit de faire une copie
+d'écran d'un site web, il est possible d'automatiser.
+</p>
+<p>
+Le module <a href="http://www.seleniumhq.org/">selenium</a> a été développé dans 
+le but de tester un site internet. Il permet de reproduire une séquence 
+d'événements (clic, clavier, ...) et d'observer le résultat. Entre autre chose,
+il permet de faire une copie d'écran de ce site.
+Le module <a href="https://pypi.python.org/pypi/selenium">selenium</a> a une déclinaison
+en Python. Et à l'aide d'un petit script, il est possible de faire une copie
+d'écran de n'importe quel site web :
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<pre class="brush: py">
+# paramètres
+navigator = "firefox"
+url = "http://www.xavierdupre.fr/"
+size = None
+img = "webshot.png"
+
+# fonction
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+
+if navigator == "firefox" : browser = webdriver.Firefox()
+elif navigator == "chrome": browser = webdriver.Chrome()
+elif navigator == "ie": browser = webdriver.Ie()
+else : raise Exception("unable to interpret the navigator")
+
+if size != None :
+    browser.set_window_size(size[0],size[1])
+    
+browser.get(url)
+browser.get_screenshot_as_file(img)
+browser.quit()
+</pre>
+
+<p>
+Il est également possible de récupérer le contenu HTML au lieu de l'image :
+</p>
+
+<pre class="brush: py">
+# ...
+browser.get(url)
+print ( browser.page_source )
+</pre>
+
+<p>
+Il serait possible d'utiliser le module <a href="http://docs.python.org/3.3/library/urllib.html">urllib</a>
+pour récupérer le contenu d'un site web. Toutefois, ce module n'exécute pas le code
+javascript que contient la page. Le module <a href="https://pypi.python.org/pypi/selenium">selenium</a>
+permet de récupérer le contenu d'une page après l'exécution du code javascript 
+qu'elle contient.
+</p>
+
+<p>
+Il serait même possible, en s'inspirant de l'exemple <a href="http://selenium-python.readthedocs.org/en/latest/getting-started.html">suivant</a>,
+de programmer un script pour récupérer le contenu de son compte en banque,
+pas de manière simple, mais ce serait possible en alternant reproduction du numéro de compte,
+copie d'écran, reconnaissance de chiffres, reproduction des clics permettant de saisir le code
+de sécurité...
+</p>
+
+<p>
+Le module <a href="http://splinter.cobrateam.info/">splinter</a> permet de faire la même
+chose. Les fonctions sont presque les mêmes :
+</p>
+
+<pre class="brush: py">
+from splinter import Browser 
+
+with Browser(navigator) as browser:
+    if size != None :
+        browser.driver.set_window_size(size[0], size[1])
+    
+    browser.visit(url) 
+    g = browser.screenshot(os.path.abspath(img))
+</pre>
+
+<p>
+Je trouve la documentation un peu mieux accessible que celle du premier module.
+Pour les utilisateurs de Python 3, il ne faut pas utiliser la version
+accessible depuis <a href="https://pypi.python.org/pypi">pipy</a> mais 
+depuis <a href="https://github.com/cobrateam/splinter">github/cobrateam</a>.
+</p>
+
+</body>
+</html>
+

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Python and C# in the same program</title>
+<meta content="python, pythonnet, C Sharp" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+I pretty much use Python for everything, I link
+many of my tools with Python, having the same place 
+to run them. However, C# is 
+very convenient if you want to automate some 
+processes on Windows. Since I discovered 
+<a href="http://www.xavierdupre.fr/blog/xd_blog.html?date=2013-10-23">pythonnet</a>,
+I do not look anymore for a way to do things in Python,
+I do it in C#, I make an assembly and I link it to Python.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+For example, to convert a couple of Word documents into PDF,
+the C# code is quite simple:
+</p>
+
+<pre class="prettyprint">
+using System;
+using Microsoft.Office.Interop.Word;
+
+namespace csharp_office_helper
+{
+    public static class WordHelper
+    {
+        public static void SaveAsPDF(string infile, string outfile)
+        {
+            Microsoft.Office.Interop.Word.Application appWord = new Microsoft.Office.Interop.Word.Application();
+            // open it in read only mode
+            var wordDocument = appWord.Documents.Open(infile, Type.Missing, true);
+            wordDocument.ExportAsFixedFormat(outfile, WdExportFormat.wdExportFormatPDF);
+        }
+    }
+}
+</pre>
+
+<p>
+It needs to be compiled in an assembly. With 
+<a href="http://pythonnet.sourceforge.net/">pythonnet</a>, it can be used
+in Python as follows:
+</p>
+
+<pre class="brush: py">
+import clr
+clr.AddReference("csharp_office_helper")
+from csharp_office_helper import WordHelper 
+WordHelper.SaveAsPDF("my_document.docx", "my_document.pdf")
+</pre>
+
+
+</body>
+</html>

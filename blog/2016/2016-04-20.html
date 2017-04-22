@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Build xgboost on Windows (not the python module)</title>
+<meta content="machine learning, xgboost, python" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+Here are the steps I followed:
+<ul>
+<li>Install <a href="http://tdm-gcc.tdragon.net/">TDM-GCC</a>, check <i>openmp</i> option (got gcc 64 bit), add gcc to PATH</li>
+<li>Install <a href="https://www.cygwin.com/">cygwin</a>, required to avoid mismatch between <tt>/</tt> and <tt>\\</tt>
+    for Windows paths</li>
+<li>You might also need <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">Java JDK</a>,
+    it was already installed when I tried these steps so I cannot tell.</li>
+<li>If you forgot to add gcc to PATH, run <tt>export PATH=$PATH:&lt;path_gcc&gt;</tt> from cygwin command line</li>
+<li>Clone the repositoy xgboost <tt>git clone --recursive https://github.com/dmlc/xgboost</tt></li>
+<li>As mentioned at <a href="https://xgboost.readthedocs.org/en/latest/build.html#building-on-windows">Building xgboost on Windows</a>,
+   from the cygwin command line, copy config.mk: <tt>cp make/config.mk ./config.mk</tt></li>
+<li>Still from the cygwin command line, run <tt>mingw32-make -j4</tt></li>
+</ul>
+
+If you want to build the wheel for Python, I suggest reading 
+<a href="http://www.xavierdupre.fr/app/pymyinstall/helpsphinx//blog/2016/2016-04-04_build_xgboost_04a30.html">Build xgboost 0.4a30 for Python 3.4 and 3.5</a>.
+</p>
+
+</body>
+</html>

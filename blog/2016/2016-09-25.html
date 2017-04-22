@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>add_notebook_menu</title>
+<meta content="python, Anaconda" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+La plupart des notebooks que je créé commencent par ces deux lignes.
+</p>
+<pre class="brush: py">
+from pyquickhelper.ipythonhelper import add_notebook_menu
+add_notebook_menu()
+</pre>
+<p>
+La fonction ajoute une bout de javascript qui produit un 
+<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/notebooks/td1a_cenonce_session1.html">menu</a>
+permettant d'accéder directement à tel ou tel paragraphe.
+Si la fonction ne fonctionne, c'est que le module
+<a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html">pyquickhelper</a> n'est pas installé.
+Ce n'est pas très grave dans la mesure ou la plupart du temps,
+le module n'est pas utilisé autrement que pour ce menu.
+Comme il requiert diverses dépendances, j'ai décidé d'extraire cette
+fonction et de la placer dans un module plus petit
+et sans dépendance : 
+<a href="http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/index.html">jyquickhelper</a>.
+On peut maintenant écrire :
+</p>
+<pre class="brush: py">
+from jyquickhelper import add_notebook_menu
+add_notebook_menu()
+</pre>
+
+
+
+</body>
+</html>

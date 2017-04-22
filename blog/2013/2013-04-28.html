@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Migration of old code</title>
+<meta content="references, python, C++, migration" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<p>
+I wanted to use some old code I wrote a while ago about training
+neural networks but I needed to migrate it under a new version of 
+Python and a new version of the compiler. 
+I assumed that migrating my old code would not be too painful but 
+it cost me day. I don't know if there is a good way to 
+maintain some personal toolbox only used only from time to time.
+A single framework with a single way to add new features. But it 
+is not very convenient with the multiplication of languages
+and the maintenane of unused old code. A framework which
+allows any kind of language but gluing projects with a script language (Python?):
+the issue with this one is you end up write multiple times the same basic 
+functionalities (parsing text...) So far, my memory and the unit test I wrote 
+were the best help to migrate my old code. It turned out I was able to 
+produce a running version of old stuff 
+<a href="http://www.xavierdupre.fr/site2013/index_code.html">here</a>.
+</p>
+<p>
+When I started that, my main issue was, as a teacher, to check
+if every piece of code I wrote for my students was still running.
+I also wanted to check which one would work on Python 3 (it was made on Python 2.6).
+I decided to come up with a solution allowing me to unit test them.
+I started to plug the biggest scripts and the new one. But what about
+the code embbeded in a latex file... I would surely do different now.
+</p>
+<p>
+However, while doing that, I discover that non-ascii characters (latin)
+are now difficult to handle while writing a C++ extension for Python.
+They need to be translated into unicode string. I preferred to remove
+any French accent from my old code (in the documentation specified
+in <i>boost::python::def</i>) instead of finding a way to keep them.
+It will be for the next project.
+</p>
+</body>
+</html>

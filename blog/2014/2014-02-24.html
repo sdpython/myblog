@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Travailler avec IPython notebook</title>
+<meta content="python, ipython, notebook, R, pyensae" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Si l'environnement que <a href="http://www.r-project.org/">R</a>
+proposait était il y a encore quelques temps
+le meilleur compromis pour quiconque voulait faire des statistiques ou 
+du machine learning, de mon point de vue, <a href="http://ipython.org/">IPython</a> 
+a changé la donne. On peut toujours travailler avec un éditeur texte
+classique, ou avec une ligne de commande similaire à celle de R
+ou encore utiliser les <a href="http://ipython.org/notebook.html">notebook</a>.
+Un notebook, c'est un peu comme une page blanche ou on mélange à la fois du texte,
+du code, des graphiques, des équations et même du javascript. C'est très pratique
+lorsqu'on cherche sa partition. Entendez par là que vous avez un problème à résoudre
+mais pas encore la solution. Il faut donc expérimenter. Cette page blanche vous 
+permet facilement de garder une trace de tous vos essais et de les annoter
+puis de rédiger le document final. Pour vous en convaincre, il
+suffit d'aller voir la <a href="http://nbviewer.ipython.org/">gallerie suivante</a>
+(également <a href="https://github.com/ipython/ipython/wiki/A-gallery-of-interesting-IPython-Notebooks">A gallery of interesting IPython Notebooks</a>),
+et on peut faire des choses assez marrantes (<a href="http://nbviewer.ipython.org/url/jakevdp.github.com/downloads/notebooks/XKCD_plots.ipynb">XKCDify</a>)
+voire même utiliser R depuis IPython (<a href="http://nbviewer.ipython.org/github/ipython/ipython/blob/master/examples/notebooks/R%20Magics.ipynb">Using R Within the IPython Notebook</a>).
+</p>
+<p>
+Pour essayer, l'option la plus rapide et de télécharger la distribution 
+<a href="http://winpython.sourceforge.net/">WinPython</a> qui contient tous les 
+packages intéressants pour un statisticien (ou data scientist). Il ne vous faudra pas très 
+longtemps pour lancer le notebook et de là, découvrir par vous-même comment cela fonctionne.
+Il n'y a pas trente six mille boutons et tout est plutôt intuitif.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Il est possible de modifier deux ou trois choses pour éviter d'avoir à les refaire à chaque
+fois. Pour cela, il faut d'abord créer un fichier de configuration depuis une ligne de commande
+(dans le répertoire <tt>C:\Python33\Scripts</tt> ou celui de WinPython :
+</p>
+<pre class="prettyprint">
+ipython3 profile create
+</pre>
+<p>
+Cette instruction crée un fichier <tt>C:\Users\[user]\.ipython\profile_default\ipython_notebook_config.py</tt>
+qu'il faut ouvrir pour changer :
+<ul>
+<li>le répertoire dans lequel sont sauvegardés les notebook :
+    <pre class="brush: py">
+    c.NotebookManager.notebook_dir = r'[votre choix]'
+    c.FileNotebookManager.checkpoint_dir = r'[votre choix]'
+    </pre>
+    </li>
+<li>toujours commencer par les mêmes instructions (comme ajouter des répertoires d'importation) :
+    <pre class="brush: py">
+    c.IPKernelApp.file_to_run = r'startup.py'
+    </pre>
+    </li>
+<li>faire en sorte que les graphiques apparaissent dans la même page :
+    <pre class="brush: py">
+    c.IPKernelApp.pylab = 'inline'    
+    </pre>
+    </li>
+</ul>
+</p>
+
+<p>
+Finalement, si vous souhaitez convertir votre notebook au format HTML, il suffit
+d'écrire sur une ligne de commande depuis le répertoire <tt>[python]/Script</tt>:
+</p>
+<pre class="prettyprint">
+set path=%path%;C:\Users\username\AppData\Local\Pandoc
+ipython3 nbconvert --to html "example pyensae-checkpoint.ipynb" --template full --output="notehtml\example pyensae"
+</pre>
+
+<p>
+La première ligne ajoute le chemin de <a href="http://johnmacfarlane.net/pandoc/">pandoc</a>
+qui doit être installé avant de pouvoir convertir le notebook au format HTML.
+Le résultat est celui-ci : <a href="http://www.xavierdupre.fr/app/pyensae/helpsphinx/_downloads/pyensae%20StockPrices.html">example pyensae</a>.
+</p>
+<p>
+Dernière remarque, si vous utilisez WinPython, tout se déroule de la même façon
+excepté le chemin d'installation. Il existe un raccourci <tt>IPython Notebook.exe</tt>.
+Il est possible que celui-ci n'appliquent pas les changements opérés plus haut.
+Dans ce cas, il faut lancer le notebook depuis le répertoire <tt>WinPython-32bit-3.3.3.3\python-3.3.3\Scripts</tt>
+et écrire <tt>ipython3 notebook</tt>.
+</p>
+<p>
+D'habitude, je change un navigateur différent de celui par défaut pour utiliser le notebook.
+L'icône a une couleur différente et je le retrouve plus facilement. Pour ce faire, il suffit
+le paramètre suivant dans le fichier de configuration.
+</p>
+<pre class="brush: py">
+import webbrowser
+webbrowser.register('[nom]', None, webbrowser.GenericBrowser(r'C:\Program Files (x86)\...chemin du navigateur'))
+c.NotebookApp.browser = '[nom]'
+</pre>
+
+<p>
+Une fois le profile créé (ou non), il existe un programme dans le répertoire <tt>Scripts</tt>
+dans le répertoire d'installation de python.
+</p>
+
+<pre class="prettyprint">
+ipython3 notebook --notebook-dir=&lt;folder_notebooks&gt;
+</pre>
+
+<p>
+Et au prélable, sous Windows, pour cela marche, il faut ajouter ce répertoire aux chemins PATH :
+</p>
+
+<pre class="prettyprint">
+set path=%path%;c:\Python34;c:\Python34\Scripts
+</pre>
+
+<p>
+Pour utiliser un notebook, il suffit de le copier dans le répertoire <tt>&lt;folder_notebooks&gt;</tt>.
+</p>
+
+</body>
+</html>

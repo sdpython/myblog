@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Fusionner deux tableaux</title>
+<meta content="python, pandas, fusion, tableau, Excel, merge" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+<p>
+L'exercice est le suivant : on récupère deux tableaux depuis le site 
+<a href="http://www.data.gouv.fr/">http://www.data.gouv.fr/</a>.
+On récupère les deux fichiers suivants :
+<ul>
+<li><a href="http://www.data.gouv.fr/DataSet/576137">PLF 2014 - ETP DU BUDGET GÉNÉRAL (BG) PAR MINISTÈRE ET CATÉGORIE D'EMPLOI</a> 
+    (ou <a href="documents/a2012.csv">a2012.csv</a>)</li>
+<li><a href="http://www.data.gouv.fr/DataSet/550637">LFI 2012 DOTATION BG EN ETP PAR MINISTÈRE</a>
+    (ou <a href="documents/a2014.csv">a2012.csv</a>)</li>
+</ul>
+Ils contiennent des effectifs de la fonction publique ventilés par ministères :
+</p>
+
+<pre class="prettyprint">
+Ministère    Libellé    Catégorie d'emploi    Emploi    ETPPLF
+1    Affaires étrangères    1101    Titulaires et CDI en administration centrale    3 059
+1    Affaires étrangères    1102    Titulaires et CDI dans le réseau    2 895
+1    Affaires étrangères    1103    CDD et volontaires internationaux    2 877
+1    Affaires étrangères    1104    Militaires    712
+1    Affaires étrangères    1105    Agents de droit local    4 962
+...
+</pre>
+
+<p>
+On cherche à mesurer l'évolution des effectifs entre ces deux années même si la liste des
+ministères et des catégories évolue. 
+</p>
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Les deux fichiers ont été téléchargés sous les noms <i>2012.csv</i> et <i>2014.csv</i>.
+On utilise d'abord le langage Python seul pour construire ces différences. Une des colonnes contient
+un identifiant unique pour chaque ligne. Il conserve la même signification deux ans plus tard.
+L'astuce consiste à créer un dictionnaire <i>{ id : [ ligne ] } </i>. Si les deux fichiers ont 
+des chiffres comparables, alors les deux dictionnaires construits auront des clés en commun.
+</p>
+
+<pre class="brush: py">
+# on charge le premier fichier
+f = open("2014.csv","r")
+lines = f.readlines()
+f.close()
+
+lines2014 = [ l.strip("\n").split(";") for l in lines ]
+
+# même code copié/collé pour le second fichier
+f = open("2012.csv","r")
+lines = f.readlines()
+f.close()
+
+lines2012 = [ l.strip("\n").split(";") for l in lines ]
+
+d2012 = { l[2]:l for l in lines2012 if len(l[2]) > 0}
+d2014 = { l[2]:l for l in lines2014 if len(l[2]) > 0}
+
+# les catégoriés supprimées en 2014
+for code in d2012 :
+    if code not in d2014 :
+        print ("-",code, d2012[code])
+        
+# les catégories ajoutées en 2014
+for code in d2014 :
+    if code not in d2012 :
+        print ("+",code, d2014[code])
+    
+# on calcule la différence    
+for code in d2012 :
+    if code in d2014 :
+        if len(code) > 5 : continue  # pas assez de colonne = ligne d'en-tête ou autre
+        # il faut supprimer les espaces et convertir en réels 
+        d = float(d2014[code][4].replace(" ","")) - float(d2012[code][5].replace(" ",""))
+        sum = d2012[code] + d2014[code] + [str(d) ]
+        # on affiche les deux lignes
+        print ("\t".join(sum))
+        # il suffira de copier/coller le résultat dans Excel
+</pre>    
+
+<p>
+La seconde option est d'utiliser le module <a href="http://pandas.pydata.org/">pandas</a>
+qui facilite l'écriture des opérations qu'on vient juste de faire.
+</p>
+
+<pre class="brush: py">
+# coding:latin-1
+import pandas
+t2012 = pandas.read_csv("2012.csv", sep=";", encoding="latin-1", thousands = " ")
+t2012 = t2012[["Catégorie d'emploi", "ETPPLF"]]    
+
+t2014 = pandas.read_csv("2014.csv", sep=";", encoding="latin-1", thousands = " ")
+t2014 = t2014[["Catégorie d'emploi", "ETPPLF"]]    
+
+# l'opération suivante correspond à un JOIN (en SQL)
+m = t2012.merge(t2014, left_on="Catégorie d'emploi",
+        right_on ="Catégorie d'emploi",
+        how='outer')
+        
+m ["delta"] = m["ETPPLF_y"] - m["ETPPLF_x"]  # les colonnes ont des suffixes _x et _y pour les distinguer
+m.to_csv("result.txt", sep="\t")
+</pre>    
+
+<p>
+Les premières lignes des deux fichiers ont été supprimées car elles 
+empêchaient <a href="http://pandas.pydata.org/">pandas</a> de détecter correctement les noms des colonnes.
+Le fait d'écrire <i>how='outer'</i> permet de conserver les catégories qui 
+n'auront pas été appariées. Le programme contient deux lignes qui réduisent le nombre
+de colonnes (<i>t2014 = t2014[["Catégorie d'emploi", "ETPPLF"]]</i>).
+</p>
+
+<pre class="brush: py">
+#coding:latin-1
+import pandas
+t2012 = pandas.read_csv("a2012.csv", sep=";", encoding="latin-1", thousands = " ")
+t2014 = pandas.read_csv("a2014.csv", sep=";", encoding="latin-1", thousands = " ")
+
+m = t2012.merge(t2014, left_on="Catégorie d'emploi",
+		right_on ="Catégorie d'emploi",
+		how='outer')
+        
+m ["delta"] = m["ETPPLF_y"] - m["ETPPLF_x"]
+m.to_csv("result.txt", sep="\t")
+</pre>    
+
+<p>
+Connaître SQL est utile pour utiliser <a href="http://pandas.pydata.org/">pandas</a> car les fonctions du module suivent la 
+même logique. Quelques liens :
+<ul>
+<li><a href="http://pandas.pydata.org/pandas-docs/dev/generated/pandas.DataFrame.merge.html">merge</a></li>
+<li><a href="http://stackoverflow.com/questions/14341805/pandas-merge-pd-merge-how-to-set-the-index-and-join">exemple d'utilisation</a></li>
+</ul>
+On retrouve également la même logique sous <a href="http://www.r-project.org/">R</a> : 
+<a href="http://stat.ethz.ch/R-manual/R-devel/library/base/html/merge.html">merge</a> 
+(<a href="http://stackoverflow.com/questions/1299871/how-to-join-data-frames-in-r-inner-outer-left-right">exemple</a>).
+</p>
+
+<p>
+En langage SQL, cela donne la requête suivante~:
+</p>
+
+<pre class="brush: sql">
+SELECT at2012.*, at2014.*
+FROM at2012 FULL OUTER JOIN at2014
+ON at2012.col2 == at2014.col2
+</pre>
+
+<p>
+Si vous testez cela avec SQLite (avec 
+<a href="http://www.yunqa.de/delphi/doku.php/products/sqlitespy/index">SQLiteSpy.exe</a> par exemple). 
+Il est seulement possible de faire un <i>LEFT OUTER JOIN</i>. Pour arriver à ses fins, il
+faut procéder comme suit :
+</p>
+
+
+<pre class="brush: sql">
+SELECT at2012.*, at2014.*
+FROM at2012 LEFT OUTER JOIN at2014
+ON at2012.col2 == at2014.col2
+
+UNION ALL
+
+SELECT at2012.*, at2014.*
+FROM at2014 LEFT OUTER JOIN at2012
+ON at2012.col2 == at2014.col2
+WHERE at2012.col2 is null
+</pre>
+
+<p>
+Cela revient à faire deux <i>LEFT OUTER JOIN</i> en permutant les deux tables.
+Lors du second <i>JOIN</i>, on ne garde que les lignes non appariés. Les autres
+ayant déjà été traitées lors du premier <i>JOIN</i>.
+</p>
+<p>
+Pour ceux qui souhaitent essayer, le programme suivant permet de nettoyer les données
+de sorte qu'elles puissent facilement être transférées dans une base de données
+<i>SQLite</i>.
+</p>
+
+<pre class="brush: py">
+#coding:latin-1
+import pandas
+t2012 = pandas.read_csv("a2012.csv", sep=";", encoding="utf8", thousands = " ")
+t2014 = pandas.read_csv("a2014.csv", sep=";", encoding="utf8", thousands = " ")
+t2012.columns = ["col%d" % i for i in range(len(t2012.columns)) ]
+t2014.columns = ["col%d" % i for i in range(len(t2014.columns)) ]
+t2012 = t2012 [ [ "col%d" % i for i in range(6) ] ]
+t2014 = t2014 [ [ "col%d" % i for i in range(5) ] ]
+t2014 = t2014.ix [ t2014["col0"].map( lambda row : not row.startswith("Total")), : ]
+
+t2012.to_csv("at2012.csv", sep="\t", encoding="utf8", index=False)
+t2014.to_csv("at2014.csv", sep="\t", encoding="utf8", index=False)
+
+from pyensae import import_flatfile_into_database
+dbf = "a2012_2014.db3"
+import_flatfile_into_database(dbf, "at2014.csv")
+import_flatfile_into_database(dbf, "at2012.csv")
+</pre>
+
+</body>
+</html>

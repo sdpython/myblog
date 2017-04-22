@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Install a Python module with Wheel</title>
+<meta content="python, wheel" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+<a href="https://wheel.readthedocs.org/en/latest/#">Wheel</a>
+is going to be the new way to install modules with Python.
+According to <a href="http://pythonwheels.com/">pythonwheels.com</a>, many packages are 
+already available and the site
+<a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">Unofficial Windows Binaries for Python Extension Packages</a>
+already proposes modules in wheel format.
+</p>
+<p>
+Windows and Linux works the same way now. It requires to install <i>wheel</i> first:
+</p>
+<pre class="prettyprint">
+pip install wheel
+</pre>
+<p>
+The next step consists in downloading a wheel file <tt>.whl</tt>. An example with pandas:
+</p>
+<pre class="prettyprint">
+pip install pandas-0.15.2-cp27-none-win_amd64.whl
+</pre>
+
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>scikit-learn, dask and map reduce and examples on Python about machine learning</title>
+<meta content="scikit-learn, dask, map reduce, python" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+This is blog post about a couple of topics. The first one is 
+about parallelizing a scikit-learn pipeline with dask.
+<a href="http://blaze.pydata.org/blog/2015/10/19/dask-learn/">Pipelines and Reuse with dask</a>.
+A little bit more and dask 
+<a href="http://blaze.pydata.org/blog/2016/02/17/dask-distributed-1/">Introducing Dask Distributed</a>.
+The module 
+<a href="https://distributed.readthedocs.org/en/latest/index.html">distributed</a>
+distribute work on a local machine with syntax very close to map/reduce syntax.
+An example taken from the documentation:
+</p>
+<pre class="brush: py">
+def square(x): return x ** 2
+def neg(x): return -x
+
+from distributed import Executor
+executor = Executor('127.0.0.1:8786')
+
+A = executor.map(square, range(10))
+B = executor.map(neg, A)
+total = executor.submit(sum, B)
+total.result()
+</pre>
+<p>
+I was being asked where to find examples, scripts about machine learning. 
+Most of them happen to be written within a notebook such as the one posted on Kaggle:
+<a href="https://www.kaggle.com/scripts?language=Python">Python script posted on kaggle</a> or
+examples from this blog: <a href="http://blog.yhat.com/">Yhat blog</a>. Other examples
+can be found at 
+<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/td_2a.html#bibliographie">ENSAE / Bibliography / Python for a Data Scientist</a>.
+If you are looking for more examples of code, pick one kaggle competition and look for it on a search engine
+after adding the word "github", you may be able to find interesting projects. Just try <i>kaggle github</i>
+to begin with.
+</p>
+</body>
+</html>

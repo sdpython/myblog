@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Easy Pivot</title>
+<meta content="Excel, pivot, TableFormula, Python" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="" name="description"/>
+<meta content="2013-03-04" name="date"/></head>
+<body>
+<p>
+I realize that wherever I go, I always do the same operation
+with figures. Before using any machine learning, the most 
+basic task consists in aggregate figures using a pivot.
+Excel is already providing a visual tool. No matter what 
+I do, I always find some limitations or I feel stuck because
+I do not know this function or this other one. Translating
+a matrix in Excel is still a pain. Plus, depending on the machine,
+I'm using, I need to switch from English function to French function
+which is really annoying. 10 years ago, I used to work with 
+<a href="http://en.wikipedia.org/wiki/Lotus_Improv">Lotus Improve</a>. 
+Basically, it was a cube in n dimension and you could write formulas
+quite easily. The sheet displayed on the screen was a pivot by
+itself and we could move a dimension from one axis to the others
+or choose a value and bring another dimension for the view.
+The concept was interesting. I never met anything similar
+except a programming language.  
+</p>
+<p>
+Any scripting language now allows
+to implement its own cube quite easily. The initial format
+is a big table containing the extended cube. Each row follows the
+same format: n coordinates, value or list of values. When I need to
+create a view of this cube, I need to aggregate using a kind of
+SQL logic. It is fine to write a GROUP BY query when the number of
+variable is small but when it is high, I would appreciate to
+have a tool which would do that for me. The convention I chose 
+is to have meaningful name. Like many convention, the name of
+a column should indicate the numeric type and the aggregation 
+type you want (sum, avg, len, key, none, max, min).
+<pre>
+key_name	sum_a	len_b	avg_c
+A	1.0	2.0	3.0
+A	1.1	2.1	3.1
+B	3.0	4.0	5.0
+</pre>
+To aggregate on name, I just write this:
+<pre class="prettyprint">
+gr = table.groupby_implicit ( lambda v : v ["key_name"] )
+</pre>
+I do not have to specify the rest. Usually, I use <i>sum</i> 
+most of the time. I'll probably add others aggregator later
+such as <i>argmax</i>. I added a module computing
+some basics statistics, the code is still here:
+<ul>
+<li><a href="documents/tableformula.html">tableformula.py</a></li>
+<li><a href="documents/tableformulagraph.html">tableformulagraph.py</a></li>
+<li><a href="documents/tableformulastat.html">tableformulastat.py</a></li>
+</ul>
+Maybe one day, somebody will find something easy.
+</p>
+</body>
+</html>

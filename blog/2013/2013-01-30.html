@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Graph matching and alignment</title>
+<meta content="Python, edit distance, Levenstein, graph, matching, alignment" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="Pipelines became a quite popular way to represent a workflow. Many tools              use graphs to represent the sequence of processes data follow. Most of the time, between two experiments,              we just copy paste a previous one, we add or delete a few nodes. After a while,             it becomes uneasy to find out what modifications were made. I was wondering              how it would be possible to automate such a task. How to find what modifications were introduced in a graph ?              ..." name="description"/>
+<meta content="2013-01-30" name="date"/></head>            
+<body>
+<p>
+Pipelines became a quite popular way to represent a workflow. Many tools such as 
+<a href="http://sourceforge.net/projects/rapidminer/">RapidMiner</a>,
+<a href="http://orange.biolab.si/">Orange</a> or 
+<a href="http://www.cs.waikato.ac.nz/ml/weka/">Weka</a> use graphs to represent the 
+sequence of processes data follow. Most of the time, between two experiments, 
+we just copy paste a previous one, we add or delete a few nodes. After a while,
+it becomes uneasy to find out what modifications were made. I was wondering 
+how it would be possible
+to automate such a task. How to find what modifications were introduced in a graph ? 
+</p>
+<p>
+<table border="0">
+<tr>
+<td><img height="500" src="documents/unittest_GraphDistance2_sub1.png"/></td>
+<td><img height="500" src="documents/unittest_GraphDistance2_sub2.png"/></td>
+<td><img height="500" src="documents/unittest_GraphDistance2.png"/></td>
+</tr>
+<tr>
+<td>Graph 1</td>
+<td>Graph 2</td>
+<td width="200">Two graphs
+we would like to merge into
+a single one. Vertices 00
+and 11 represents the only
+root and the only leave.</td>
+</tr>
+</table>
+</p>
+
+<!-- CUT PAGE HERE -->
+
+<p>
+The following <a href="documents/graph_distance.pdf">paper</a> gives an answer 
+to those questions for graphs without cycles. The outcome
+is a way to match two graphs altogether and to build an alignment between edges and vertices
+from both graphs. This method is based on Levenstein's edit distance.
+</p>
+
+<p>
+<table border="0">
+<tr>
+<td valign="top"><img height="600" src="documents/unittest_GraphDistance4_sub1.png"/></td>
+<td valign="top"><img height="850" src="documents/unittest_GraphDistance4_sub2.png"/></td>
+<td valign="top"><img height="850" src="documents/unittest_GraphDistance4_subf.png"/></td>
+</tr>
+<tr>
+<td>Graph 1</td>
+<td>Graph 2</td>
+<td>Merged graph</td>
+</tr>
+</table>
+</p>
+
+<p>You can find an implementation here: 
+<a href="documents/graph_distance.html">graph_distance.py</a>,
+<a href="documents/importme.html">importme.py</a>. This algorithm is still very slow and 
+could be improved. Maybe for another blog post.
+</p>
+
+
+
+</body>
+</html>

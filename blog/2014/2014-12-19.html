@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Example in C# and unions of enumerables</title>
+<meta content="c sharp, example, union" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+I often how to compute the concatenation of several lists in C# using 
+<a href="http://msdn.microsoft.com/fr-fr/library/bb397926.aspx">Linq</a>.
+</p>
+
+<pre class="brush: py">
+var iterator = new List&lt;List&lt;string&gt;&gt; () ... ;
+var union = iterator.Aggregate( (a,b) =&gt; a.Concat(b) ) ;  // enumerate on strings
+</pre>
+
+<p>
+And if you are looking to a page easy which gives you many examples,
+that should be this one: <a href="https://code.msdn.microsoft.com/101-LINQ-Samples-3fb9811b">101 LINQ Samples</a>.
+</p>
+
+</body>
+</html>

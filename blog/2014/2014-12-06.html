@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Build automation with Jenkins</title>
+<meta content="python, jenkins" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+For the past two months, I updated many times my website. 
+I automated many things but it still takes a while.
+And my laptop needs to remain opens until it completes.
+I finally took the decision to spend some time on 
+<a href="http://jenkins-ci.org/">Jenkins</a>.
+I use it to compile the documentation of my python modules,
+to run the unit tests, and maybe publish it to my website.
+Basically, you can run a command line batch
+by just clicking and receive an email when it is over or if
+it has failed.
+One interesting feature is the possibility to chain the commands.
+If the commands <i>n</i> succeeds, go to command <i>n+1</i>. You 
+can connect it to GitHub or any source repository. It will update 
+your clone just before building.
+</p>
+
+<img src="documents/jenkins.png" width="500" />
+
+<p>
+It takes less than an hour to install Jenkins, install the necessary
+plugins and creates the first job. I had difficulties because
+I was running my python script from a batch command file.
+The script was not stopping even after Python raised an exception.
+To do that, the following line must be inserted:
+</p>
+<pre class="prettyprint">
+%pythonexe% -u setup.py unittests
+if %errorlevel% neq 0 exit /b %errorlevel%
+</pre>
+<p>
+Jenkins is more than a scheduler, it handles security,
+it can run a script on a different machine.
+</p>
+
+</body>
+</html>

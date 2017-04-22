@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Programmer un robot Lego</title>
+<meta content="programmation, robot, lego, scratch, arduino, ev3, coding goûter" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+J'ai acheté un robot Lego <i><a href="http://www.lego.com/fr-fr/mindstorms/?domainredir=mindstorms.lego.com">Mindstorms</a></i>.
+Je me suis que si <a href="http://pbenco.wordpress.com/coding-gouter/">des enfants arrivent à le faire</a>
+dans des <a href="http://www.slate.fr/story/75279/code-enfant-parent-apprendre-jouer">coding goûters</a>,
+je devrais bien y arriver aussi. Je suis donc allé dans un magasin Lego à Levallois pour
+dénicher l'objet (<a href="http://stores.lego.com/fr-fr/stores/fr/so-ouest">ici</a>).
+</p>
+<p>
+Je l'ai laissé mariner quelque temps afin de penser à aller acheter des piles (6 piles R6, 2 piles R03).
+Et j'ai commencé à monter l'engin, une occupation qui m'amuse beaucoup d'habitude,
+mais étant donné que j'étais plus intéressé par le robot fini que le fait de le construire,
+l'heure d'assemblage m'a paru longue. Lorsque j'ai eu fini, il me restait la moitié des pièces.
+J'ai compris que j'aurais dû télécharger l'application d'abord ! Cela prend une heure et on a le choix
+entre pas mal de modèles différents (avec les mêmes pièces je suppose). Si vous suivez le même chemin,
+il vaut mieux procéder dans cet ordre, télécharger d'abord, monter ensuite. 
+Je vous montre une photo de mon petit n'importe quoi car je n'ai pas eu le courage 
+de terminer un des assemblages proposés. L'essentiel était pour moi d'avoir un 
+n'importe quoi qui bouge tout seul.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+
+<center>
+<img src="documents/legonp.png" width="25%" />
+</center>
+
+
+
+<p>
+Le montage n'est pas si compliqué et la télécommande marche plutôt bien. Les moteurs se branchent
+côté lettre et les capteurs se branchent côté chiffre (4 de chaque côté). Lego fournit
+un logiciel qui permet de programmer le robot avec des commandes visuelles de la même façon
+que <a href="http://scratch.mit.edu/">Scratch</a>. C'est un peu pour lui que je me suis lancé
+dans l'affaire. Ceux qui ont déjà programmé s'y retrouveront
+assez facilement. On finit par comprendre comment raconter une histoire entre les capteurs (tactile + infrarouge)
+et les moteurs (deux roues + un autre moteur tournant).
+</p>
+
+
+
+<p>
+On reconnaît qu'on a lancé l'application car elle reproduit le bruit de robots dans 
+les couloirs de fond de calle de l'étoile noir. 
+On arrive vite à comprendre comment écrire un
+petit programme, à le transborder sur le robot puis à le faire tourner. Le programme ci-dessous
+attend en boucle la pression du capteur tactile. S'il est pressé, le robot recule.
+</p>
+
+<center>
+<img src="documents/legocode.png" width="45%" />
+</center>
+
+<p>
+Je ne sais pas si je coderais quelque chose de conséquent avec ce robot. L'aspect
+visuel est sympathique mais les gros programmes peuvent devenir vite illisible
+si on n'a pas un grand écran. J'ai essayé de dénicher quelque chose avec Python mais
+le chemin n'a pas l'air aussi bien balisé qu'avec l'application de Windows.
+Il y a bien des gens qui s'y sont essayés mais sous Linux: 
+<a href="http://bitsandbricks.no/2014/01/19/getting-started-with-python-on-ev3/">Getting started with Python on EV3</a>.
+Les autres modules ont l'air un peu trop vieux. Si on aime le C#,
+il existe une extension Visual Studio: <a href="http://legoev3.codeplex.com/">LEGO MINDSTORMS EV3 API</a> 
+(et celle-ci pour échanger avec le robot via bluetooth
+<a href="http://ev3messenger.codeplex.com/">EV3Messenger</a>).
+</p>
+
+<p>
+Il existe d'autres capteurs / moteurs qu'on peut ajouter
+au robot: <a href="http://www.intorobotics.com/additional-lego-ev3-resources-robotic-applications/">Additional Lego EV3 Resources for Robotic Applications</a>.
+J'aimerais bien lui ajouter une caméra et lui demander se ballader seul dans l'appartement mais
+ça risque de prendre encore un peu de temps.
+</p>
+
+<p>
+Le robot Lego n'est pas la seule façon d'aborder une programmation visuelle. Il est possible avec
+<a href="http://arduino.cc/">Arduino</a> de construire des jouets ou des objets plus utiles au quotidien
+puis de les programmer de façon visuelle avec l'extension <a href="http://s4a.cat/">S4A</a>. Un ami m'a récemment
+parlé de <a href="http://www.fischertechnik.de/home.aspx">fischertechnik</a> qui propose aussi
+des <a href="http://www.fischertechnik.de/en/desktopdefault.aspx/tabid-21/39_read-33/usetemplate-2_column_pano/">robots</a>.
+</p>
+
+</body>
+</html>

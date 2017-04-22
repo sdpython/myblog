@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Stop a thread in Python</title>
+<meta content="python, thread" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+I was writing a simple GUI in Python, a button start to start a function
+from a thread, another one to stop the execution. I then realized
+my program did not stop.
+</p>
+
+<pre class="brush: py">
+import threading, time
+
+class MyThread(threading.Thread):
+    def run(self):
+        while True:
+            time.sleep(1)
+            
+th = MyThread()
+th.start()
+</pre>
+
+<p>
+There are two ways to avoid that issue. The first one is to set up
+<a href="http://docs.python.org/3.3/library/threading.html#threading.Thread.daemon">daemon</a>
+to <i>True</i>.
+</p>
+
+<pre class="brush: py">
+th = MyThread()
+th.daemon = True
+th.start()
+</pre>
+
+<p>
+The second way is to use a kind of hidden function <i>_stop</i>(not documented). 
+But this function might disappear in the next version of python.
+</p>
+
+<pre class="brush: py">
+th = MyThread()
+th.start()
+th._stop()
+</pre>
+
+</body>
+</html>

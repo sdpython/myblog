@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Issue with some Sphinx themes and Internet Explorer</title>
+<meta content="python, sphinx, internet explorer, theme" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+The theme <a href="http://ryan-roemer.github.io/sphinx-bootstrap-theme/">Bootstrap</a> does not work
+well on Internet Explorer. In that case, the file
+<tt>[python_path]/Lib/site-packages/sphinx/themes/basic/layout.html</tt>
+must be modified to include the following line:
+</p>
+
+<pre class="prettyprint">
+&lt;meta http-equiv="X-UA-Compatible" content="IE=edge" /&gt;
+</pre>
+
+
+
+</body>
+</html>

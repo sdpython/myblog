@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Quelques précisions sur les projets informatiques</title>
+<meta content="ENSAE, Python, initiation à la programmation, projets" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="Ce blog regroupe quelques instructions et documents à lire       avant de commencer son projet informatique à l'ENSAE (second semestre).        Nuage de mots,       algorithmes de trading, pentomino, propagation d'une épidémie,       jeux avec ou sans hasard." name="description"/>
+<meta content="2013-02-03" name="date"/></head>
+<body>
+<p><b>
+Données textuelles, nuages de mots
+</b></p>
+<p>
+Certains sujets traitent du traitement de texte et dans ce domaine, 
+il est parfois important d'obtenir des données en grande quantité. 
+La source la plus accessible et une des plus propres est Wikipedia
+dont il est possible de télécharger une copie dans n'importe quelle
+langue à partir de l'adresse suivante : 
+<a href="http://dumps.wikimedia.org/backup-index.html">wikipedia backups</a>.
+Il faut chercher sur cette page un lien <i>xxwiki</i> ou <i>xx</i> sont 
+les deux premières lettres d'une langue (<i>frwiki</i> par exemple). 
+Il est possible de télécharger tout ou partie du site
+(cela peut prendre quelques heures).
+</p>
+
+<p>Lire les informations présentes dans ces fichiers de plusieurs Go requiert quelques
+connaissances en XML, puis de comprendre la structure plutôt intuitive du document. 
+Pour vous aider, vous pourrez lire l'article sur le 
+<a href="http://www.xavierdupre.fr/blog/xd_blog.html?date=2013-02-02">parser XML</a>
+en espérant que cela vous fasse gagner du temps.
+</p>
+
+<p>La liste des
+<a href="documents/liste_projets_ensae_programmation_2012-2013.pdf">sujets</a> fournit quelques 
+références concernant la construction des nuages de mots. Pour l'affichage,
+le language HTML est sans doute le plus simple. Il permet de composer des blocs
+de texte de différentes tailles et se charge de les disposer. Le code HTML
+suivant permet de modifier la taille du texte affiché par un navigateur (Firefox par exemple) :
+<pre>
+&lt;font size="6"&gt;This is some text!&lt;/font&gt;
+</pre>
+</p>
+<p><font size="6">Taille 6</font><font size="16">Taille 16</font>
+</p>
+<p>
+Ce texte pourrait être la sorti d'un programme Python.
+</p>
+
+
+<p><b>Données financières</b></p>
+
+<!-- CUT PAGE HERE -->
+
+
+<p>
+Les sujets proposés font tous intervenir une optimisation qui requiert des données 
+pour être menée à terme. Le programme suivant 
+<a href="documents/recuperation_serie_financiere.html">recuperation_serie_financiere.py</a>
+récupèrent des données quotidiennes depuis le site de 
+<a href="http://finance.yahoo.com/">Yahoo Finance</a> et les enregistre sous forme
+de fichier texte. Le programme peut être
+facilement modifié pour récupérer les cours de sociétés autres que celles du CAC40, 
+ce qu'il fait par défaut. L'article 
+<a href="http://www.xavierdupre.fr/blog/xd_blog.html?date=2013-01-28">TableFormula</a> décrit 
+un programme permettant de récupèrer les données financières ainsi enregistrées
+sous forme de table.
+</p>
+<p>
+Le module <a href="http://matplotlib.org/index.html">MatPlotLib</a> permet de 
+tracer des graphes de séries financières même si ce n'est pas la seule.
+Le programme suivant <a href="documents/graphohlc.html">graphohlc.py</a>
+permet de représenter une série financière. Il sera facile 
+d'adapter ce graphique pour y ajouter plusieurs séries. L'essentiel
+est que les axes comportent des unités et des dates.
+</p>
+
+<p>
+Trend following, pair trading, gestion de portefeuille, ce <a href="documents/finance_autostrat.pdf">document</a>
+présente quelques des algorithmes
+de trading. Il rappelle aussi quelques définitions couramment utilisées (volatilité, rendement,
+ratio de Sharpe). La conception de tels algorithmes, dont l’objectif avoué est de pouvoir
+faire du trading sans intervention humaine, requiert une certaine rigueur afin de s’assurer de la
+robustesse de la stratégie financière. C’est aussi un sujet que cet exposé aborde avec la description
+du back testing ou la prise en compte de coûts cachés (coûts de transaction, slip edge) qui
+expliquent en partie que des stratégies ne soient pas aussi prometteuses que leur évaluation sur
+des données passées le laissait penser.
+</p>
+
+
+<p><b>Jeux sans hasard et intelligence artificielle</b></p>
+<p>
+Othello, Puissance 4, les échecs, les dames, sont des jeux qui opposent deux joueurs 
+autour d'un plateau. Aucun hasard n'intervient. Pour implémenter un joueur artificiel
+(ou intelligence artificielle, même si intelligence est sans doute un terme 
+galvaudé dans ce cas), on peut s'inspirer de l'algorithme 
+<a href="http://fr.wikipedia.org/wiki/Algorithme_minimax">MiniMax</a> 
+(la version <a href="http://en.wikipedia.org/wiki/Minimax">anglaise</a> est plus
+complète). Il s'agit d'envisager tous les coups possibles jusqu'à 
+une certaine profondeur tout en choisissant le meilleur coup pour l'adversaire. 
+Selon les jeux, cette approche peut être assez gourmande en calcul ce qu'il est 
+possible d'améliorer en travaillant sur une fonction d'évaluation de chaque coup ou 
+en ne choisissant de ne pas explorer tous les coups (voir 
+<a href="http://fr.wikipedia.org/wiki/%C3%89lagage_alpha-beta">Alpha Beta</a> ou sa version
+<a href="http://en.wikipedia.org/wiki/Alpha-beta_pruning">anglaise</a>). La plus simple 
+des fonctions d'évaluation des coups (ou fonction de coût) consiste à 
+compter le nombre de pièces ou de pions pris mais celle-ci peut tout-à-fait
+inclure des informations relatives à la disposition des pièces sur le plateau de jeu.
+</p>
+
+
+<p><b>Jeux de hasard et intelligence artificielle</b></p>
+<p>
+Poker, Belotte utilisent des cartes et l'état du jeu à un instant quelconque n'est pas 
+entièrement décrit par le plateau de jeu. Il n'est pas possible
+d'utiliser des algorithmes de type
+<a href="http://fr.wikipedia.org/wiki/Algorithme_minimax">MiniMax</a> sans faire intervenir 
+des simulations aléatoires. Celles-ci permettront d'estimer la probabilité que telle ou 
+telle ensemble de cartes apparaissent. Le joueur optimisera l'espérance de ses gains.
+Les meilleurs stratégies incluent les décisions des autres joueurs comme au Poker 
+mais transcire cela sous forme d'algorithme n'est pas chose facile.
+</p>
+
+<p><b>Jeux et interface graphique</b></p>
+<p>L'interface graphique est en général réalisée à l'aide du module 
+<a href="http://www.pygame.org/">PyGame</a>. Le programme inclus alors 
+une boucle principale qui attend
+des événements (un clic de souris, la pression d'une touche) et agit en conséquence. 
+Comme exemple, voici une fonction qui a été implémentée par des élèves l'année dernière :
+<pre class="prettyprint">
+def Accueil():
+    continuer=True
+    fenetre.blit(fond,(0,0)) #affichage de l'image en haut à gauche de notre fond d'écran
+    pygame.display.flip() #raffraîchissement de l'écran
+    while continuer:
+        for event in pygame.event.get():
+            if event.type==QUIT:
+                continuer=False
+            if event.type==KEYDOWN and event.key==K_ESCAPE:
+                continuer=False
+            if event.type == MOUSEBUTTONUP and event.button == 1 and event.pos[0]&gt;218 and event.pos[0]&lt;587\
+                and event.pos[1]&gt;139 and event.pos[1]&lt;206: #bouton Joueur VS. Joueur
+                JvJ()
+                continuer=False
+            if event.type == MOUSEBUTTONUP and event.button == 1 and event.pos[0]&gt;218 and event.pos[0]&lt;587\
+                and event.pos[1]&gt;225 and event.pos[1]&lt;294: #bouton Joueur VS. Ordinateur
+                vsOrdi()
+                continuer=False
+            if event.type == MOUSEBUTTONUP and event.button == 1 and event.pos[0]&gt;218 and event.pos[0]&lt;587\
+                and event.pos[1]&gt;316 and event.pos[1]&lt;383: #bouton I.A. vs. I.A.
+                IAvsIA()
+                continuer=False
+            if event.type == MOUSEBUTTONUP and event.button == 1 and event.pos[0]&gt;218 and event.pos[0]&lt;587\
+                and event.pos[1]&gt;404 and event.pos[1]&lt;471: #bouton Crédits
+                Credits()
+                continuer=False
+            if event.type == MOUSEBUTTONUP and event.button == 1 and event.pos[0]&gt;218 and event.pos[0]&lt;587\
+                and event.pos[1]&gt;495 and event.pos[1]&lt;561: #bouton Quitter
+                continuer=False
+        pygame.display.flip()
+</pre>                
+Vous pouvez aussi jeter un coup d'oeil sur 
+le programme introduit au paragraphe suivant.
+</p>
+
+<p><b>Propagation d'une épidémie, évoluion de population</b></p>
+<p>
+On peut étudier ces phénomènes selon une approche macro ou micro. Les modèles 
+macro font souvent apparaître des équations différentielles comme celles
+du modèle 
+<a href="http://fr.wikipedia.org/wiki/%C3%89quations_de_Lotka-Volterra">Lokta Volterra</a> 
+qui modélisent l'évolution des populations de proies et de prédateurs 
+(version <a href="http://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equation">anglaise</a>).
+L'article <a href="documents/6146.full.pdf">Factors that make an infectious disease
+outbreak controllable</a> pousse cette approche pour évaluer l'efficacité 
+de mesures pour contrôler l'évolution d'une épidémie.
+</p>
+
+<p>
+Le programme <a href="documents/propagation_epidemie.html">suivant</a> propose un exemple 
+d'approche micro. Il s'agit de modéliser plus ou moins fidèlement 
+le comportement de chaque individu puis d'étudier l'évolution d'une population.
+</p>
+<p>
+Entre ces deux approches, une troisième est possible à mi-chemin si on considère 
+la possibilité de représenter les interactions entre individus sous forme 
+de graphes. Chaque noeud représente un individu, chaque arc une relation
+entre ces deux individus. Les propriétés du graphe ont-elle un impact
+sur la propagation d'une épidémie ? L'article 
+<a href="http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0000012">
+The Effectiveness of Contact Tracing in Emerging Epidemic</a> donne quelques idées
+de ce qu'on peut attendre d'une telle approche. L'article 
+<a href="documents/200305-01_SciAmer-ScaleFree.pdf">Scale Free Networks</a> étudie
+différentes tolopologies de réseau et leur présence dans différents domaines.
+</p>
+<p>
+Pour cette dernière approche, il peut s'avérer utile de dessiner des graphes, ce que
+propose le module <a href="http://code.google.com/p/yapgvb/">yapgvb</a> 
+pour le langage Python.
+</p>
+
+<p><b>Pentomino</b></p>
+<p>
+Même si ce sujet semble plutôt spécifique, l'algorithme utilisé (décrit 
+<a href="documents/pentominoes.pdf">ici</a>)
+pour résoudre le puzzle
+s'appuie sur une exploration qu'on représente sous forme d'arbre comme celle
+utilisée pour résoudre ce 
+<a href="http://www.xavierdupre.fr/blog/xd_blog.html?date=2011-11-13">puzzle</a>. 
+Chaque noeud de l'arbre représente un choix, celui de positionner une pièce de cette
+manière ou d'une autre. Les noeuds plus bas dans l'arborescence auront tous comme point commun
+le choix effectué à ce moment précis de la résolution. Ce type d'approche
+peut être adapté à d'autres problèmes de résolution de contraintes (Sudoku, 
+<a href="http://fr.wikipedia.org/wiki/Int%C3%A9gramme">l'énigme d'Einstein</a>). 
+Un language de programmation logique comme 
+<a href="http://en.wikipedia.org/wiki/Prolog">Prolog</a> inclut implicitement cette
+exploration arborescence à condition de savoir représenter les contraintes du problème.
+</p>
+
+<p><b>Construction d'une texture</b></p>
+<p>
+Le projet s'appuie sur une idée plutôt simple mais gourmande en calcul développée dans l'article
+<a href="http://www.xavierdupre.fr/enseignement/projet_data/texture_efros-iccv99.pdf">suivant</a>.
+Il s'agit de peindre un mur à partir d'un motif quelconque. Si ce motif est carré par exemple,
+le recopier plusieurs fera probablement apparaître un quadrillage car il est peut probable
+que les bords droit et gauche s'ajustent parfaitement. L'article propose un moyen
+de faire en sorte qu'on ne voit aucun quadrillage. Il utilise une méthode 
+utilisée pour faire de la prédiction : 
+<a href="http://en.wikipedia.org/wiki/K-nearest_neighbor_algorithm">les plus proches voisins</a>. 
+Le programme informatique devra utiliser le module <a href="http://www.numpy.org/">numpy</a> afin
+d'obtenir des temps de calculs suffisamment rapides. La librairie graphique installée à l'ENSAE 
+n'est plus maintenue (<a href="http://www.pythonware.com/products/pil/">PIL</a>), 
+je suggère d'utiliser 
+<a href="http://pypi.python.org/pypi/Pillow/">Pillow</a> qui est disponible pour
+les dernières versions de Python.
+</p>
+
+<p><b>Jeu de plateforme</b></p>
+<p>
+Les jeux de plateformes sont intéressants à plusieurs niveaux. Le premier défi
+est de réaliser une interface fluide : les personnages doivent réagier rapidement
+lorsqu'on presse une touche. Les personnages autres que celui manipulés par le 
+joueur ne doivent pas tourner en rond.
+</p>
+<p>
+En ce qui concerne le premier défi, la solution proposée plus haut présente le défaut de 
+passer beaucoup de temps à attendre :
+<ul>
+<li>le programme attend la pression d'une touche ou passe à l'étape suivante après 50ms</li>
+<li>le programme calcule la nouvelle position de tous les éléments du jeu</li>
+<li> le programme retourne à l'étape 1</li>
+</ul>
+Si les calculs que le programme effectue entre deux pressions d'une touche dépassent 50ms,
+le défilement du jeu apparaît saccadé. Le joueur est frustré et appuie d'autant plus sur 
+les touches pour faire réagir le jeu qui essaye tant bien que mal de rattraper le temps perdu.
+Une solution pour éviter cela est d'utiliser les threads (voir le chapitre 9 du 
+<a href="http://www.xavierdupre.fr/mywiki/InitiationPython">support de cours</a>). La réception
+des événements générés par l'utilisateur est un thread, les calculs en sont un autre, 
+l'affichage un dernier. Ce mécanisme permet de traiter plusieurs événements d'un coup 
+(le joueur a pressé dix fois la touche droite).
+</p>
+<p>
+En ce qui concerne le déplacements des autres joueurs, la première direction est d'implémenter
+une fonction assez simple qu'on modifie au fur et à mesure des essais du jeu. Par exemple,
+si un méchant doit poursuivre un gentil, il se déplace dans sa direction. S'il est bloqué par un mur, 
+on détecte qu'il ne bouge plus alors il doit prendre un direction au hasard et la suivre 
+pendant quelques temps. Cette approche fonctionne dans un premier temps.
+</p>
+<p>
+La seconde option est de prévoir une telle fonction pour tous les éléments mobiles, y 
+compris le joueur. Cette fonction est en quelque sorte une fonction à trous : 
+elle prend en compte des configurations (élément mobile bloqué depuis plus de deux secondes,
+élément mobile entouré de murs, présence d'objet récompense devant, présence d'un méchant derrière, ...)
+et elle retourne une décision. Cette fonction retourne des décisions différentes en fonction 
+de paramètres : si la distance de la récompense est <i>alpha</i> fois plus grande que celle du méchant,
+alors aller vers la récompense sinon fuir.
+</p>
+<p>
+Pour déterminer les paramètres optimaux, on peut par exemple lancer le programme un grand nombre de fois 
+(sans interface graphique) et on optimise tour à tour :
+<ul>
+<li>on maximise le nombre de récompenses attrappées si on veut améliorer les paramètres de joueur</li>
+<li>on minimise le nombre de récompenses attrappées si on veut améliorer les paramètres des méchants</li>
+</ul>
+Optimisation veut dire essentiellement choisir aléatoirement des paramètres et choisir ceux qui
+ont obtenus les meilleurs résultats.
+</p>
+
+</body>
+</html>

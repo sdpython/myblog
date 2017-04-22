@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Frameworks for games in Python</title>
+<meta content="python, pygame, pysdl2, pyglet, games, kivy, pythonista" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<p>
+Implementing a simple game in Python is not too difficult if you consider using
+a module such as <a href="http://www.pygame.org/">pygame</a>. 
+With the multiplicity of devices (computers, laptop, tablets, phones), we may wonder whether
+or not the same code will work on many of them. So far, I was able to find a couple of modules to 
+implement a game. I mean display graphics, play music or videos, intercept events coming from the mouse
+or the keyboard:
+<ul>
+<li><a href="http://www.pygame.org/">pygame</a>: very popular and bullet proof but it does not work with touchscreen (it 
+is based on <a href="http://www.libsdl.org/">SDL</a>). There is no dependency.</li>
+<li><a href="http://pysdl2.readthedocs.org/">pysdl2</a>: the development seems quite active, it is based 
+on <a href="http://www.libsdl.org/">SDL2</a> which needs to be retrieved first. It can handle touchscreens.</li>
+<li><a href="http://www.pyglet.org/">pyglet</a>: offers similar functionalities, however, the development
+does not seem to be very active.</li>
+<li><a href="http://qt-project.org/wiki/PySide/">PySide</a>: very similar to 
+<a href="http://www.riverbankcomputing.co.uk/software/pyqt/intro">pyqt</a>, the licence is different and gives more freedom.</li>
+</ul>
+If the game requires 3D graphics, those extensions will have to associated with
+<a href="http://pyopengl.sourceforge.net/">pyOpenGL</a>. If my preference goes to <a href="http://www.pygame.org/">pygame</a>
+mostly because I know it, I would consider <a href="http://pysdl2.readthedocs.org/">pysdl2</a>
+because <a href="http://www.libsdl.org/">SDL2</a> now supports Android and 
+<a href="https://www.apple.com/ios/">iOS</a> (iPad, iPhone). 
+GitHub and Bitbucket are now very popular. You can find examples just by searching the module you want to use:
+<a href="https://github.com/search?o=desc&amp;q=pygame&amp;ref=cmdform&amp;s=updated&amp;type=Repositories">pygame on github</a>,
+<a href="https://bitbucket.org/repo/all/relevance?name=pygame">pygame on bitbucket</a>.
+</p>
+
+<p>
+However, there exist others solutions. They might need more effort to be used but they
+seem promising as they could really make deployment on many platform easy. 
+<a href="http://kivy.org/#home">kivy</a> seems very promising. A game implemented with that framework
+can be deployed on Linux, Windows, Android, iOS. It is also available on 
+<a href="http://en.wikipedia.org/wiki/Raspberry_Pi">Raspberry Pi</a>. kivy allows the programmer to
+interact the same way with any device.
+The last one I found is <a href="http://omz-software.com/pythonista/">pythonista</a>. It was designed to
+easily implement Python programs on iOS (iPad), not necessarily games. 
+It only works with Python 2.7 but I hope Python 3.x will be
+soon supported.
+</p>
+
+<p>
+A last solution would be to use a HTML/Javascript solution packaged in a service but maybe, it goes beyond python
+and the scope of this post.
+</p>
+
+</body>
+</html>
+

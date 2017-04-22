@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Datamining avec R ou Python</title>
+<meta content="programming, R, Python, datamining, shiny, references, machine learning" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+
+<p>
+Il est devenu assez facile de travailler avec <a href="http://www.r-project.org/">R</a>.
+Même si je trouve toujours le langage compliqué, il faut avouer que 
+des outils comme <a href="http://www.rstudio.com/">RStudio</a> rendent l'outil
+indispensable et de moins en moins difficile d'accès. On peut 
+importer ses données depuis une grande variété de format, créer des 
+rapports en utilisant <a href="http://yihui.name/knitr/">knitr</a> ou
+encore créer une application web avec 
+<a href="http://www.rstudio.com/shiny/">shiny</a>.
+Il existe un package pour presque tout comme 
+pour faire des tests unitaires avec 
+<a href="http://cran.r-project.org/web/packages/RUnit/">RUnit</a>.
+</p>
+<p>
+J'ai pour habitude de faire le plus de choses possibles en Python, de passer au C++ quand 
+c'est vraiment nécessaire et d'utiliser R pour tout ce qui statistiques. R a l'avantage d'avoir 
+une modèle suivi par tous les packages alors que les modules Python suivent
+leur propre logique le plus souvent.
+</p>
+<p>
+Un exemple sur les méthodes à noyau : sous R, il faudrait utiliser
+le package <a href="http://cran.r-project.org/web/packages/kernlab/index.html">kernlab</a>, 
+sous Python, on se dirigerait vers <a href="http://scikit-learn.org/stable/index.html">scikit-learn</a>.
+Les packages sous Python sont souvent plus gros car les auteurs auront voulu intégrer 
+de nombreux algorithmes selon la même logique. Sous R, chaque package a un périmètre plus réduit
+et suit les mêmes conventions.
+Comme Python s'interface avec à peu près tout y compris R, je préfère ce langage dont 
+la syntaxe me paraît plus facile même si je n'hésite pas à repasser à R dès qu'il le faut.
+</p>
+<p><b>C++</b></p>
+<p>
+Les deux langages permettent d'inclure des morceau de C++ si nécessaire.
+Python dispose de diverses façons~: <a href="http://cython.org/">Cython</a>, 
+<a href="http://www.boost.org/doc/libs/1_54_0/libs/python/doc/index.html">Boost.Python</a>, 
+ou <a href="https://pypi.python.org/pypi/cffi">cffi</a>. Avec R, il y a 
+<a href="http://cran.r-project.org/web/packages/Rcpp/index.html">Rcpp</a> 
+(<a href="http://www.edii.uclm.es/~useR-2013/Tutorials/Francois.html">tutoriel sur Rcpp</a>, il faut aussi
+installer <a href="http://www.rstudio.com/projects/devtools/">devtools</a>).
+Est-ce que le langage C va disparaître ? Pour le moment, si les langages de scripts
+sont beaucoup plus utilisés, les compilateurs sont la plupart du temps écrits en C++. 
+De nombreuses extensions ont été écrites en C++ (voir <a href="http://eigen.tuxfamily.org/index.php">Eigen</a> par exemple).
+Ce langage est souvent un choix raisonnable lorsqu'on veut écrire du code très rapide.
+</p>
+<p><b>Graphiques</b></p>
+<p>
+L'outil qui prend un peu plus d'importance ces temps-ci est 
+<a href="http://d3js.org/">d3.js</a> car il permet de réaliser des graphiques facilement
+intégrables sur un site web, un journal en ligne, qu'il permet de faire plus facilement
+des animations et surtout, comme il est écrit en javascript, il permet de créer
+des graphes qui réagissent à la souris ou au clavier.
+Je n'arrive pas encore à trouver un module qui le rende facilement utilisable depuis Python. 
+L'article 
+<a href="http://blog.nextgenetics.net/?e=7">Method: Data visualization with D3.js and python - part 1</a>
+décrit comment s'y prendre sans toutefois citer de module dédié à cet usage. Ca ne devrait pas tarder.
+Sous R, sans être javascript, il existe <a href="http://docs.ggplot2.org/current/">ggplot2</a>
+qui propose des graphes assez jolis.
+</p>
+<p><b>Big Data</b></p>
+<p>
+Enfin, dans le domaine des Big Data, les solutions lourdes type Map/Reduce 
+<a href="http://hadoop.apache.org/">Hadoop</a> sont de plus en plus fréquentes lorsqu'on traite
+des données qui arrivent en continu (internet, téléphone, consommation d'énergie...). Pour le reste,
+un ordinateur portable avec quelques giga octets de mémoire et un disque dur conséquent suffit.
+Des outils existent pour ne pas avoir à charger une base complète en mémoire. C'est le cas de 
+<a href="http://cran.r-project.org/web/packages/ff/index.html">ff</a> et 
+<a href="http://cran.r-project.org/web/packages/ffbase/index.html">ffbase</a> 
+(ou ça <a href="https://github.com/hadley/bigvis">bigvis</a>) sous R.
+Sous Python, l'environnement de travail le plus approprié est <a href="http://ipython.org/">IPython</a>.
+Pour manipuler les données, on trouve <a href="http://pandas.pydata.org/">pandas</a> ou
+<a href="http://www.pytables.org/moin">PyTables</a>.
+</p>
+
+</body>
+</html>

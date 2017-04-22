@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Compter le nombre de cellules d'une couleur sous Excel</title>
+<meta content="Excel, compter les couleurs, VBA" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="On cherche à compter le nombre de cellules d'une couleur spécifique        sous Excel dans une plage de données. On peut considérer l'exemple suivant qui fait        apparaître un rectangle contenant des cases de couleurs différentes.        La première ligne contient toutes les couleurs une seule fois,        la seconde ligne contient le nombre de cellules dans le rectangle de la même        couleur que la case du dessus..." name="description"/>
+<meta content="2013-01-26" name="date"/></head>      
+<body>
+<p>
+On cherche à compter le nombre de cellules 
+d'une couleur spécifique sous Excel dans une plage de données. 
+On peut considérer l'exemple suivant qui fait apparaître un rectangle contenant des
+cases de couleurs différentes. La première ligne contient toutes les couleurs une seule fois,
+la seconde ligne contient le nombre de cellules dans le rectangle de la même couleur que la case du dessus.
+</p>
+<p><img src="documents/excel_couleurs.png" width="90%"/></p>
+<p>
+On veut pouvoir écrire une formule du type :
+<pre class="prettyprint">
+=NbColorSameAs($B$6:$D$11;B1)
+</pre>
+Il n'est pas possible de s'en sortir sans programmer soit même cette fonction. Pour cela,
+il faut :
+<ul>
+<li>créer une document Excel qui accepte les macros,</li>
+<li>ouvrir l'éditeur Visual Basic (ALT + F11),</li>
+<li>ajouter un module (clic droit de la souris)</li>
+<li>copier/coller le code qui suit</li>
+<pre class="prettyprint">
+Function NbColor(ByRef Plage As Range, Couleur As Byte) As Long
+    Dim c As Range
+    Dim nb As Long
+    nb = 0
+    For Each c In Plage
+        If c.Interior.ColorIndex = Couleur Then
+            nb = nb + 1
+        End If
+    Next c
+    NbColor = nb
+End Function
+
+Function NbColorSameAs(ByRef Plage As Range, ByRef Cellule As Range) As Long
+    NbColorSameAs = NbColor(Plage, Cellule.Interior.ColorIndex)
+End Function
+</pre>
+</ul>
+Le document Excel est maintenant prêt, il suffit d'insérer 
+la première formule insérée plus haut dans ce blog (vous pourrez trouver un 
+exemple <a href="documents/excel_couleur.xlsm">ici</a>).
+</p>
+
+<!-- CUT PAGE HERE -->
+
+<p><b>Et la réciproque ?</b></p>
+<p>Il est possible de modifier la couleur d'une cellule en fonction de la valeur qu'elle 
+contient. C'est accessible via le menu &quot;mise en forme conditionnelle&quot;, la suite est assez intuitive.
+</p>
+
+<p><b>Compter des cases ayant une couleur et une valeur...</b></p>
+
+<p>Il est possible d'adapter la fonction de telle sorte qu'elle compte le nombre de cellules ayant une certaine
+couleur et contenant un certain texte :
+
+<pre class="prettyprint">
+Function NbColorText(ByRef Plage As Range, ByRef Couleur As Byte, text As String) As Long
+    Dim c As Range
+    Dim nb As Long
+    nb = 0
+    For Each c In Plage
+        If c.Interior.ColorIndex = Couleur And c.Value = text Then
+            nb = nb + 1
+        End If
+    Next c
+    NbColorText = nb
+End Function
+
+Function NbColorAndTextSameAs(ByRef Plage As Range, ByRef Cellule As Range) As Long
+    NbColorAndTextSameAs = NbColorText(Plage, Cellule.Interior.ColorIndex, Cellule.Value)
+End Function
+</pre>
+</p>
+
+<p><b>Le cas des cellules fusionnées</b></p>
+
+<p>
+Lorsque des cellules sont fusionnées, le résultat n'est pas intuitif. Supposons qu'on fusionne deux cellules et 
+que la cellule fusionnée contient un certain texte, pour Excel, il y aura une cellule vide et une cellule contenant le texte.
+Lorsqu'on fait le décompte, il faut juste ne pas se tromper.
+</p>
+
+<p><img src="documents/excel_couleurs2.png" width="90%"/></p>
+
+<p>Dernière astuce : pour forcer le recalcul des valeurs, il faut appuyer sur F9 ou Shift+F9.
+</p>
+</body>
+</html>

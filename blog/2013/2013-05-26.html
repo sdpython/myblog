@@ -1,0 +1,1115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Processing (big) data with Hadoop</title>
+<meta content="machine learning, big data, hadoop, virtual machine, AWS, amazon, cygwin, java, pig, hive, tutorial" name="keywords"/>
+<meta content="" name="description"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+
+<p>
+Big Data becomes very popular nowadays. If the concept seems very simple
+- use many machines to process big chunks of data -, pratically, 
+it takes a couple of hours before being ready to run the first script on
+the grid. Hopefully, this article will help you saving some times. Here are some 
+directions I looked to create and submit a job map/reduce. 
+</p>
+<p>
+Unless you are very strong, there is very little chance that you
+develop a script without making any mistake on the first try. Every run
+on the grid has a cost, plus accessing a distant cluster might take some 
+time. That's why it is convenient to be able to develop a script on
+a local machine. I looked into several ways: Cygwin, a virtual machine with Cloudera,
+a virtual machine with HortonWorks, a local installation of Hadoop on Windows.
+As you may have understood, my laptop OS is Windows.
+Setting up a virtual machine is more complex but it gives a better overview of 
+how Hadoop works.
+</p>
+<p>
+Here are the points I will develop:
+<ul>
+<li>Develop a short script in <a href="http://cloudera.github.io/hue/">Hue</a>
+        and <a href="http://hive.apache.org/">Hive</a> 
+        on this local machine,</li>
+<li>Install a virtual machine (VM) on a laptop,</li>
+<li>Run this script on the grid (using <a href="http://aws.amazon.com/fr/">Amazon AWS</a>).</li>
+</ul>
+
+To go through all the steps, you need a machine with 30Gb free on your hard drive,
+and at least 4Gb memory. 64bit OS is better. I went through the steps
+with Windows 8 and it works on any other OS.
+</p>
+<p>
+<b>Contents:</b>
+<ul>
+<li><a href="#java">Local run with Java</a></li>
+    <ul>
+    <li><a href="#installcyg">Installation</a></li>
+    <li><a href="#cygex">Executing a script PIG with Cygwin</a></li>
+    <li><a href="#cygexj">Executing a script PIG without Cygwin</a></li>
+    </ul>
+<li><a href="#locserver">Installation of a local server with HortonWorks</a></li>
+<li><a href="#secinstall">Install a virtual machine (Cloudera)</a></li>
+    <ul>
+    <li><a href="#filetodl">Files to download</a></li>
+    <li><a href="#frenchk">Only for French keyboards</a></li>
+    <li><a href="#updownload">Upload, download files to the local grid</a></li>
+    <li><a href="#vmtools">Install the VMWare Tools and create a shared folder</a></li>
+    <li><a href="#lasttweak">Final tweaks: change the repository</a></li>
+    <li><a href="#installpy">Install Python 3.3, Numpy (optional)</a></li>
+    <li><a href="#installr">Install R and Rpy2</a></li>
+    </ul>
+<li><a href="#horinstall">Install a virtual machine (HortonWorks)</a></li>
+<li><a href="#developscript">Develop a short script</a></li>
+    <ul>
+    <li><a href="#pgcommandline">Run a pig Script through the command line</a></li>
+    <li><a href="#jobcheck">Checking job execution</a></li>
+    <li><a href="#hive">Same process with Hive and Hue</a></li>
+    </ul>
+<li><a href="#pythonmod">Hadoop and Python</a></li>
+<li><a href="#amazon">Using Amazon AWS</a></li>
+    <ul>
+    <li><a href="#asubscribe">Open an Amazon account</a></li>
+    <li><a href="#aplay">Run a script PIG on Amazon</a></li>
+    </ul>
+<li><a href="#errors">Errors you might face</a></li>
+    <ul>
+    <li><a href="#err1">Cannot retrieve repository metadata (repomd.xml)</a></li>
+    <li><a href="#errsql">ImportError: No module named '_sqlite3'</a></li>
+    <li><a href="#pigerrorcpl">Compilation Error for a PIG script</a></li>
+    <li><a href="#hivefile">Error when creating a <i>Hive</i> table</a></li>
+    </ul>
+</ul>
+</p>
+
+I'll assume you are familiar with 
+<a href="http://en.wikipedia.org/wiki/MapReduce">Map/Reduce</a> concepts and you have heard about
+<a href="http://en.wikipedia.org/wiki/Hadoop">Hadoop</a> and 
+<a href="http://en.wikipedia.org/wiki/Pig_(programming_tool)">PIG</a>.
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p><b>2014-06-03</b> French tutorial :
+<a href="http://mbaron.developpez.com/tutoriels/nosql/hadoop/installation-configuration-cluster-singlenode-avec-cloudera-cdh5/">Partie 2 : Installation et configuration d'un cluster simple nœud avec Cloudera CDH 5 </a>
+</p>
+
+
+<hr />
+
+<h2 id="java">Local run with Java</h2>
+
+I used this page to run
+<a href="http://avid.cs.umass.edu/courses/645/f2012/hw/hw3files/aws.html">Setting up Pig and AWS</a>
+on my laptop. I followed the same steps, first with Cygwin and without.
+
+
+<h3 id="installcyg">Installation of Cygwin</h3>
+
+<p>
+The first step is obviously to install everything which is needed to compile and execute 
+a script PIG. Hadoop only works on Linux but we do not necessarily need Linux
+to execute a PIG script. However, we need 
+<a href="http://www.cygwin.com/">Cygwin</a> which provides an environnement 
+very similar to Linux but on Windows.
+<ul>
+<li>Download and install <a href="http://www.cygwin.com/">Cygwin</a>: you should 
+install every package related to perl.</li>
+<li>Download and install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java JDK</a>,</li>
+</ul>
+You can check the installation went well by looking at the following folder
+where you should find the java binaries:
+<pre class="prettyprint">
+ls /cygdrive/c/"Program Files"/Java/jdk1.7.0_21/bin/
+</pre>
+Then type:
+<pre class="prettyprint">
+export JAVA_HOME=/cygdrive/c/"Program Files"/Java/jdk1.7.0_21/bin/
+export PATH=$JAVA_HOME:$PATH
+</pre>
+</p>
+
+<p>
+I then followed the instructions described here: 
+<a href="http://avid.cs.umass.edu/courses/645/f2012/hw/hw3files/aws.html">Setting up Pig and AWS</a>.
+You need to download <a href="http://avid.cs.umass.edu/courses/645/f2012/hw/hw3files/hw3.tar.gz">hw3.tar.gz</a>
+and unzip it:
+<pre class="prettyprint">
+tar -xzf hw3.tar.gz
+cd hw3
+tar -xzf pigtutorial.tar.gz
+tar -xzf hadoop-0.18.3.tar.gz
+</pre>
+Cygwin (and Linux) are quite strict with file attribute. Use the following command
+to change them:
+<pre class="prettyprint">
+chmod u+x+r &lt;path&gt;
+</pre>
+Because I did it in folder <i>/tmp</i>, I had to type the following commands
+(as mentioned <a href="http://avid.cs.umass.edu/courses/645/f2012/hw/hw3files/aws.html">here</a>):
+<pre class="prettyprint">
+chmod u+x /tmp/hw3/hw3/hadoop-0.18.3/bin/hadoop
+export PIGDIR=/tmp/hw3/hw3/pigtmp
+export HADOOP=/tmp/hw3/hw3/hadoop-0.18.3
+export HADOOPSITEPATH=/tmp/hw3/hw3/hadoop-0.18.3/conf/
+export JAVA_HOME=/cygdrive/c/"Program Files"/Java/jdk1.7.0_21/bin/
+export PATH=$HADOOP/bin/:$PATH
+</pre>
+</p>
+
+
+<h3 id="cygex">Executing a script PIG with Cygwin</h3>
+<p>
+For that example, I'm using the following file
+<a href="documents/velib_20r.7z">velib_20r.7z</a>:
+<pre class="prettyprint">
+3 AVENUE BOSQUET - 75007 PARIS	33	36	0	69	0	2013-05-24 18:30:00	48.86164049957625	2.302250344175951	07022 - PONT DE L'ALMA	7022	OPEN
+18 RUE MARIE ANDREE LAGROUA - 75013 PARIS	8	52	0	61	0	2013-05-24 18:30:27	48.828595283857425	2.380220606266108	13055 - LAGROUA	13055	OPEN
+25 RUE LOUIS LE GRAND - 75002 PARIS	6	25	0	31	0	2013-05-24 18:30:43	48.870508937203915	2.334054461939329	02015 - OPERA - CAPUCINES	2015	OPEN
+...
+</pre>
+And the following script <a href="documents/velib1.pig">velib1.pig</a>:
+<pre class="prettyprint">
+raw_velib = 
+    LOAD 'velib_20r.txt'
+    USING PigStorage('\t') 
+    AS (address, 
+        available_bike_stands:int, 
+        available_bikes:int, 
+        banking, 
+        bike_stands, 
+        bonus, 
+        last_update, 
+        lat:double, 
+        lng:double, 
+        name, 
+        number:int, 
+        status);
+        
+stations_group = 
+    GROUP raw_velib 
+    BY (name, status);
+    
+stations_count = 
+    FOREACH stations_group 
+    GENERATE flatten($0), COUNT($1) as count;
+    
+STORE stations_count 
+INTO 'stations_count_2013-05-24.paris.short.pig.2.txt' 
+USING PigStorage(); 
+</pre>
+I pasted the files in the folder: <i>/tmp/hw3/hw3/pigtmp</i>.
+Now, to execute the script, we just need to do:
+
+<pre class="prettyprint">
+java -cp pig.jar org.apache.pig.Main -x local velib1.pig
+</pre>
+
+If everything goes well, you should see:
+
+<pre class="prettyprint">
+$ java -cp pig.jar org.apache.pig.Main -x local velib1.pig
+2013-05-26 18:03:31,221 [main] INFO  org.apache.pig.backend.local.executionengine.LocalPigLauncher - Successfully stored result in: "file:/C:/cygwin/tmp/hw3/hw3/pigtmp/stations_count_2013-05-24.paris.short.pig.2.txt"
+2013-05-26 18:03:31,222 [main] INFO  org.apache.pig.backend.local.executionengine.LocalPigLauncher - Records written : 1228
+2013-05-26 18:03:31,222 [main] INFO  org.apache.pig.backend.local.executionengine.LocalPigLauncher - Bytes written : 0
+2013-05-26 18:03:31,222 [main] INFO  org.apache.pig.backend.local.executionengine.LocalPigLauncher - 100% complete!
+2013-05-26 18:03:31,222 [main] INFO  org.apache.pig.backend.local.executionengine.LocalPigLauncher - Success!!
+</pre>
+To check the output, just type:
+
+<pre class="prettyprint">
+head -n 10 stations_count_2013-05-24.paris.short.pig.2.txt
+</pre>
+To see:
+<pre class="prettyprint">
+00901 - ALLEE DU BELVEDERE      OPEN    7
+00903 - QUAI MAURIAC  / PONT DE BERCY   OPEN    20
+00904 - PLACE JOFFRE / ECOLE MILITAIRE  OPEN    20
+00905 - GARE DE BERCY (STATION MOBILE 5)        OPEN    7
+00906 - GARE DE L'EST   OPEN    20
+00907 - FOIRE DU TRONE  OPEN    20
+00908 - MALTE - FAUBOURG DU TEMPLE      OPEN    7
+01001 - ILE DE LA CITE PONT NEUF        OPEN    20
+01002 - PLACE DU CHATELET       OPEN    20
+01003 - RIVOLI SAINT DENIS      OPEN    20
+</pre>
+
+</p>
+
+
+
+<h3 id="cygexj">Executing a script PIG without Cygwin</h3>
+<p>
+The previous steps relies on Java. Cygwin is only needed because some 
+java code needs <i>bash</i>. 
+I used the same data and PIG script.
+I did not check carefully without Cywin but from a
+prompt window (DOS command), I typed:
+
+<pre class="prettyprint">
+set PIGDIR=C:\temp\local\folder
+set HADOOP=C:\temp\local\folder\hadoop-0.18.3
+set HADOOPSITEPATH=C:\temp\local\folder\hadoop-0.18.3\conf
+set JAVA_HOME="c:\Program Files\Java\jdk1.7.0_21\bin"
+set PATH=%PATH%;%HADOOP\bin;%JAVA_HOME%;C:\Perl64\bin
+
+java -cp pig.jar org.apache.pig.Main -x local velib1.pig
+</pre>
+
+I was able to get the same output except I got the following exception:
+
+<pre class="prettyprint">
+C:\temp\local\folder&gt;java -cp pig.jar org.apache.pig.Main -x local velib1.pig
+2013-05-27 22:08:12,790 [main] WARN  org.apache.hadoop.fs.FileSystem - uri=file:///
+javax.security.auth.login.LoginException: Login failed: Cannot run program "bash": CreateProcess error=2, File not found
+        at org.apache.hadoop.security.UnixUserGroupInformation.login(UnixUserGroupInformation.java:250)
+        at org.apache.hadoop.security.UnixUserGroupInformation.login(UnixUserGroupInformation.java:275)
+        at org.apache.hadoop.security.UnixUserGroupInformation.login(UnixUserGroupInformation.java:257)
+        at org.apache.hadoop.security.UserGroupInformation.login(UserGroupInformation.java:67)
+        at org.apache.hadoop.fs.FileSystem$Cache$Key.&lt;init&gt;(FileSystem.java:1410)
+        at org.apache.hadoop.fs.FileSystem$Cache.get(FileSystem.java:1348)
+        at org.apache.hadoop.fs.FileSystem.get(FileSystem.java:213)
+        at org.apache.pig.backend.hadoop.datastorage.HDataStorage.init(HDataStorage.java:70)
+        at org.apache.pig.backend.hadoop.datastorage.HDataStorage.&lt;init&gt;(HDataStorage.java:53)
+        at org.apache.pig.impl.PigContext.connect(PigContext.java:168)
+        at org.apache.pig.PigServer.&lt;init&gt;(PigServer.java:169)
+        at org.apache.pig.PigServer.&lt;init&gt;(PigServer.java:158)
+        at org.apache.pig.tools.grunt.Grunt.&lt;init&gt;(Grunt.java:54)
+        at org.apache.pig.Main.main(Main.java:382)
+013-05-27 22:58:57,666 [main] INFO  org.apache.pig.backend.local.executionengine.LocalPigLauncher - Successfully stored result in: "file:/C:/username/vmshare/data_local/stations_count_2013-05-24.paris.short.pig.2.txt"
+2013-05-27 22:58:57,666 [main] INFO  org.apache.pig.backend.local.executionengine.LocalPigLauncher - Records written : 1228
+2013-05-27 22:58:57,666 [main] INFO  org.apache.pig.backend.local.executionengine.LocalPigLauncher - Bytes written : 0
+2013-05-27 22:58:57,666 [main] INFO  org.apache.pig.backend.local.executionengine.LocalPigLauncher - 100% complete!
+2013-05-27 22:58:57,666 [main] INFO  org.apache.pig.backend.local.executionengine.LocalPigLauncher - Success!!        
+</pre>
+    
+I checked the output was fine.
+
+</p>
+
+
+
+
+
+
+
+
+
+<hr />
+
+<h2 id="locserver">Installation of a local server with HortonWorks</h2>
+
+<p><b>2014-06-06: </b> see first <a href="http://hortonworks.com/blog/install-hadoop-windows-hortonworks-data-platform-2-0/">How To Install Hadoop on Windows with HDP 2.0</a>,
+if it does not work, read what is below (but older that).
+It is Python 2.7 though (so I'll wait before trying).
+</p>
+
+<p>
+I tried to install Hadoop on my laptop on Windows without using a virtual machine.
+<a href="http://hortonworks.com/">HortonWorks</a> recently made that possible and it is available 
+<a href="http://hortonworks.com/download/">here</a>. It leads you to this 
+<a href="http://hortonworks.com/thankyou-hdp11-win/">page</a>. I then tried to follow the instructions I
+found: <a href="http://docs.hortonworks.com/HDPDocuments/HDP1/HDP-Win-1.1.0/bk_installing_hdp_for_windows/content/win-chap2-singlenode.html">single node</a>.
+</p>
+<p>
+I installed Java, set up <i>JAVA_HOME</i> to <i>C:\Software\Java\jdk1.7.0_21</i> (I reinstalled Java because 
+according to the documentation, spaces in paths are not very well handled. I added <i>c:\Python27</i> to <i>PATH</i>.  
+I then opened some ports:
+<pre>
+netsh advfirewall firewall add rule name=AllowRPCCommunication dir=in action=allow protocol=TCP localport=$PORT_NUMBER
+</pre>
+With the following list:
+<pre>
+50070, 50075, 50090, 50030, 50060, 51111, 50111, 50470, 50475, 8020, 9000, 50020, 8021, 50010, 10001, 10000, 9083
+</pre>
+I then created a file <i>clusterproperties.txt</i> without changing anything except the cluster name:
+<pre>
+#Log directory
+HDP_LOG_DIR=c:\hadoop\logs
+
+#Data directory
+HDP_DATA_DIR=c:\hdp\data
+
+#Hosts (Roles for the host machines in your cluster)
+NAMENODE_HOST=${Hostname for your single node cluster}
+SECONDARY_NAMENODE_HOST=${Hostname for your single node cluster}
+JOBTRACKER_HOST=${Hostname for your single node cluster}
+HIVE_SERVER_HOST=${Hostname for your single node cluster}
+OOZIE_SERVER_HOST=${Hostname for your single node cluster}
+TEMPLETON_HOST=${Hostname for your single node cluster}
+SLAVE_HOSTS=${Hostname for your single node cluster}
+
+#Database host
+DB_FLAVOR=derby
+DB_HOSTNAME=${Hostname for your single node cluster}
+
+#Hive properties
+HIVE_DB_NAME=hive
+HIVE_DB_USERNAME=hive
+HIVE_DB_PASSWORD=hive
+
+#Oozie properties
+OOZIE_DB_NAME=oozie
+OOZIE_DB_USERNAME=oozie
+OOZIE_DB_PASSWORD=oozie
+</pre>
+And I run from a command line windows with admin rights:
+<pre>
+msiexec /i "hdp-1.1.0-GA.winpkg.msi" /lv "hdp.log" HDP_LAYOUT="C:\temp\horton\clusterproperties.txt" HDP_DIR="C:\hdp\hadoop" DESTROY_DATA="no"
+</pre>
+
+And I got an error.
+</p>
+
+
+<hr />
+
+<h2 id="secinstall">Install a virtual machine</h2>
+
+
+
+<h3 id="filetodl">Files to download</h3>
+
+
+
+
+<p>
+<a href="http://hadoop.apache.org/">Hadoop</a> only works on Linux. 
+The most convenient way when you use Windows is then to use
+a virtual machine (<a href="http://www.vmware.com/">VMware</a> in my case).
+Even if you have Linux, you could save some time by using a preinstalled virtual machine (VM).
+Once it is installed, everything will take place inside this VM and it does not
+depend on the OS you are using.
+</p>
+<p><b>Step 1: install <a href="http://www.vmware.com/products/player/">VMWare Player</a></b>, 
+choose the version which corresponds to your system.</p>
+
+<p>
+We then weed to build a virtual machine (linux) having all the tools we need 
+(Hadoop, Hive, ...). Fortunately, 
+<a href="http://www.cloudera.com/">Cloudera</a> did that.
+</p>
+
+<p><b>Step 2: download and uncompress the 
+<a href="https://ccp.cloudera.com/display/SUPPORT/Cloudera+QuickStart+VM">Cloudera QuickStart VM</a>,
+choose the VMware version.</b></p>
+
+<p>
+The VM is about 6Gb and it will take a couple of hours. After you did that,
+you need to run VMware and play the virtual machine you just downloaded. 
+You should see that:
+</p>
+<p style="text-align:center;">
+<img src="documents/vmware.png" width="500" />
+</p>
+
+<p>
+The first run will take sometimes (around an hour). It will boot for the first
+time, it will ask you to log in as an admin (admin, password: admin).
+Follow the installation steps, use the default value every time. You should get
+a virtual machine with all the expected services related to Hadoop up
+and running. Firefox is preinstalled and already opened on pages
+which allow you to control your Hadoop environnement. Try to nagivate,
+you should find a page like this one:
+</p>
+
+<p style="text-align:center;">
+<img src="documents/service.png" width="800" />
+</p>
+
+<p>
+The linux version is <i>CentOS Release 6.2</i>. The previous snapshots
+shows the list of available tools on the machine. You can access
+internet from the virtual machine.
+</p>
+
+<h3 id="updownload">Upload, download files to the local grid</h3>
+
+<p>
+To check, it is working, you should open
+a terminal windows (click on the icon at the top of the screen and type:
+<pre class="prettyprint">
+hdfs dfs
+</pre>
+This command gives access the the Hadoop filesystem (HDFS). It is a distributed
+filesystem or simply a kind of remote one. As a consequence, before
+doing any map/reduce job, we need to move a local file to HDFS.
+It must be uploaded:
+<pre class="prettyprint">
+hdfs dfs -put local_file dfs_name
+</pre>
+For example, try the series of commands:
+<pre class="prettyprint">
+hdfs dfs > commands.txt
+hdfs dfs -put commands.txt .
+hdfs dfs -ls
+</pre>
+The first command created a text file, the second one uploaded it to the 
+local grid, the last checked it was done. You can download a file by
+using the following command:
+<pre class="prettyprint">
+hdfs dfs -get dfs_path local_path
+hdfs dfs -help get
+</pre>
+The second command gives help on the function get. You will find
+a complete of the available commands here:
+<a href="http://hadoop.apache.org/docs/r1.0.4/commands_manual.html">Commands Guide</a>.
+You can also check the file was uploaded through the web interface. Just click on 
+on red areas in next figures.
+</p>
+
+<p style="text-align:center;">
+<table border="0" align="center">
+<tr>
+<td> <img src="documents/hdfs.png" width="150" /> </td>
+<td> <img src="documents/hdfs_node.png" width="300" /> </td>
+<td> <img src="documents/hdfs_browse.png" width="200" /> </td>
+</tr>
+</table>
+</p>
+
+<p>
+After I typed the following command line:
+<pre class="prettyprint">
+hdfs dfs -put velib_20r.txt velib_data_2013-05-24.paris.short.txt
+</pre>
+I was able to see:
+</p>
+<p style="text-align:center;">
+<img src="documents/hdfs_file.png" width="800"/>
+</p>
+
+
+
+<h3 id="frenchk">Only for French keyboards</h3>
+
+<p>
+As usual, this virtual machine was made for English keyboard and if, like me,
+you have a French keyboard, it is better to switch to French inside
+the virtual machine. You need to:
+<ul>
+<li>go to the menu <i>System/Prefrences/Keyboard</i>,</li>
+<li>add a French keyboard,</li>
+<li>remove the English one</li>
+</ul>
+</p>
+
+<p style="text-align:center;">
+<img src="documents/keyboard_fr.png" width="300" />
+</p>
+
+<p>
+Unfortunately, on some machines, 
+I still have to do that everytime I restart the virtual
+machine. I did not find a way to make it stable. And I had to remove the English
+keyboard, making the other one as default was not enough.
+</p>
+
+
+
+
+
+
+
+
+
+
+<h3 id="vmtools">Install the VMWare Tools, create a shared folder</h3>
+
+<p>
+The VMWare tools are needed to allow copy/paste and to share a folder  
+between the virtual machine and the physical machine. The first step is 
+to tell the VM Ware there is a CD/DDVD reader. If there is none on your laptop, you need
+to create a virtual one. This optional step happens on the physical machine (not the VM Ware).
+</p>
+
+<p><b>Step 3 (can be optional): create a virtual disk, 
+associate a letter to it (on Windows)</b></p>
+
+<p style="text-align:center;">
+<img src="documents/creer_disque_virtual.png" width="800" />
+</p>
+
+<p>
+We need to add a CD/DVD reader which is possible through the 
+Virtual Machine Settings (through the VM Ware menu). The second picture is needed
+if the CD/DVD player is virtual.
+</p>
+
+<p style="text-align:center;">
+<table border="0" align="center">
+<tr>
+<td> <img src="documents/add_cdrom.png" width="500" /> </td>
+<td> <img src="documents/add_disk2.png" width="500" /> </td>
+</tr>
+</table>
+</p>
+
+<p><b>Step 4: mount a CDROM</b></p>
+
+
+<p>
+Then go to the second tab to enable option <i>Share folder</i> it is not done yet.
+The virtual machine needs then to be powered off to let the changes be effective. 
+After you rebooted the VM, you should see a folder <i>/dev/cdrom</i>.
+We need to mound it.
+
+<pre class="prettyprint">
+mkdir /mnt/cdrom 
+mount -t iso9660 /dev/cdrom /mnt/cdrom
+</pre>
+
+The next is to start installing the VM Ware tools (through the VMWare menu). 
+A banner should appear at the bottom:
+</p>
+
+<p><b>Step 5: install VMware Tools</b></p>
+
+
+
+<p style="text-align:center;">
+<img src="documents/bandeau.png" height="50" />
+</p>
+
+<p>
+By clicking on <i>help</i>, you get the next instructions (it does not work with
+Chrome, use Firefox, otherwise you can find it in
+the VMware player installation folder):
+<pre class="prettyprint">
+cd /tmp
+ls /media/VMware\ Tools/
+tar zxpf /media/VMware\ Tools/VMwareTools-9.2.3-1031360.tar.gz
+cd vmware-tools-distrib
+./vmware-install.pl
+</pre>
+Choose all the default options. After that, go back to the VMware settings
+and add a shared folder (tab <i>options / share folder</i>, choose
+an existing folder. To verify it went well, add an empty file 
+in this folder and type:
+
+<pre class="prettyprint">
+ls /mnt/hgfs/share/
+</pre>
+Your file should appear.
+</p>
+
+
+
+
+
+
+<h3 id="lasttweak">Final tweaks: change the repository</h3>
+
+<p>
+The virtual machine provided by cloudera contains a bug which happens
+when you want to install new packages: the repository is wrong. To 
+change it, you need to edit one or all the following files:
+<pre>
+gedit /etc/yum.repos.d/Cloudera-cdh.repo
+gedit /etc/yum.repos.d/Cloudera-manager.repo
+gedit /etc/yum.repos.d/Cloudera-impala.repo
+</pre>
+To get the following paths:
+<pre>
+http://archive.cloudera.com/cdh4/redhat/6/x86_64/cdh/4.2.0
+http://archive.cloudera.com/impala/redhat/6/x86_64/impala/1.0
+</pre>
+
+</p>
+
+
+
+
+
+<h3 id="installpy">Install Python 3.3, Numpy (optional)</h3>
+
+<p>
+These steps are optional but since we are going to deal with some data,
+it is convenient to get a scripting language inside the virtual machine
+to automate some frequent steps (uploading, downloading from hdfs,
+running a job... I followed the steps described here:
+<a href="http://toomuchdata.com/2012/06/25/how-to-install-python-2-7-3-on-centos-6-2/">How to install Python 2.7 and 3.3 on CentOS 6</a>.
+Before installing Python, some tools are required to compile Python. If these steps
+are skipped, the module <i>sqlite3</i> will not work:
+
+<pre class="prettyprint">
+sudo su   % only if did not do it already
+yum groupinstall "Development tools"
+yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel
+</pre>
+
+
+I then started to install Python 3.3 in folder <i>/tmp</i>:
+<pre class="prettyprint">
+wget http://python.org/ftp/python/3.3.0/Python-3.3.0.tar.bz2
+tar xf Python-3.3.0.tar.bz2
+cd Python-3.3.0
+./configure --prefix=/usr/local
+make &amp;&amp; make altinstall
+</pre>
+
+I need <i>easy_install</i> to run (Python 3.3 is in folder <i>/usr/local/bin/</i>):
+<pre class="prettyprint">
+wget http://pypi.python.org/packages/source/d/distribute/distribute-0.6.40.tar.gz
+tar xf distribute-0.6.40.tar.gz
+cd distribute-0.6.40
+python3.3 setup.py install
+</pre>
+
+The rest is easier (from /usr/local):
+<pre class="prettyprint">
+bin/easy_install3.3 pip
+bin/pip-3.3 install numpy
+</pre>
+
+
+</p>
+
+
+
+
+
+
+<h3 id="installr">Install R and Rpy2</h3>
+
+<p>
+The installation of <a href="http://www.r-project.org/">R</a> is quite easy
+(<a href="http://serverfault.com/questions/482017/installing-haproxy-on-centos-6-3">source</a>
+or <a href="http://www.sysarchitects.com/rpy_on_rhel6">here</a>):
+
+<pre class="prettyprint">
+sudo su
+rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+yum install R
+</pre>
+As well as the module <a href="http://rpy.sourceforge.net/rpy2.html">rpy2</a>:
+<pre class="prettyprint">
+pip install rpy2
+</pre>
+</p>
+
+
+
+
+<hr />
+
+<h2 id="horinstall">Install a virtual machine (HortonWorks)</h2>
+
+<p>
+Not tried yet but it is here: 
+<a href="http://hortonworks.com/products/hortonworks-sandbox/">HortonWorks Sandbox</a>.
+</p>
+
+
+
+<hr />
+<h2 id="developscript">Develop a short script</h2>
+
+
+<p>
+The exemple was based on data coming from the 
+<a href="https://developer.jcdecaux.com/#/home">Velib website</a>. The short sample I used
+is available here:
+<a href="documents/velib_20r.7z">velib_20r.7z</a>. It contains a table. I will
+not detail them as the goal of this post is to run jobs not to produce
+meaningful statistics.
+</p>
+
+
+
+
+
+
+
+
+<h3 id="pgcommandline">Run a pig Script through the command line</h3>
+<p>
+The script 
+<a href="http://pig.apache.org/">PIG</a>
+we want to run is pasted below. Basically, it counts the occurrences
+of a pair (name, status), both are strings. We can distinguish three steps:
+<ul>
+<li>loading the data</li>
+<li>counting occurences</li>
+<li>storing the results</li>
+</ul>
+
+The keyword <i>LOAD</i> hides a stream: no data is explicitely loaded and it would be difficult to
+trace the paths the data will follow during the job execution. It is more a way to declare
+a stream and the columns it contains.
+
+<pre class="prettyprint">
+raw_velib = 
+    LOAD '/user/cloudera/velib_data_2013-05-24.paris.short.txt'
+    USING PigStorage('\t') 
+    AS (address, 
+        available_bike_stands:int, 
+        available_bikes:int, 
+        banking, 
+        bike_stands, 
+        bonus, 
+        last_update, 
+        lat:double, 
+        lng:double, 
+        name, 
+        number:int, 
+        status);
+        
+stations_group = 
+    GROUP raw_velib 
+    BY (name, status);
+    
+stations_count = 
+    FOREACH stations_group 
+    GENERATE flatten($0), COUNT($1) as count;
+    
+STORE stations_count 
+INTO '/user/cloudera/stations_count_2013-05-24.paris.short.pig.txt' 
+USING PigStorage(); 
+</pre>
+
+Let's assume we saved this script in <i>job1.pig</i>.
+To run it, we just need to open a terminal (no need to be an admin) and to type:
+<pre class="prettyprint">
+pig job1.pig
+</pre>
+
+If everything goes well, the terminal windows displays many lines of text 
+and the last one will be:
+
+
+<pre class="prettyprint">
+...
+Success!
+
+Job Stats (time in seconds):
+JobId	Maps	Reduces	MaxMapTime	MinMapTIme	AvgMapTime	MedianMapTime	MaxReduceTime	MinReduceTime	AvgReduceTime	MedianReducetime	Alias	Feature	Outputs
+job_201305231054_0001	1	1	7	7	7	7	7	77	7	raw_velib,stations_count,stations_group	GROUP_BY,COMBINER	/user/cloudera/stations_count_2013-05-24.paris.short.pig.txt,
+
+Input(s):
+Successfully read 24521 records (3500381 bytes) from: "/user/cloudera/velib_data_2013-05-24.paris.short.txt"
+
+Output(s):
+Successfully stored 1228 records (40416 bytes) in: "/user/cloudera/stations_count_2013-05-24.paris.short.pig.txt"
+
+Counters:
+Total records written : 1228
+Total bytes written : 40416
+Spillable Memory Manager spill count : 0
+Total bags proactively spilled: 0
+Total records proactively spilled: 0
+
+Job DAG:
+job_201305231054_0001
+
+
+2013-05-24 14:42:22,846 [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - Success!
+</pre>
+
+We get the output through the web interface or by typing the command:
+
+<pre class="prettyprint">
+hdfs dfs -get stations_count_2013-05-24.paris.short.pig.txt
+</pre>
+
+</p>
+
+
+<h3 id="jobcheck">Checking job execution</h3>
+
+<p>
+A job like the previous one takes a couple of seconds to run. However the web interface 
+allows us to check its status. Next figure shows the click sequence.
+</p>
+
+<p style="text-align:center;">
+<table border="0" align="center">
+<tr>
+<td> <img src="documents/job_mp.png" width="150" /> </td>
+<td> <img src="documents/job_ui.png" width="300" /> </td>
+</tr>
+</table>
+</p>
+
+<p>
+It leads to the following page:
+</p>
+
+<p style="text-align:center;">
+<table border="0" align="center">
+<tr>
+<td> <img src="documents/job_st.png" width="800" /> </td>
+</tr>
+</table>
+</p>
+
+<p>
+And if you click:
+</p>
+
+<p style="text-align:center;">
+<img src="documents/job_st2.png" width="600" /> 
+</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3 id="hive">Same process with Hive and Hue</h3>
+<p>
+PIG's syntax is different from <a href="http://en.wikipedia.org/wiki/SQL">SQL</a> but what it does
+is similar and could be written with a syntax similar to SQL. That's what 
+<a href="http://hive.apache.org/">Hive</a> does. The other tool 
+<a href="http://cloudera.github.io/hue/">Hue</a> is a web interface 
+to edit and run <i>Hive</i> queries. I recommand reading about SQL before going further,
+both languages are very similar. The first step consists in creating a <i>Hive</i> table
+with our data. We need to put our data in a folder on <i>HDFS</i>.
+
+<pre class="prettyprint">
+hdfs dfs -mkdir ./folder_velib
+hdfs dgs -put velib_20r.txt ./folder_velib/velib_data_2013-05-24.paris.short.txt
+</pre>
+
+We can now create a <i>Hive</i> table. First, <i>Hue</i>:
+</p>
+<p style="text-align:center;">
+<table border="0" align="center">
+<tr>
+<td> <img src="documents/hue_cl.png" width="150" /> </td>
+<td> <img src="documents/hue_ui.png" width="300" /> </td>
+</tr>
+</table>
+</p>
+
+
+<p>
+You will see:
+</p>
+
+<p style="text-align:center;">
+<img src="documents/hue_qu.png" width="600" /> 
+</p>
+
+<p>
+To upload the data in <i>Hive</i> the same we did with PIG, we need to paste
+the following query:
+<pre class="prettyprint">
+CREATE EXTERNAL TABLE raw_velib (
+        address STRING, 
+        available_bike_stands INT, 
+        available_bikes INT, 
+        banking STRING, 
+        bike_stands INT, 
+        bonus STRING, 
+        last_update STRING, 
+        lat DOUBLE, 
+        lng DOUBLE, 
+        name STRING, 
+        number INT, 
+        status STRING)
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' 
+    LOCATION '/user/cloudera/folder_velib'  ;
+</pre>
+
+The location is a folder <i>HDFS</i>, if you mess up with it and replace it
+with a filename instead, you will get an error. If you insist, go to this
+<a href="#hivefile">section</a>. I recommend to save the query in a file or using the 
+<i>Hue</i> saving functionality. It is very likely you will have to type your query again
+if you don't do it (even if you click on <i>Back</i> from the browser). By clicking on 
+<i>Table</i>, you will see the table repository. Everything is clickable, so go ahead and look.
+</p>
+
+
+
+<p style="text-align:center;">
+<img src="documents/hue_tbl.png" width="500" /> 
+</p>
+
+
+<p>
+Next step is to a GROUP BY which you can do like this:
+
+<pre class="prettyprint">
+SELECT name, status, COUNT(*) AS nb
+FROM raw_velib 
+GROUP BY name, status ;
+</pre>
+
+Or like this if you like to rename tables:
+
+<pre class="prettyprint">
+SELECT a.name, a.status, COUNT(*) AS nb
+FROM raw_velib a
+GROUP BY a.name, a.status ;
+</pre>
+
+Anyhow, after your job is completed, you will see the next window:
+
+</p>
+
+
+
+<p style="text-align:center;">
+<img src="documents/hue_hi.png" width="800" /> 
+</p>
+
+<p>
+You can decide whether or not you want to save this intermediate result.
+At this stage, the table exists but does not have any name you can refer to. You need 
+to give on to make it permanent.
+</p>
+
+<p>
+<i>Hive</i> does not seem to be at a stage where you can chain SQL statement
+like you would do with PIG. It seems very convenient to extract basic statistics
+from table or to do a simple look up. However, for more consistent job, PIG seems more
+suitable.
+</p>
+
+
+<hr />
+<h2 id="pythonmod">Hadoop and Python</h2>
+
+
+<p>
+Some modules offers the possibility to use Hadoop through Python:
+<ul>
+<li><a href="http://pydoop.sourceforge.net/docs/index.html#">Pydoop</a>: 
+                this one only works on the Cloudera distribution (or was only tested with this one)</li>
+<li><a href="http://www.hadoopy.com/en/latest/">Hadoopy</a> : it seems to work everywhere.</li>
+<li><a href="https://github.com/klbostee/dumbo/wiki">dumbo</a> : not sure this one is still active.</li>
+</ul>
+All of them offers a python mechanism to implement Map/Reducer by overloading a Mapper or 
+a Reducer class.
+</p>
+
+
+
+<hr />
+<h2 id="amazon">Using Amazon AWS</h2>
+
+<h3 id="asubscribe">Open an Amazon account</h3>
+
+<p>
+You need to go the page: <a href="http://aws.amazon.com/">Sign In or Create an AWS Account</a>. 
+You need a credit card and a phone number. You will receive an automated call.
+</p>
+ 
+<h3 id="aplay">Run a script PIG on Amazon</h3>
+<p>
+The following page is very precise about the required steps:
+<a href="http://avid.cs.umass.edu/courses/645/f2012/hw/hw3files/aws.html">Executing Pig scripts on AWS</a>.
+</p>
+
+
+
+
+<hr />
+<h2 id="errors">Errors you might face</h2>
+
+<h3 id="err1">Cannot retrieve repository metadata (repomd.xml)</h3>
+
+<p>
+The VMware provided by Cloudera can be enhanced by installing new packages.
+You can do that by using <i>yum install ...</i>. But you may get the following error:
+<pre>
+[root@localhost vmware-tools-distrib]# yum install anythingmmmmm
+Loaded plugins: fastestmirror, refresh-packagekit, security
+Loading mirror speeds from cached hostfile
+ * base: ftp.ciril.fr
+ * extras: ftp.ciril.fr
+ * updates: ftp.ciril.fr
+http://beta.cloudera.com/impala/redhat/6/x86_64/impala/0.7/repodata/repomd.xml: [Errno 14] PYCURL ERROR 22 - "The requested URL returned error: 404"
+Trying other mirror.
+Error: Cannot retrieve repository metadata (repomd.xml) for repository: Cloudera-impala. Please verify its path and try again
+</pre>
+If that is the case go to this <a href="#lasttweak">section</a>.
+</p>
+
+<h3 id="errsql">ImportError: No module named '_sqlite3'</h3>
+
+<p>
+When importing <i>sqlite3</i>, the following issue can appear:
+
+<pre class="prettyprint">
+&gt;&gt;&gt; import sqlite3
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+  File "/usr/local/lib/python3.3/sqlite3/__init__.py", line 23, in &lt;module&gt;
+    from sqlite3.dbapi2 import *
+  File "/usr/local/lib/python3.3/sqlite3/dbapi2.py", line 26, in &lt;module&gt;
+    from _sqlite3 import *
+ImportError: No module named '_sqlite3'
+</pre>
+
+It means you forget to do the following steps before installing Python 3.3 
+(which you will have to do again):
+<pre class="prettyprint">
+sudo su   % only if did not do it already
+yum groupinstall "Development tools"
+yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel
+</pre>
+
+</p>
+
+
+
+
+<h3 id="pigerrorcpl">Compilation Error for a PIG script</h3>
+
+<p>
+We usually need a couple of tries before getting the final version of a script. We run
+the command <i>pig &lt;job_name&gt;</i> many times looking at errors such as the following one:
+
+<pre class="prettyprint">
+2013-05-24 15:08:24,415 [main] ERROR org.apache.pig.tools.grunt.Grunt - ERROR 1025: 
+file velib1.pig, line 25, column 14 Invalid field projection. Projected field [statu] does not exist in schema: address:bytearray,available_bike_stands:int,available_bikes:int,banking:bytearray,bike_stands:bytearray,bonus:bytearray,last_update:bytearray,lat:double,lng:double,name:bytearray,number:int,status:bytearray.
+Details at logfile: /mnt/hgfs/vmshare/jobs/pig_1369422501213.log
+</pre>
+
+Error messages can be mysterious but it usually gives valuable information: the place
+where the compilation error happened and an indication. Here, I forgot an "s" to the
+column <i>status</i>. A more detailed message is logged into a file you should look
+if the short message was not precise enough.
+
+<pre class="prettyprint">
+stations_group = 
+    GROUP raw_velib 
+    BY (name, statu);  /* it should be status */
+</pre>    
+</p>
+
+
+
+<h3 id="hivefile">Error when creating a <i>Hive</i> table</h3>
+
+<p>
+When creating a table with <i>Hive</i>, the location must be a folder and
+not a file. However, if you insist (like me), you will get the following error:
+</p>
+
+<p style="text-align:center;">
+<img src="documents/hive_err.png" width="900" /> 
+</p>
+
+<p>
+The location must be a folder.
+</p>
+
+
+
+
+</body>
+</html>

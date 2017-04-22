@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Remote Notebook with Azure</title>
+<meta content="python, notebook, ipython, azure, remote" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+For my teachings, I installed a notebook server on a virtual machine on Azure.
+All the students will be able to connect the same login
+(the multi-user configuration is part of the 
+<a href="https://github.com/ipython/ipython/wiki/Roadmap:-IPython">roadmap</a>).
+The students will not have to install the notebooks by themselves.
+They will be able to see what other students users do.
+Here are the steps I followed.
+</p>
+
+<p><b>Step 1: create the virtual machine with Azure</b></p>
+<p>
+I won't detail that, it is pretty straight forward. 
+Just follow the tutorial 
+<a href="http://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-tutorial/">Create a Virtual Machine Running Windows</a>.
+I chose a Windows Server. The number of cores must depend on the number of users.
+I assume all students are not going to access the notebook at the same time
+except during the lectures. I chose eight cores. I might modify
+this post in case it is not enough.
+</p>
+
+<p><b>Step 2: install Python</b> (latest version - 3.4 today)</p>
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+I chose the distribution 
+<a href="http://continuum.io/downloads#py34">Anaconda 3.4 64bit</a>. This distribution is 
+the most up to date (Python 3.4) and it contains the necessary modules
+to access a Linux server with a SSH connection (module 
+<a href="http://www.paramiko.org/en/latest/">paramiko</a>).
+I did not change the default options.
+For my teachings, you also need to install (with <a href="http://pip.readthedocs.org/en/latest/quickstart.html">pip</a>):
+<ul>
+<li><a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html">pyquickhelper</a></li>
+<li><a href="http://www.xavierdupre.fr/app/pyensae/helpsphinx/index.html">pyensae</a></li>
+<li><a href="http://www.xavierdupre.fr/app/azure-sdk-for-python/helpsphinx/index.html">azure</a></li>
+<li><a href="https://pypi.python.org/pypi/ansi2html/1.0.7">ansi2html</a></li>
+<li><a href="http://pythonhosted.org/ansiconv/">ansiconv</a></li>
+</ul>
+</p>
+
+<p><b>Step 3: allow connection to the machine</b></p>
+
+<p>
+The setup follows the instructions described at 
+<a href="http://azure.microsoft.com/en-us/documentation/articles/virtual-machines-python-ipython-notebook/">IPython Notebook on Azure</a>
+(French: <a href="http://azure.microsoft.com/fr-fr/documentation/articles/virtual-machines-python-ipython-notebook/">IPython Notebook sur Azure</a>).
+I summarize the steps I followed (+ one change in bolded text):
+<ul>
+<li>Create an Endpoint (ou point de terminaison en français), <b>the public and private port must be the same</b>.</li>
+<li>Add an Inbound rule in the firewall (open Windows Firewall with Advanced Security)</li>
+</ul>
+<img width="400" src="https://acomdpsstorage.blob.core.windows.net/dpsmedia-prod/azure.microsoft.com/en-us/documentation/articles/virtual-machines-python-ipython-notebook/20141029115546/ipy-azure-linux-005.png" />
+</p>
+
+<p><b>Step 4: install OpenSSL</b></p>
+
+<p>
+<a href="https://www.openssl.org/">OpenSSL</a> is not installed on Windows.
+I did it on <tt>c:\OpenSSL</tt>. This path will appear later.
+<ul>
+<li>Go to <a href="http://slproweb.com/products/Win32OpenSSL.html">Win32 OpenSSL</a></li>
+<li>Install <a href="http://www.microsoft.com/downloads/details.aspx?familyid=bd2a6171-e2d6-4230-b809-9a8d7548c1b6">Visual C++ 2008 Redistributables (x64)</a></li>
+<li>Install <a href="http://slproweb.com/download/Win64OpenSSL_Light-0_9_8zc.exe">Win64 OpenSSL v0.9.8zc Light</a>,
+during the installation, choose the option <i>Copy OpenSSL DLLs to /bin</i>.</li>
+</ul>
+</p>
+
+<p><b>Step 5: create an IPython profile for the server</b></p>
+
+<p>
+</p>
+
+<pre class="prettyprint">
+rem for the regular installation
+rem cd c:\Python34\Script
+cd C:\Anaconda3\Scripts
+ipython profile create studentsrv
+</pre>
+
+<p><b>2015/09/04</b> I updated to Jupyter 4.0 which does not work the same
+way. You can create a profile the same way or just do:
+</p>
+<pre class="prettyprint">
+jupyter-notebook --generate-config
+</pre>
+<p>
+It just creates a config file, it is better to rename it just after.
+</p>
+
+
+<p><b>Step 6: create a certificate</b></p>
+
+<p>
+The command line described in the post mentioned in the previous step
+does not work unless the config file is specified 
+(see <a href="http://stackoverflow.com/questions/7360602/openssl-error-in-reading-openssl-conf-file">openssl error in reading openssl.conf file</a>).
+From a command line, execute:
+</p>
+
+<pre class="prettyprint">
+set PATH=%PATH%;c:\OpenSSL\bin
+cd %USERPROFILE%\.ipython\profile_studentsrv
+openssl req -config C:\OpenSSL\bin\openssl.cfg -x509 -days 365 -newkey rsa:1024 -keyout notebooksrv.key -nodes -out notebooksrv.crt
+</pre>
+
+
+<p><b>Step 7: create a password</b></p>
+
+<p>
+Create a password for the notebook. The password is encrypted.
+</p>
+
+<pre class="prettyprint">
+rem for the regular installation
+rem cd c:\Python34\Script
+cd C:\Anaconda3\Scripts
+python -c "import IPython;print (IPython.lib.passwd())"
+</pre>
+
+<p><b>Step 8: edit the configuration for the notebook</b></p>
+
+<p>
+It is almost finished, we just need to update the configuration
+for the notebook server with all the necessary details.
+Don't forget to replace <tt>[user]</tt> by your username.
+</p>
+
+
+<pre class="prettyprint">
+c = get_config()
+
+c.IPKernelApp.pylab = 'inline'
+c.NotebookApp.certfile = r'C:\Users\[user]\.ipython\profile_studentsrv\notebooksrv.crt'
+c.NotebookApp.keyfile = r'C:\Users\[user]\.ipython\profile_studentsrv\notebooksrv.key'
+c.NotebookApp.password = 'sha1:b86e933199ad:a02e9592e5 etc... '
+
+c.NotebookApp.ip = '*'
+c.NotebookApp.port = 9999
+c.NotebookApp.open_browser = False
+</pre>
+
+
+
+<p><b>Step 9: the final shortcut on the desktop</b></p>
+
+<p>
+The last thing to do is to launch the notebooks. This is the command I use:
+</p>
+
+<pre class="prettyprint">
+set PATH=%PATH%;c:\OpenSSL\bin
+set PATH=%PATH%;C:\Anaconda3;C:\Anaconda3\Scripts
+ipython notebook --profile=studentsrv --notebook-dir=c:\notebooks
+</pre>
+
+<p><b>2015/09/04</b> 
+The command line changed. If you run it as it is (IPython 2.1 &lt; 4.0)),
+ it tells <tt>Unrecognized alias</tt>. The new way to launch the notebook is:
+</p>
+
+<pre class="prettyprint">
+set PATH=%PATH%;c:\OpenSSL\bin
+set PATH=%PATH%;C:\PythonENSAE;C:\PythonENSAE\Scripts
+jupyter-notebook --config=C:\Users\user_name\.ipython\profile_name\ipython_notebook_config2.py --notebook-dir=c:\notebooks2015
+</pre>
+<p>
+It will probably evolve a little bit again as the current is not fully
+polished.
+</p>
+
+<p><b>Step 10: try it</b></p>
+
+<p>
+Everything is set up. The url to try is:
+<a href="https://[machinename].cloudapp.net:9999/">https://[machinename].cloudapp.net:9999/</a>.
+The browser will first ask you to approve a certificate it does not recognize.
+Once it is approved, you will have to enter the password.
+You can now download a notebook from anywhere (for example from
+<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/td_1a.html">ENSAE Algorithme et Programmation</a>). 
+You can then drag and drop it on the 
+webpage to upload it to the server.
+</p>
+<p>
+I created a folder for each user but everybody can look at anybody's folder.
+This server is more a way to do some exercises without installing everything.
+To work on sensible data, I recommend to follow the steps on your own
+in order to get your own server.
+</p>
+
+<p><b>Step 11: store your notebooks on Azure BLob Storage</b></p>
+
+<p>
+It requires to change the notebook configuration as described at:
+<a href="http://ipython.org/ipython-doc/1/interactive/public_server.html#using-a-different-notebook-store">Using a different notebook store</a>.
+</p>
+
+
+</body>
+</html>

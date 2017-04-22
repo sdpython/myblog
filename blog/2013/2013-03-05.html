@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<title>Importer des modules directement depuis ce site</title>
+<meta content="Python, Enseignement, modules, importme" name="keywords"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="" name="description"/>
+<meta content="2013-03-05" name="date"/></head>
+<body>
+<p>
+Lorsqu'on prépare une séance de travaux pratiques, on
+prévoit parfois de travailler sur des données non disponibles
+à l'école. Pour
+éviter de perdre du temps sur des choses déjà et 
+rébarbatives telles que lire un fichier de données et 
+construire une matrice, je prépare un fichier qui permet de
+lire ces données directement. Un fichier zip nécessite qu'on
+décompresse le fichier quelque part, qu'on vérifie que tout marche
+bien. Finalement, j'ai opté pour le programme que voici :
+<a href="documents/importme.html">importme.py</a>. Il me permet à l'aide
+d'une instruction de télécharger les fichiers dont les élèves ont 
+besoin. Il me suffit alors de leur donner quelques unes des lignes
+suivantes pour qu'ils puissent commencer à travailler.
+<pre class="prettyprint">
+import importme
+use_graphviz = importme.import_module("use_graphviz")
+tableformula = importme.import_module("tableformula")
+tableformulagraph = importme.import_module("tableformulagraph")
+file = importme.import_module("donnes_banque_mondiale.txt")
+files = importme.import_module("equipements_sportif_2011.zip")
+</pre>
+Si un fichier téléchargé est un fichier zip, 
+il décompresse tous les fichiers
+au même endroit.
+</p>
+</body>
+</html>

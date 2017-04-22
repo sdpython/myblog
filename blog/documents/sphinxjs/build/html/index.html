@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+
+
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My first try with reveals &mdash; Présentation 0.1 documentation</title>
+
+    
+
+    
+<link rel="stylesheet" href="_static/css/reveal.min.css">
+<link rel="stylesheet" href="_static/css/theme/default.css" id="theme">
+<link rel="stylesheet" href="_static/lib/css/zenburn.css">
+<link rel="stylesheet" href="_static/revealjs.css" type="text/css" />
+
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+      document.write('<link rel="stylesheet" href="_static/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="_static/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        
+  <div class="section" id="my-first-try-with-reveals">
+<h1>My first try with reveals<a class="headerlink" href="#my-first-try-with-reveals" title="Permalink to this headline">¶</a></h1>
+<section>
+<h2>A quick try with sphinxjp.themes.revealjs</h2>
+<blockquote class="first">
+<div>Let&#8217;s how it goes</div></blockquote>
+<small class="last">
+Created by <a class="reference external" href="http://www.xavierdupre.fr/blog/2014-02-01_nojs.html">Xavier Dupré</a></small>
+</section>
+<section>
+<h2>What's up</h2>
+<p class="first">Let&#8217;s see how this text is displayed.
+And what about these bullet points:</p>
+<blockquote>
+<div><ul class="simple">
+<li>bullet 1</li>
+<li>bullet 2</li>
+<li>bullet 3</li>
+</ul>
+</div></blockquote>
+<aside class="last notes">
+hidden note</aside>
+</section>
+<section>
+<section class="first">
+<h2>The first slide comes horizontally.</h2>
+The first slide of a pile.</section>
+<section>
+<h2>The second slide comes vertically.</h2>
+Well, do you remember where you are.</section>
+<section class="last">
+<h2>The third slide still comes vertically.</h2>
+I&#8217;m lost</section>
+</section>
+<section>
+<section class="first">
+<h2>Conlusion</h2>
+I like it</section>
+<section class="last">
+<h2>Plus</h2>
+It is easy to put online.</section>
+</section>
+</div>
+
+
+      </div>
+    </div>
+    
+<script src="_static/js/jquery.min.js"></script>
+<script src="_static/lib/js/head.min.js"></script>
+<script src="_static/js/reveal.js"></script>
+    <script>
+
+      // change DOM for reveal.js
+      $("div.section h1").remove();
+      var content = $("div.section").html();
+      $("div.section").remove();
+      $("div.slides").html(content);
+
+      Reveal.initialize({
+        width: 960,
+        height: 700,
+
+        margin: 0.1,
+
+        minScale: 0.2,
+        maxScale: 1.0,
+
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        keyboard : true,
+        overview: true,
+        touch: true,
+        loop: false,
+        rtl: false,
+        fragments: true,
+
+        autoSlide: 0,
+        mouseWheel: false,
+        rollingLinks: true,
+        previewLinks: false,
+
+        transitionSpeed: "default",
+        backgroundTransition: "default",
+
+        theme: Reveal.getQueryHash().theme || "default", // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || "default", // default/cube/page/concave/zoom/linear/fade/none
+
+        dependencies: [
+        { src: '_static/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+        { src: '_static/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: '_static/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: '_static/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+        { src: '_static/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+        { src: '_static/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+      });
+    </script>
+  </body>
+</html>

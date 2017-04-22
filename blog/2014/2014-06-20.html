@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Python et Excel</title>
+<meta content="python, programmation, excel, pythonnet, openpyxl" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+
+<p>
+On m'a posé récemment la question des divers moyens de travailler avec Python et Excel.
+J'en connais trois :
+<ul>
+<li>lecture, écriture offline de fichiers Excel</li>
+<li>communiquer avec Excel avec une API COM</li>
+<li>communiquer avec Excel en utilisant C# et .Net</li>
+</ul>
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Je préfère de loin la première option car elle n'implique pas Excel et elle est portable.
+Elle suppose juste la lecture et l'écriture de données selon le format des fichiers Excel.
+Et c'est la seule option qui marche si Excel n'est pas installé. Voici quelques modules 
+qui permettent de faire cela :
+<ul>
+<li><a href="https://pythonhosted.org/openpyxl/">openpyxl</a> : je l'utilise rarement tel quel mais quotidiennement
+    avec <a href="http://pandas.pydata.org/">pandas</a>, son seul défaut est d'être
+    assez lent pour des fichiers qui dépassent 100.000 lignes.</li>
+<li><a href="https://tablib.readthedocs.org/en/latest/">tablib</a> : ce module permet la manipulation des tables,
+    ses sources incluent <a href="https://pythonhosted.org/openpyxl/">openpyxl</a>,
+    <a href="https://pypi.python.org/pypi/xlrd">xlrd</a> (plus rapide que <i>openpyxl</i> pour les gros fichiers), 
+    <a href="https://pypi.python.org/pypi/xlwt/0.7.5">xlwt</a>.
+    Ces deux derniers modules ont mal vécu le passage à Python 3, il n'existe pas vraiment 
+    de versions officielles et maintenues, il est préférable de s'en remettre
+    aux auteurs de <a href="https://tablib.readthedocs.org/en/latest/">tablib</a> pour cela.</li>
+</ul>
+</p>
+
+<p>
+La seconde option est celle que je déconseille. Elle utilise le module
+<a href="http://sourceforge.net/projects/pywin32/">pywin32</a>, elle n'est valide que sous
+Windows. Elle consiste à piloter l'application Excel avec 
+l'<a href="http://msdn.microsoft.com/en-us/library/windows/apps/br205757.aspx">API COM</a>.
+Comme elle n'est pas documentée, il faut sans cesse deviner la syntaxe à utiliser pour faire telle
+ou telle chose. La dernière fois que je l'ai essayé (il y a quelques années), il 
+y avait quelques interférences avec Excel s'il était déjà ouvert. De plus, il peut rester quelques
+processus Excel vivant qu'il faut tuer à un moment ou à un autre.
+</p>
+<p>
+La dernière option consiste à utiliser <a href="http://www.microsoft.com/net">.Net</a> avec le module
+<a href="https://github.com/renshawbay/pythonnet">pythonnet</a> 
+(<a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#pythonnet">lien</a> pour l'installer,
+ou <a href="https://github.com/sdpython/pythonnet">sdpython/pythonnet</a> pour le compiler vous-même).
+Elle présente deux avantages. Le premier est que la plupart des exemples qu'on trouve sur internet en C#
+sont transposables en Python presque sans modifications. Le second est qu'il est très facile d'écrire du code 
+C#. Compilé sous forme de DLL, il est directement exploitable depuis Python.
+<i>pythonnet</i> fonctionne aussi sous Linux, il doit être possible
+de transposer le code Python sur un Mac même si je n'ai pas vérifié.
+Avec ce module, il est même possible d'écrire ses macros en Python sous Excel
+(voir <a href="https://www.pyxll.com/">pyxll</a>).
+</p>
+
+
+
+</body>
+</html>

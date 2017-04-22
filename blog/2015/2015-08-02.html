@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Which version of R to install for bigmemory?</title>
+<meta content="R, install, bigmemory" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+
+<p>
+While trying to install a package for R on Windows,
+I realized not all of them are available for the latest version.
+The package 
+<a href="https://cran.r-project.org/web/packages/bigmemory/index.html">bigmemory</a>
+does not seem to exist on Windows (click on the link).
+However after a couple of web searches, you can find that
+the instruction might work:
+</p>
+<pre class="prettyprint">
+install.packages("bigmemory", repos="http://R-Forge.R-project.org")
+</pre>
+
+<p>
+But it does not work on the latest version, only R-3.1.
+That's what this page indicates:
+<a href="https://r-forge.r-project.org/R/?group_id=556">R Development Page</a>
+(click on this <a href="https://r-forge.r-project.org/R/?group_id=556&amp;log=build_win64&amp;pkg=bigmemory&amp;flavor=patched">link</a>).
+</p>
+
+
+</body>
+</html>

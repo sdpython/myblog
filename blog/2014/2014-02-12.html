@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Travailler à plusieurs sur le même projet informatique</title>
+<meta content="python, groupe, projet informatique, ensae, github" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<!-- SUMMARY BEGINS -->
+
+<p>
+
+La principale difficulté lorsqu'on travaille à plusieurs sur le même programme
+survient lorsqu'on doit agréger les modifications de plusieurs personnes. On part d'un même programme,
+on le modifie chacun de son côté et on essaye quelques jours plus tard de réconcilier les deux
+versions. C'est souvent laborieux et ça peut introduire quelques erreurs. 
+</p>
+<p>
+Une solution peut déjà être 
+d'avoir un emplacement qui détient toujours la bonne version. Par exemple,
+<a href="http://www.ovhtelecom.fr/hubiC/">hubiC</a> vous propose d'avoir un répertoire distant (donc pas chez soi)
+synchronisé avec un répertoire local de son ordinateur. Ce même répertoire peut 
+être synchronisé avec un autre répertoire local sur un autre ordinateur. De cette façon, dès
+que quelqu'un modifie un fichier, les autres contributeurs récupèrent les modifications (à condition
+d'être connecté).
+</p>
+<p>
+Même si c'est pratique, ce genre de solution ne permet pas de revenir en arrière
+ni même de visualiser les modifications de chacun. Pour cela, on peut utiliser 
+un système de suivi de source tel que <a href="https://github.com/">GitHub</a>,
+ce que j'ai fait pour <a href="https://github.com/sdpython/pyensae/">pyensae</a>, 
+qui permet de voir les <a href="https://github.com/sdpython/pyensae/commit/e6d7e59b4b2b22e6294767d53bc40502c8c890a6">différences</a>.
+Ce service n'est pas totalement gratuit (voir <a href="https://github.com/pricing">GitHub Pricing</a>,
+<a href="https://bitbucket.org/plans">BitBucket Pricing</a>).
+Avant d'essayer, il est préférable de lire cette page : 
+<a href="https://help.github.com/articles/fork-a-repo">Fork A Repo</a>.
+Si vous n'aimez pas trop les lignes de commande, il est possible de coupler cela 
+avec <a href="http://code.google.com/p/tortoisegit/">TortoiseGit</a>.
+</p>
+
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+GitHub fonctionne à la fois avec une interface graphique que suppléent quelques
+instructions en ligne de commande comme mettre à jour son <i>fork</i>
+avec les modifications du répertoire <i>forké</i> :
+<pre class="prettyprint">
+git fetch upstream
+git merge upstream/master
+</pre>
+</p>
+
+
+
+
+<p>
+Même si ces outils facilitent la vie, quelques règles simples lors de l'implémentation
+d'un programme évitent de la compliquer inutilement.
+</p>
+
+<p><b>Ecrire des petites fonctions</b></p>
+<p>
+Parce que :
+<ul>
+<li>Il est plus facile de corriger un programme qui est constitué de petites fonctions plutôt que de quelques grandes. 
+        Chaque fonction peut être vérifiée séparément.</li>
+<li>Il est plus facile de réutiliser des petites fonctions qui font quelque chose de précis.</li>
+<li>Il est plus facile de répartir le travail sur plusieurs personnes.</li>
+</ul>
+</p>
+
+<p><b>Eviter les variables globales</b></p>
+<p>
+Elles sont en quelque sorte des paramètres cachés, le genre de petits détails qu'on oublie. 
+Et lorsqu'on fait du multi-threading, on se souvient pourquoi il fallait les éviter.
+</p>
+
+<p><b>Séparer calcul et interface graphique</b></p>
+<p>
+Parce que :
+<ul>
+<li>Il est plus facile de vérifier un calcul s'il est dans une fonction indépendante 
+plutôt que caché dans le code d'une interface graphique.</li>
+<li>C'est facile de faire un calcul une fois lorsqu'un utilisateur appuie sur un bouton, 
+si on veut faire ce calcul cent fois, on ne peut pas lui demander 
+d'appuyer cent fois sur le même bouton.</li>
+<li>Les calculs peuvent être utilisés dans d'autres programmes 
+sauf s'ils sont coincés dans l'interface graphique.</li>
+</ul>
+</p>
+
+<p><b>Tests unitaires</b></p>
+<p>
+Ce sont des petites fonctions qui vérifient les entrées et sorties d'une autre. On les exécute
+à chaque changement pour vérifier qu'ils n'ont pas <i>cassé</i> quelque chose qui marchait avant.
+Par exemple : 
+on crée une fonction qui retourne 0 dans un cas précis. Deux semaines plus tard, on préfère
+que cette fonction retourne 1 dans ce cas précis. Sauf qu'entre temps, on a écrit deux fonctions
+en tenant compte de ce 0. Mais on a oublié... et on cherche le bug pendant des heures.
+Autre exemple plus concret, on considère une fonction qui doit retourner une somme 
+réelle même si les éléments de la liste sont entiers. 
+On écrit la fonction qui vérifie cela.
+</p>
+<pre class="brush: py">   
+def somme_double (liste) :
+    return 1.0 * sum(liste)
+
+def test_somme_double () :
+    y = somme_double([ 1 ]) / 2
+    if y == 0 : raise Exception ("valeur > 0 attendue")
+        
+if __name__ == "__main__" :
+    test_somme_double()
+</pre>
+<p>
+Si plus tard, quelqu'un modifie la fonction <tt>somme_double</tt> en enlevant la multiplication 
+parce qu'il considère cela inutile. La fonction de test provoquera une erreur. 
+Elle est là pour rappeler que la fonction a été programmée pour retourner un nombre réel 
+et que quiconque l'utilise s'attend à ce qu'elle retourne ce type de résultat.
+</p>
+
+<pre class="prettyprint">   
+Traceback (most recent call last):
+  File "conseil.py", line 10, in &lt;module&gt;
+    test_somme_double()
+  File "conseil.py", line 7, in test_somme_double
+    if y == 0 : raise Exception ("valeur &gt; 0 attendue")
+Exception: valeur &gt; 0 attendue
+</pre>
+
+
+</body>
+</html>

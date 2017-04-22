@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Données d'assurance maladie</title>
+<meta content="code, assurance, économie, sécurité sociale" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+
+Les données d'assurance maladie sont disponibles depuis peu sur <a href="https://www.data.gouv.fr/">data.gouv.fr</a> :
+<a href="https://www.data.gouv.fr/fr/datasets/depenses-d-assurance-maladie-hors-prestations-hospitalieres-par-caisse-primaire-departement/">Dépenses d' assurance maladie hors prestations hospitalières par caisse primaire/département</a>.
+Je recopie ici la description des variables de la base de données histoire de données une petite idée
+de ce qu'on peut en faire (voir plus bas).
+</p>
+
+<p>
+On peut vaguement imaginer tout ce qu'on pourrait en faire comme observer les différentes saisonnalités dans la médecine,
+saisonnalité des actes, saisonnalités géographiques, d'observer des tendances même si la période
+couverte par les données est assez courte. On peut croiser ces données avec la 
+<a href="https://www.data.gouv.fr/fr/datasets/la-demographie-des-medecins-rpps/">répartition des médecins</a>
+et détecter les zones où il manque des médecins.
+</p>
+<p>
+Cela donne une idée aussi de ce qu'on ne pourrait pas faire comme cette étude
+<a href="http://theodi.org/news/prescription-savings-worth-millions-identified-odi-incubated-company">Prescription Savings Worth Millions Identified by ODI incubated company</a>
+qui utilise des données géographiques et le nom des médicaments prescrits pour 
+situer sur une carte les prescriptions d'un médicament précis et d'observer
+certaines disparités.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Il serait également difficile d'étudier les corrélations entre les différents actes ou traitement
+car il est impossible d'associer chaque observation à une personne en particulier.
+Pour ce faire, il faudrait y ajouter un identifiant personnel et anonyme (c'est-à-dire 
+surtout pas le numéro de sécurité social). Mais même cette information pourrait poser problème.
+Votre dernière visite à votre médecin est dans cette base et vous pourriez facilement
+retrouver votre idenfiant anonyme, voire par recoupement, retrouver celui de vos voisins 
+de salle d'attente et ainsi accéder à une information protégée. 
+</p>
+<p>
+C'est un peu la magie des données. Nous sommes tous dans la base mais il est presque impossible de
+se retrouver. Je dis presque car il existe des modèles mathématiques qui permettent parfois de reconstruire 
+des données personnelles à partir de données agrégées (et pas mal de puissance de calcul). 
+Elles ne produisent pas des résultats précis
+mais suffisamment exploitables pour en tirer quelques enseignements.
+A ce sujet, vous pouvez lire : 
+<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/coding_party_1.html">Coding Party 22 mai 2014 : inférer des trajectoires de vélos</a>
+(à partir des données vélib).
+</p>
+
+<p>
+<table>
+<tr><td style="background-color:#D9D9D9;color:#000000;font-weight:bold;">variable</td><td style="background-color:#D9D9D9;color:#000000;font-weight:bold;">libellé</td><td style="background-color:#D9D9D9;color:#000000;font-weight:bold;">description</td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">act_coe</td><td style="background-color:#CCB8E4;color:#000000;">coefficient global</td><td style="background-color:#CCB8E4;color:#000000;">Une partie des actes de soins est décrite par
+•Une lettre clé qui varie selon les professions et catégories d'actes et qui a une valeur unitaire
+•Un coefficient qui reflète la complexité de l'acte, et qui, multiplié par la valeur unitaire de la lettre clé, donne le tarif de l'acte. 
+Ceci est notamment le cas des actes techniques médicaux et des actes d'auxilaires médicaux (infirmier, kiné, ...)
+Par exemple, un pansement lourd exécuté par un infirmier est côté AMI 4 soit une base de remboursement de 3,15 (valeur conventionnelle AMI)*4=12,6 euros</td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">act_dnb</td><td style="background-color:#E6DCF1;color:#000000;">dénombrement</td><td style="background-color:#E6DCF1;color:#000000;">Une partie des actes peut être dénombrée car codifiée avec un code qui permet de connaître directement la nature exacte et le tarif de l'acte (CCAM).
+C'est par exemple le cas des consultations,</td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">asu_nat</td><td style="background-color:#CCB8E4;color:#000000;">nature d'assurance</td><td style="background-color:#CCB8E4;color:#000000;">Risque au titre duquel est prise en charge la prestation: Maladie, Maternité, Accident du Travail-Maladie Professionnelle, Invalidité, Décès</td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">ben_qlt</td><td style="background-color:#E6DCF1;color:#000000;">qualité du bénéficiaire</td><td style="background-color:#E6DCF1;color:#000000;">Cette variable distingue les bénéficaires assuré, conjoint et enfant.</td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">cpam</td><td style="background-color:#CCB8E4;color:#000000;">cpam d'affiliation du bénéficiaire</td><td style="background-color:#CCB8E4;color:#000000;">Numéro de la Caisse Primaire d'Assurance Maladie de rattachement du bénéficaire des soins</td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">cpl_cod</td><td style="background-color:#E6DCF1;color:#000000;">complement d'acte</td><td style="background-color:#E6DCF1;color:#000000;">Cette variable permet de toper les suppléments tarifés, ajouté au montant de l’acte lorsqu'il est réalisé dans un contexte spécifique ( majoration de nuit, de dimanche ou jour férié, urgence) 
+</td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">dep_mon</td><td style="background-color:#CCB8E4;color:#000000;">dépassement d'honoraires</td><td style="background-color:#CCB8E4;color:#000000;">On parle de montant de dépassement lorsque les prix pratiqués par les professionnels de santé sont supérieurs aux tarifs de convention fixés pour chaque acte médical par la sécurité sociale. Les dépassements d'honoraires peuvent être pris en charge par les complémentaires santé. Cette notion ne concerne que les honoraires des médecins.</td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">dpt</td><td style="background-color:#E6DCF1;color:#000000;">département d'affiliation du bénéficiaire</td><td style="background-color:#E6DCF1;color:#000000;"></td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">exe_spe</td><td style="background-color:#CCB8E4;color:#000000;">spécialité exécutant</td><td style="background-color:#CCB8E4;color:#000000;">Spécialité exercée par le médecin (généraliste, cardiologue, etc), nature d'activité des auxilaires médicaux (infirmiers, masseurs-kinésithérapeutes)...</td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">exe_spe1</td><td style="background-color:#E6DCF1;color:#000000;">regroupement spécialité exécutant</td><td style="background-color:#E6DCF1;color:#000000;">Spécialité regroupée par grande catégorie d'exécutant: médecins omnipraticiens, médecins spécialistes,… Cette notion ne concerne que les  médecins.</td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">exe_stj1</td><td style="background-color:#CCB8E4;color:#000000;">mode d'exercice exécutant</td><td style="background-color:#CCB8E4;color:#000000;">Statut du professionnel de santé sur sa manière d'exercer: libéral ou salarié 
+</td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">l_asu_nat</td><td style="background-color:#E6DCF1;color:#000000;">libellé assurance</td><td style="background-color:#E6DCF1;color:#000000;"></td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">l_ben_qlt</td><td style="background-color:#CCB8E4;color:#000000;">libellé qualité du bénéficiaire</td><td style="background-color:#CCB8E4;color:#000000;"></td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">l_cpam</td><td style="background-color:#E6DCF1;color:#000000;">libellé cpam d'affiliation du bénéficiaire</td><td style="background-color:#E6DCF1;color:#000000;"></td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">l_cpl_cod</td><td style="background-color:#CCB8E4;color:#000000;">libellé du complément d'acte</td><td style="background-color:#CCB8E4;color:#000000;"></td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">l_dpt</td><td style="background-color:#E6DCF1;color:#000000;">libellé du département d'affiliation du bénéficiaire</td><td style="background-color:#E6DCF1;color:#000000;"></td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">l_exe_spe</td><td style="background-color:#CCB8E4;color:#000000;">libellé spécialité exécutant</td><td style="background-color:#CCB8E4;color:#000000;"></td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">l_exe_spe1 </td><td style="background-color:#E6DCF1;color:#000000;">libellé regroupement spécialité exécutant</td><td style="background-color:#E6DCF1;color:#000000;"></td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">l_exe_stj1</td><td style="background-color:#CCB8E4;color:#000000;">libellé mode d'exercice exécutant</td><td style="background-color:#CCB8E4;color:#000000;"></td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">l_pre_spe</td><td style="background-color:#E6DCF1;color:#000000;">libellé spécialité prescripteur</td><td style="background-color:#E6DCF1;color:#000000;"></td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">l_pre_spe1</td><td style="background-color:#CCB8E4;color:#000000;">libelle regroupement spécialité prescripteur</td><td style="background-color:#CCB8E4;color:#000000;"></td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">l_pre_stj1</td><td style="background-color:#E6DCF1;color:#000000;">libellé mode d'exercice prescripteur</td><td style="background-color:#E6DCF1;color:#000000;"></td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">l_prs_nat</td><td style="background-color:#CCB8E4;color:#000000;">libellé prestation</td><td style="background-color:#CCB8E4;color:#000000;"></td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">l_region</td><td style="background-color:#E6DCF1;color:#000000;">libellé région d'affiliation du bénéficiaire</td><td style="background-color:#E6DCF1;color:#000000;"></td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">l_serie</td><td style="background-color:#CCB8E4;color:#000000;">libellé de la série Statistique Mensuelle</td><td style="background-color:#CCB8E4;color:#000000;"></td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">l_top_slm</td><td style="background-color:#E6DCF1;color:#000000;">libellé Top Sections Locales Mutualistes</td><td style="background-color:#E6DCF1;color:#000000;"></td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">pre_spe</td><td style="background-color:#CCB8E4;color:#000000;">spécialité prescripteur</td><td style="background-color:#CCB8E4;color:#000000;">Spécialité exercée par le médecin (généraliste, cardiologue, etc), nature d'activité des auxilaires médicaux (infirmiers, masseurs-kinésithérapeutes)</td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">pre_spe1</td><td style="background-color:#E6DCF1;color:#000000;">regroupement spécialité prescripteur</td><td style="background-color:#E6DCF1;color:#000000;">Spécialité regroupée par grande catégorie de prescripteur: médecins omnipraticiens, médecins spécialistes, chirurgiens dentiste, …</td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">pre_stj1</td><td style="background-color:#CCB8E4;color:#000000;">mode d'exercice prescripteur</td><td style="background-color:#CCB8E4;color:#000000;">Statut du professionnel de santé sur sa manière d'exercer: libéral ou salarié 
+</td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">prs_nat</td><td style="background-color:#E6DCF1;color:#000000;">prestation</td><td style="background-color:#E6DCF1;color:#000000;">Chaque prestation est codifiée par un code à 4 chiffres dans le SNIIRAM.  Une prestation est un acte réalisé par professionnel de santé (médécin, auxiliaire, …) ou un produit de santé (médicament, prothèse, ..) pris en charge par l'assurance maladie.  Cela peut être également un versement de prestation en espèces (indemnités journalières dans le cas d'un arrêt maladie, rente d'accident du travail, pension d'invalidité)...
+</td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">rec_mon</td><td style="background-color:#CCB8E4;color:#000000;">base de remboursement</td><td style="background-color:#CCB8E4;color:#000000;"> La base de remboursement correspond au montant pris en considération par l’Assurance Maladie avant application du taux de remboursement. C'est le tarif conventionnel pour les Professionnels de Santé. Exemple : pour une consultation de médecin généraliste la base de remboursement est de 23€ et le taux de remboursement est de 70% (si vous avez un médecin traitant) sauf pour les personnes en affection longue durée 100%.
+</td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">region</td><td style="background-color:#E6DCF1;color:#000000;">région d'affiliation du bénéficiaire</td><td style="background-color:#E6DCF1;color:#000000;"></td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">rem_mon </td><td style="background-color:#CCB8E4;color:#000000;">montant remboursé</td><td style="background-color:#CCB8E4;color:#000000;">Montant que l’Assurance Maladie rembourse à l’assuré : (base de remboursement * taux de remboursement).
+</td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">rem_tau</td><td style="background-color:#E6DCF1;color:#000000;">taux de remboursement</td><td style="background-color:#E6DCF1;color:#000000;">Le taux de remboursement de la sécurité sociale est le taux sur lequel cet organisme se base pour effectuer ses remboursements. Il s'applique sur le tarif conventionnel et varie en fonction de l'acte médical et du régime obligatoire de l'assuré social, et de la situation de l'assuré.</td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">serie</td><td style="background-color:#CCB8E4;color:#000000;">série de la Statistique Mensuelle</td><td style="background-color:#CCB8E4;color:#000000;">Une série de la Statistique Mensuelle est un poste de dépenses obtenu par croisement de la prestation et de la spécialité exécutant. Pour ce qui concerne le médicament, un croisement est également opéré avec le taux de remboursement </td></tr>
+<tr><td style="background-color:#E6DCF1;color:#000000;">sns_date</td><td style="background-color:#E6DCF1;color:#000000;">mois et année des soins</td><td style="background-color:#E6DCF1;color:#000000;">Mois et année  auxquels le prestataire de soins a executé un acte ou délivré un produit:
+•C (consultation), V (visite à domicile) pour un médecin; 
+•Médicaments pour un pharmacien;
+•etc.
+Pour les prestations en espèces : mois et année de début de la période de versement.</td></tr>
+<tr><td style="background-color:#CCB8E4;color:#000000;">top_slm</td><td style="background-color:#CCB8E4;color:#000000;">Top Sections Locales Mutualistes</td><td style="background-color:#CCB8E4;color:#000000;">Permet de toper les remboursements relevant des Sections Locales Mutualistes (Mutuelle des Étudiants, Mutuelle Générale de l'Education Nationale…)</td></tr>
+</table>
+
+</p>
+
+
+
+</body>
+</html>

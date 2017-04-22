@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Pywin32 does not find its DLL</title>
+<meta content="python, progamming, pywin32, exception" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+I recently needed to install <a href="http://starship.python.net/crew/mhammond/win32/">pywin32</a>
+because of <a href="http://ipython.org/ipython-doc/rel-1.0.0/interactive/nbconvert.html">nbconvert</a>.
+However, when importing <tt>win32api</tt>, it produces an exception
+(unable to find some DLL). To fix it, the following path
+<tt>&lt;python&gt;Lib/site-packages/pywin32_system32</tt> must be 
+added to environment variable <tt>PATH</tt>.
+But I did not want to do that but I'm using several
+Python version at the same time so I needed to fix
+it while running my script which I did below.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+
+<pre class="brush: py">
+def import_pywin32():
+    """
+    For the module ``pywin32``,
+    this function tries to add the path to the DLL to ``PATH``
+    before throwing the exception: 
+    ``DLL load failed: The specified module could not be found``.
+    """
+    try:
+        import win32com
+    except ImportError as e :
+        if "DLL load failed:" in str(e):
+            import os,sys
+            path = os.path.join(os.path.split(sys.executable)[0], "Lib","site-packages","pywin32_system32")
+            os.environ["PATH"] = os.environ["PATH"] + ";" + path
+            try:
+                import win32com
+            except ImportError as ee :
+                dll = os.listdir(path)
+                dll = [os.path.join(path,_) for _ in dll if "dll" in _]
+                raise ImportError("some DLL must be copied:\n" + "\n".join(dll)) from e
+        else :
+            raise e
+</pre>
+
+<p>
+I hope I'll remember I foudn a way to fix it next time I run into the same exception.
+</p>
+
+</body>
+</html>
