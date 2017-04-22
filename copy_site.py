@@ -30,6 +30,8 @@ password = keyring.get_password("ftp_list_modules", os.environ["COMPUTERNAME"] +
 googleid = keyring.get_password("web", os.environ["COMPUTERNAME"] + "google")
 this = os.path.abspath(os.path.dirname(__file__))
 destination = os.path.normpath(os.path.join(this, "../../site"))
+ftp_site = keyring.get_password("web", os.environ["COMPUTERNAME"] + "ftp")
+
 
 
 def copy_site() :
@@ -190,7 +192,7 @@ def copy_site_cwd() :
         
         print("loginame", loginame)
         print("password", password)
-        ftp = TransferFTP('ftp.xavierdupre.fr', loginame, password, fLOG = print)  
+        ftp = TransferFTP(ftp_site, loginame, password, fLOG = print)  
         nbproc = 0
 
         # on trie par taille pour faire les plus gros en dernier
