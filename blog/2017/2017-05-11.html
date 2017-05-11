@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>PyParis</title>
+<meta content="python, pyparis, pydata" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+<a href="http://pyparis.org/">PyParis</a> est la déclinaison parisienne du cycle de conférence
+<a href="https://pydata.org/">pydata</a>. Le 
+<a href="http://pyparis.org/talks.html">programme</a> de cette année est plutôt
+alléchant. Outre les sujets scientidiques, j'y ai découvert une palanquée de modules
+que je ne connaissais pas.
+</p>
+
+<p>
+<a href="https://github.com/prologin/camisole">camisole</a> est un module 
+(<a href="https://camisole.prologin.org/">documentatino</a>) qui implémente un service 
+de compilation et exécution de code. Ceci peut se réveler assez pratique pour
+l'enseignement. La liste des langages supportés est plutôt longue. Une machine virtuelle
+est mise à disposition. Le module implémente uniquement une API REST. Au détour de la 
+documentation, on voit le package <a href="https://github.com/ioi/isolate">isolate</a> (C).
+Je vous laisse découvrir ce qu'il fait.
+</p>
+<p>
+Un talk parlera de PDF. Je n'avais pas imaginer qu'on puisse parler de PDF pendant tout un talk.
+Mais a priori, c'est possible. Quelques moduless : <a href="http://weasyprint.org/">weasyprint</a>,
+<a href="https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/">pdftk</a>,
+<a href="http://www.reportlab.com/">reportlab</a>.
+</p>
+<p>
+Je ne vais pas assez souvent les extensions 
+<a href="http://jupyter-contrib-nbextensions.readthedocs.io/en/latest/">Unofficial Jupyter Notebook Extensions</a>.
+Sans doute parce que qu'elles ne marchent pas toujours. Néanmoins, parmi celles que j'ai déjà utilisées,
+il y a <a href="http://jupyter-contrib-nbextensions.readthedocs.io/en/latest/nbextensions/execute_time/readme.html">execute_time</a>,
+<a href="http://jupyter-contrib-nbextensions.readthedocs.io/en/latest/nbextensions/hide_input/readme.html">hide_input</a>,
+<a href="http://jupyter-contrib-nbextensions.readthedocs.io/en/latest/nbextensions/scratchpad/README.html">ScratchPad</a>
+(pratique celle-ci).
+Parmi celles que j'ai envie d'essayer, il y a 
+<a href="http://jupyter-contrib-nbextensions.readthedocs.io/en/latest/nbextensions/nbTranslate/README.html">nbTranslate</a>,
+<a href="http://jupyter-contrib-nbextensions.readthedocs.io/en/latest/nbextensions/toc2/README.html">Table of Contents (2)</a>
+(même si je rêverais de l'inclure en javascript plutôt que sous forme d'extension),
+<a href="http://jupyter-contrib-nbextensions.readthedocs.io/en/latest/nbextensions/tree-filter/readme.html">tree filter</a>,
+<a href="http://jupyter-contrib-nbextensions.readthedocs.io/en/latest/nbextensions/collapsible_headings/readme.html">Collapsible Headings</a>
+qui s'exporte aussi en HTML <tt>jupyter nbconvert --to html_ch FILE.ipynb</tt>.
+</p>
+<p>
+Côté machine learning, nous avons 
+<a href="http://surpriselib.com/">Surprise</a> pour construire des systèmes de recommandation
+(<a href="http://surprise.readthedocs.io/en/stable/index.html">documentation</a>).
+<a href="http://freediscovery.io/doc/stable/">FreeDiscovery</a> automatise quelques opérations 
+standard d'analyse des données. Il y a pas mal de choses au niveau texte :
+<a href="http://freediscovery.io/doc/stable/python_api.html#">Python API Reference</a>.
+Un article <a href="https://arxiv.org/pdf/1605.08087.pdf">Extremal Bootstrapping</a>
+à propos de <a href="https://en.wikipedia.org/wiki/Conformal_field_theory">Conformal Field Theory</a>.
+<a href="https://pomegranate.readthedocs.io/en/latest/">pomegranate</a> qui implémente des modèles
+bayésiens tels que les 
+<a href="https://pomegranate.readthedocs.io/en/latest/HiddenMarkovModel.html">Hidden Markov Models</a>
+(à comparer avec <a href="http://hmmlearn.readthedocs.io/en/stable/#">hmmlearn</a>.
+</p>
+<p>
+Enième workflow engine <a href="http://mrq.readthedocs.io/en/latest/">MRQ</a> 
+mais il a l'air assez simple. <a href="http://fluiddyn.readthedocs.io/en/latest/">FluidDyn</a>
+est une autre option qui incluent également des fonctionalités de calculs
+numériques. L'objectif est de réaliser des simulations numériques.
+</p>
+<p>
+Parmi ceux que je n'utiliserai pas tout de suite 
+<a href="http://pythonhosted.org/PySpice/">PySpice</a> qui encapsule 
+<a href="https://bwrcs.eecs.berkeley.edu/Classes/IcBook/SPICE/">SPICE</a>, un langage pour des circuits 
+électroniques. Un bloq <a href="https://boontadata.github.io/spark-structured-streaming/">boontadata</a>
+pour lire à propos de différentes architectures de workflow de données en temps réel.
+</p>
+<p>
+Enfin <a href="https://wikis.univ-lille1.fr/chticode/">Ch'ti code</a> ou comment parler de programmation
+dans les écoles primaires.
+</p>
+<p>
+Maintenant, il va falloir que j'aille regarder si tout cela s'installe facilement.
+</p>
+
+</body>
+</html>
