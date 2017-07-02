@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Include output a script in the Python documentation</title>
+<meta content="python, sphinx, runpython" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+The directive <a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/pyquickhelper/sphinxext/sphinx_runpython_extension.html?highlight=runpython#module-pyquickhelper.sphinxext.sphinx_runpython_extension">runpython</a>
+runs a python script and insert the output in the documentation.
+</p>
+
+<pre class="prettyprint">
+.. runpython::
+    
+    import sys
+    print(sys.version_info)
+</pre>
+<p>
+Every printed information is added to the documntation :
+</p>
+
+<pre class="prettyprint">
+sys.version_info(major=3, minor=6, micro=1, releaselevel='final', serial=0)
+</pre>
+<p>
+Two intersections options :
+<ul>
+<li><i>:showcode:</i> the code will be added to the documentation.</li>
+<li><i>:rst:</i> the directive assumes the output is rst and is adding as such in the documentation.
+That options can be used to create repetitive documentation such as 
+the list of imported mdules or to check that inserted examples
+still work.
+</li>
+</ul>
+One extension must be added to configuration <i>conf.py</i>:
+</p>
+<pre class="prettyprint">
+    extensions = ['sphinx.ext.intersphinx',
+        ...
+        'pyquickhelper.sphinxext.sphinx_runpython_extension']
+</pre>
+<p>
+One example (in French) :
+<a href="https://github.com/sdpython/demo/blob/master/2017/sphinx/source/index.rst">demo runpython</a>.
+The second one shows how I use to build content (still French):
+<a href="http://www.xavierdupre.fr/app/teachpyx/helpsphinx/c_classes/classes.html">rendering</a>
+and <a href="http://www.xavierdupre.fr/app/teachpyx/helpsphinx/_sources/c_classes/classes.rst.txt">source</a>.
+</p>
+</body>
+</html>
