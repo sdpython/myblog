@@ -70,6 +70,28 @@ To do that, you need to follow the steps described into:
 That leaves the problem of finding files you can remove.
 You can go to 
 <a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/notebooks/git_dataframes.html">git_dataframes.ipynb</a>.
+I tried it on my own repo. I added and removed a file <i>log.txt</i>.
 </p>
+<img src="documents/gitremove.png" />
+<p>
+If then run:
+</p>
+<pre>
+git filter-branch --force --index-filter "git rm --cached --ignore-unmatch log.txt" --prune-empty --tag-name-filter cat -- --all
+</pre>
+<p>
+It displayed the following message:
+</p>
+<img src="documents/gitremove2.png" />
+<p>
+I finally typed:
+</p>
+<pre>
+git push origin --force --all
+</pre>
+<p>
+And its content disappeared from the 
+<a href="https://github.com/sdpython/pyquickhelper/commit/d9f5b9873fa0563ca8a3081712a16f1cc6bb7b7c">commit</a>.
+</a>
 </body>
 </html>
