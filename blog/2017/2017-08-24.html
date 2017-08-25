@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Remove big files from git history</title>
+<meta content="python, git" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Git repositories always get bigger. I noticed than
+one of GitHub repository was above 500Mb. I was wondering how 
+I could make that size smaller. First, let see the size.
+</p>
+<pre>
+git count-objects -v 
+</pre>
+<pre>
+count: 0
+size: 0
+in-pack: 19644
+packs: 1
+size-pack: 222397
+prune-packable: 0
+garbage: 0
+size-garbage: 0
+</pre>
+<p>
+The size is <i>size-pack</i>. To clean,
+the first option is to rebase
+the repository so basically to clean everything and to commit 
+the current state of the content. One solution is to keep only 
+the latest commits (see <a href="https://confluence.atlassian.com/bitbucket/reduce-repository-size-321848262.html">Reduce repository size</a>). 
+</p>
+<pre>
+git log -n N
+git reset --hard HEAD~N
+git push --force 
+</pre>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+If this does not work, another 
+strategy is to create an empty branch, to commit
+everything as the first commit, to delete the master branch,
+to replace it by the new one and to clean unused files
+(see <a href="https://stackoverflow.com/questions/9683279/make-the-current-commit-the-only-initial-commit-in-a-git-repository">Make the current commit the only (initial) commit in a Git repository?</a>).
+</p>
+<pre>
+git checkout --orphan newBranch
+git add -A                      # Add all files and commit them
+git commit
+git branch -D master            # Deletes the master branch
+git branch -m master            # Rename the current branch to master
+git push -f origin master       # Force push master branch to github
+git gc --aggressive --prune=all # Remove the old files
+</pre>
+
+<p>
+A third option is to remove files added to the repository and then deleted.
+To do that, you need to follow the steps described into:
+<a href="https://help.github.com/articles/removing-sensitive-data-from-a-repository/">Removing sensitive data from a repository</a>.
+That leaves the problem of finding files you can remove.
+You can go to 
+<a href="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/notebooks/git_dataframes.html">git_dataframes.ipynb</a>.
+</p>
+</body>
+</html>
