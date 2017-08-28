@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Continuous integration</title>
+<meta content="python, circleci, travis, CI" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+Maintaining notebooks is a lot of work. 
+I consider a notebook is ok if it runs with the latest versions of
+the packages it uses and if it can be converted into HTML to be
+included on a website. Easy when you have one notebook but 
+what if you have more than 200 hundred of them to verify for your teachings?
+I had to automate. I started by running a virtual machine on Azure
+wich Jenkins and everything I needed. This machine is still up and running
+and tests everything once in a week for all my python package.
+But my teachings are also open source so I decided to use continuous 
+integration to test my package on other distributions. I first
+used <a href="https://travis-ci.org/sdpython/ensae_teaching_cs">travis</a> and 
+<a href="https://ci.appveyor.com/project/sdpython/ensae-teaching-cs">appveyor</a> 
+but I could not include the compilation of the notebooks into documentation.
+It requires a couple of huge dependencies as latex. <i>appveyor</i>
+is quite slow and stops any job after one hour. 
+<i>travis</i> was using Ubuntu 12.04 when I started and 14.04 now.
+I recently tried <a href="https://circleci.com/gh/sdpython/ensae_teaching_cs">CircleCI 2.0</a>.
+The design is really nice, it offers Ubuntu 16.04, the configuration file
+<a href="https://github.com/sdpython/ensae_teaching_cs/blob/master/.circleci/config.yml">config.yml</a>
+is much easier to read and to write. One interesting feature is 
+<i>artifacts</i>. The user can easily copy in a specific folder whatever he wants to keep from the build
+and make it available to download. The other interesting feature is caching. <i>CircleCI</i>
+automatically caches a docker which contains the dependencies of the package to test.
+The first run is slow and the following are faster due to this option plus
+renewing the cache can be easily done by changing a file. So I decided
+it was worth spending some time enabling <i>CircleCI</i> anywhere.
+I described here all the steps to create a Python package, with unit tests and documentation
+and to build it on <i>CircleCI</i> :
+<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/notebooks/td1a_unit_test_ci_correction.html">Tests unitaires, setup et ingéniérie logiciel</a> (French).
+</p>
+
+
+</body>
+</html>
