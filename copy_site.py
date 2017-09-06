@@ -235,7 +235,7 @@ def copy_site_cwd() :
                 
             ftp_dest = os.path.split(file)[-1]
             r = ftp.transfer (file, path, ftp_dest)
-            print("[upload]", file, "to", "/".join([path, ftp_dest]))
+            print("[upload]", file, "to", "/".join([path, ftp_dest]), " -- ", reason)
                 
             if r : 
                 processed.append(file)
