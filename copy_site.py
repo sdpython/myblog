@@ -23,7 +23,10 @@ from pyquickhelper.filehelper import TransferFTP, explore_folder, synchronize_fo
 from ensae_teaching_cs.homeblog import CopyFileForFtp, py_to_html_folder, modify_all_posts
 from ensae_teaching_cs.homeblog import file_build_rss, file_all_keywords, build_process_all_pages
 
-import keyring
+import warnings
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore', DeprecationWarning)
+    import keyring
 
 loginame = keyring.get_password("ftp_list_modules", os.environ["COMPUTERNAME"] + "login")
 password = keyring.get_password("ftp_list_modules", os.environ["COMPUTERNAME"] + "password")  
