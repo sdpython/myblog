@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>streaming pandas dataframe</title>
+<meta content="python, pandas" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<p>
+<a href="http://pandas.pydata.org/">pandas</a> is widely used by data scientists.
+It is one of the modules which contributed a lot to the Python ecosystem to manipulate data.
+It is not perfect, a dataset takes in memory three times the space it takes on disk
+in average and reading a couple of gigabytes is necessarily fast. However,
+a couple of gigabytes is not enough to think about stronger approaches such 
+parallelization (<a href="https://dask.pydata.org/en/latest/">dask</a>, ...) but with a little bit of overhead
+for such size. All I wanted was the same functionalities as <i>pandas</i>
+but implemented in a streaming way. No need to load the whole datasets in memory,
+no need to wait for the data to be fully loaded in memory. That's why I started
+<a href="http://www.xavierdupre.fr/app/pandas_streaming/helpsphinx/index.html">pandas_streaming</a>.
+</p>
+<pre class="brush: py">
+import pandas
+df = pandas.DataFrame([dict(cf=0, cint=0, cstr="0"),
+                       dict(cf=1, cint=1, cstr="1"),
+                       dict(cf=3, cint=3, cstr="3")])
+
+from pandas_streaming.df import StreamingDataFrame
+sdf = StreamingDataFrame.read_df(df)
+
+for df in sdf:
+    # process this chunk of data
+    # df is a dataframe
+    print(df)
+</pre>
+<p>
+The module will continue to grow probably not as fast as I would like it to.
+</p>
+</body>
+</html>
