@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Small change and potentially big impact (pandas)</title>
+<meta content="Python, pandas" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+<a href="http://pandas.pydata.org/">pandas</a> updated its interface in its version 0.22.
+More particularly <a href="http://pandas.pydata.org/pandas-docs/stable/whatsnew.html#v0-22-0-december-29-2017">v0.22.0 (December 29, 2017)</a>,
+</p>
+<pre class="brush:py">
+print(pd.Series([]).sum())
+</pre>
+<pre>
+0.0  # It was nan in 0.21.
+</pre>
+<p>
+This is typically the kind of change which could have a huge impact
+on many functions if you don't have unit tests to capture that.
+According to the documentation of <a href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.sum.html?highlight=sum#pandas.Series.sum">sum</a>,
+the previous behaviour can be retrieved by adding <tt>min_count=1</tt>.
+</p>
+<pre class="brush:py">
+print(pd.Series([]).sum(min_count=1))
+</pre>
+<pre>
+nan
+</pre>
+<p>
+And in 10 days, computers might slow down:
+<a href="http://www.theregister.co.uk/2018/01/02/intel_cpu_design_flaw/">Kernel-memory-leaking Intel processor design flaw forces Linux, Windows redesign</a>.
+See also <a href="https://gruss.cc/files/kaiser.pdf">KASLR is Dead: Long Live KASLR</a>.
+</p>
+</body>
+</html>
