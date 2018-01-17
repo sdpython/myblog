@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Montage vidéo avec Python</title>
+<meta content="Python, moviepy" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<p>
+La programmation peut aussi servir à faire du montage vidéo.
+C'est du moins ce que j'ai essayé de construire en imaginant 
+l'atelier pour
+<a href="http://lesenfantscodaient.fr/sessions/session_2018_01_13.html">Lille - Devoxx4Kid - 13 janvier 2018</a>.
+Pour un néophite, le module <a href="https://zulko.github.io/moviepy/index.html">moviepy</a>
+n'est pas si évident que ça à manipuler. J'ai donc commencé à imaginer une interface
+avec uniquement des fonctions :
+<a href="http://lesenfantscodaient.fr//api/video.html">Vidéos et Sons</a>.
+J'y ai fait mon premier trucage vidéo :
+</p>
+
+<video width="400" height="auto" controls="">
+<source src="http://lesenfantscodaient.fr/sessions/images/mur.mp4" type="video/mp4" />
+Your browser does not support the video tag.
+</video>
+<p>
+Si on ajoute des modules tels que
+<a href="https://github.com/wkentaro/fcn">fcn</a> qui permet
+de séparer les personnages du fond d'une image, on peut commencer
+à fabriquer des vidéos assez trafiquées.
+</p>
+</body>
+</html>
+
