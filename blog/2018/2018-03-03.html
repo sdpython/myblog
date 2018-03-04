@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>onnx</title>
+<meta content="machine learning, onnx, deep learning" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<p>
+<a href="https://onnx.ai/">onnx</a> est un outil qui permet de convertir
+des modèles de deep learning venant de plusieurs librairies différentes
+dans un format commun. Cela d'une certaine façon de passer d'une librairie
+à l'autre mais aussi de pouvoir exécuter des prédictions sur un système
+différent de celui ayant servi à l'apprentissage. Ordinateur, tablettes, téléphones,
+objets connectés... C'est l'idée. Apprendre sur un ordinateur dédié à cette usage
+et optimisé pour cela et prédire sur une machine de moindre puissance mais
+plus adaptée. <a href="https://github.com/onnx/onnxmltools">onnxmltools</a>
+étend la liste des librairies à celle du machine learning classique, comme bien évidemment
+<a href="http://scikit-learn.org/stable/">scikit-learn</a>.
+Et il se trouve que j'y ai contribué.
+</p>
+<p>
+Cela m'a permis de redécouvrir le site de 
+<a href="https://chainer.org/">chainer</a> qui a récemment 
+évolué et casser quelques-uns de mes tests vérifiant mes supports de cours.
+Le design est similaire à celui de <a href="http://pytorch.org/">pytorch</a>
+mais la partie GPU a été placée dans un module séparé
+<a href="https://github.com/cupy/cupy">cupy</a> qui s'apparente
+à un <a href="http://www.numpy.org/">numpy</a>
+pour GPU. Je garde malgré tout une préférence pour le premier
+même si l'installation sous Windows est encore assez confuse et repose
+soit sur votre propre compilation soit sur celle disponible ici :
+<a href="https://anaconda.org/peterjc123/repo">anaconda/peterjc123</a>.
+<a href="https://cupy.chainer.org/">cupy</a> est disponible quant à lui sur le site
+<a href="https://www.lfd.uci.edu/~gohlke/pythonlibs/#cupy">Unofficial Windows Binaries for Python Extension Packages</a>.
+</p>
+</body>
+</html>
+
