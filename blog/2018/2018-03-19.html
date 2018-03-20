@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>ONNX : apprendre et prédire sur différentes machines</title>
+<meta content="machine learning, ONNX, runtime" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<p>
+J'écrivais sur <a href="http://www.xavierdupre.fr/blog/2018-03-03_nojs.html">onnx</a>
+il y a peu de temps.
+<a href="https://github.com/onnx/onnx">onnx</a>, 
+<a href="https://github.com/onnx/onnxmltools">onnxmltools</a>
+sont deux librairies qui permettent de convertir des modèles de deep learning
+mais aussi des modèles entraînés avec
+<a href="http://scikit-learn.org/stable/">scikit-learn</a>
+en un format unique. Lorsque cela est possible, cela permet d'utiliser avec une
+librairie un modèle appris avec une autre. C'est pratique si vous trouvez un modèle
+de deep learning appris avec <i>Caffe</i> et que vous souhaitez l'associé avec
+un autre appris avec <i>pytorch</i>.
+La suite n'a pas tardé, il est maintenant possible d'utilser ce format unique
+sur une machine qui dispose de l'algorithme de prédiction associé.
+Concrètement, on peut maintenant apprendre un modèle avec 
+<a href="http://scikit-learn.org/stable/">scikit-learn</a>
+et l'utiliser depuis un programme écrit en <i>C#</i> sans faire appel à <i>Python</i> :
+<a href="https://blogs.technet.microsoft.com/machinelearning/2018/03/13/how-three-lines-of-code-and-windows-machine-learning-empower-net-developers-to-run-ai-locally-on-windows-10-devices/">How Three Lines of Code and Windows Machine Learning Empower .NET Developers to Run AI Locally on Windows 10 Devices</a>.
+Quelques informations techniques supplémentaires :
+<a href="https://docs.microsoft.com/en-us/windows/uwp/machine-learning/overview#automatic-interface-code-generation">Windows Machine Learning overview</a>.
+</p>
+</body>
+</html>
+
