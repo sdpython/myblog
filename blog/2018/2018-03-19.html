@@ -30,6 +30,32 @@ et l'utiliser depuis un programme écrit en <i>C#</i> sans faire appel à <i>Pyt
 Quelques informations techniques supplémentaires :
 <a href="https://docs.microsoft.com/en-us/windows/uwp/machine-learning/overview#automatic-interface-code-generation">Windows Machine Learning overview</a>.
 </p>
+<p>
+On ne se pose plus la question de savoir s'il faut
+utiliser du deep learning mais plutôt comment le mettre
+en production. 
+<a href="https://www.tensorflow.org/serving/">TensorFlow-Serving</a>
+est une solution assez aboutie qui implémente certains besoins :
+prédiction temps réel, adaptation à un trafic élevé, 
+capables de conserver de vieilles versions de modèles,
+de le comparer, de faire de l'A/B testing.
+Certains ont partagé leur expérience 
+<a href="https://medium.com/zendesk-engineering/how-zendesk-serves-tensorflow-models-in-production-751ee22f0f4b">How Zendesk Serves TensorFlow Models in Production</a>/
+L'inconvénient est d'être plus ou moins lié à TensorFlow
+et personnellement je préfère 
+<a href="http://pytorch.org/">PyTorch</a>.
+La librairie est plus intuitive et séduit beaucoup les chercheurs :
+<a href="https://awni.github.io/pytorch-tensorflow/">PyTorch or TensorFlow?</a>.
+Elle est aussi rapide que TensorFlow voire un peu plus :
+<a href="https://github.com/ilkarman/DeepLearningFrameworks">Deep Learning Framework Examples</a>.
+Il reste le problème de la mise en production. C'est là que le projet <i>ONNX</i> intervient
+en proposant de séparer l'apprentissage et l'exploitation en production.
+D'un côté l'apprentissage avec une librairie, une de celle supportée par ONNX,
+de l'autre une autre librairie ou runtime spécifique au la machine
+qui fera tourner les prédictions. Le reste du site web est composée
+de briques classiques. C'est une approche plus modulaire est moins
+dépendante d'un composant en particulier.
+</p>
 </body>
 </html>
 
