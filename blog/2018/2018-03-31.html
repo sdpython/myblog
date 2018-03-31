@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Mettre un modèle de machine learning en production</title>
+<meta content="production, machine learning, python, c++" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+<p>
+J'écrivais un article il y a peu sur le sujet
+<a href="http://www.xavierdupre.fr/blog/2018-03-19_nojs.html">ONNX : apprendre et prédire sur différentes machines</a>
+où j'évoquais deux pistes pour mettre en production un modèle 
+de machine learning, essentiellement via une application web.
+Il n'y a pas d'ordre de préférence, certaines sont plus abouties que 
+d'autres. La première <a href="https://www.tensorflow.org/serving/">tensorflow-serving</a>
+propose tout clé en main mais elle repose sur l'utilisation de 
+<a href="https://www.tensorflow.org/">tensorflow</a>.
+La seconde <a href="https://github.com/onnx/onnx">ONNX</a>,
+<a href="https://github.com/onnx/onnxmltools">onnxmltools</a>,
+<a href="https://pypi.python.org/pypi/winmltools">winmltools</a>
+convertit un modèle dans un format commun. Il est ensuite exploité
+là où une librairie de prédiction (un runtime) existe
+(<a href="https://onnx.ai/supported-tools">liste des runtime disponibles</a>).
+Ce format commun n'est pas encore exploitable en C++ ou javascript
+mais ces options envisageable également. Tensorflow encore
+propose une façon d'exploiter les modèles en javascript directement
+avec <a href="https://js.tensorflow.org/">tensorflow.js</a>
+(voir <a href="Importing a Keras model into TensorFlow.js">https://js.tensorflow.org/tutorials/import-keras.html</a>).
+ONNX réfléchit à une extension pour le langage C/C++
+<a href="https://github.com/onnx/onnx/issues/418">ONNX in C/C++</a> 
+qu'il est possible de faire pour le moment pour un modèle 
+de deep learning en convertissant un modèle
+appris pour la librairie <a href="https://caffe2.ai/">caffe2</a> avec ONNX :
+<a href="https://discuss.pytorch.org/t/onnx-deploying-a-trained-model-in-a-c-project/9593">ONNX: deploying a trained model in a C++ project</a>.
+C'est une direction choisie par le module
+<a href="https://github.com/nok/sklearn-porter">sklearn-porter</a> qui propose des codes
+en Java, C++, Go, PhP, Ruby, Javascript
+pour certains des modèles implémenté par <a href="http://scikit-learn.org/stable/">scikit-learn</a>.
+Cela couvre nettement plus de modèles que ce que j'avais commencé à faire
+avec <a href="http://www.xavierdupre.fr/app/mlprodict/helpsphinx/index.html">mlprodict</a>.
+Il existe d'autres options comme <a href="https://github.com/SeldonIO/seldon-core">Seldon</a>,
+à moitié open source, à moitié tourné vers une proposition de services.
+</p>
+</body>
+</html>
+
+
+
