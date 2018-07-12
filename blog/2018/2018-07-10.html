@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>DataFrame for C&#135;</title>
+<meta content="C#, dataframe, ML.net" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Microsoft has recently released an open source machine learning library
+called <a href="https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet">ML.net</a>.
+As opposed to <a href="http://scikit-learn.org/stable/">scikit-learn</a>,
+there is no dataframe in C# and the data are described as an array of
+instances specific to the data the learning pipeline has to handle :
+<a href="https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet/get-started/windows">Get started with ML.NET in 10 minutes</a>.
+I was wondering if there could be a way to skip that part even if it means
+to be a little bit slower. I finally ended up by implementing something similar to 
+what a dataframe in Python with
+<a href="http://pandas.pydata.org/pandas-docs/stable/">pandas</a>
+which I called <a href="https://www.nuget.org/packages/Scikit.ML.DataFrame/">Scikit.ML.DataFrame</a>.
+I modified the inital example:
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<pre class="brush: csharp">
+ar iris = "iris.txt";
+
+// We read the text data and create a dataframe / dataview.
+var df = DataFrame.ReadCsv(iris, sep: '\t',
+                           dtypes: new DataKind?[] { DataKind.R4 });
+
+var importData = df.EPTextLoader(iris, sep: '\t', header: true);
+var learningPipeline = new GenericLearningPipeline();
+learningPipeline.Add(importData);
+learningPipeline.Add(new ColumnConcatenator("Features", "Sepal_length", "Sepal_width"));
+learningPipeline.Add(new StochasticDualCoordinateAscentClassifier());
+var predictor = learningPipeline.Train();
+var predictions = predictor.Predict(df);
+
+var dfout = DataFrame.ReadView(predictions);
+
+// And access one value...
+var v = dfout.iloc[0, 7];
+Console.WriteLine("{0}: {1}", vdf.Schema.GetColumnName(7), v.iloc[0, 7]);
+</pre>
+
+</body>
+</html>
+
+
+
