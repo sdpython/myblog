@@ -12,11 +12,6 @@ I(s) =  \frac{ X(s,t) }{ \sum_{t=10am}^{4pm} X(s,t) }
 
 """
 import shutil, os, glob, re, datetime, sys
-sys.path.append ("../pyquickhelper/src")
-sys.path.append ("../pyensae/src")
-sys.path.append ("../pyrsslocal/src")
-sys.path.append ("../ensae_teaching_cs/src")
-
 from pyquickhelper.loghelper import fLOG
 fLOG(OutputPrint = True)
 from pyquickhelper.filehelper import TransferFTP, explore_folder, synchronize_folder
