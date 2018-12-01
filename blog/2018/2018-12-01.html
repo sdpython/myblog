@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Choose a web framework</title>
+<meta content="python, web framework" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+I need to choose a framework to run a website.
+The first option which comes to many developpers
+is probably <a href="https://www.djangoproject.com/">django</a>.
+But it is slow and it is difficult to know where to start with it.
+I looked into <a href="https://aiohttp.readthedocs.io/en/stable/">aiohttp</a> or 
+<a href="https://sanic.readthedocs.io/en/latest/">sanic</a>.
+I was looking into something more efficient and I found some
+interesting options such as
+<a href="https://github.com/squeaky-pl/japronto">japronto</a> (uses C),
+<a href="https://github.com/vibora-io/vibora">vibora</a> (use Cython),
+<a href="https://github.com/encode/uvicorn">uvicorn</a>,
+<a href="https://github.com/encode/starlette">starlette</a>.
+There was some interesting benchmark here:
+<a href="https://www.techempower.com/benchmarks/#section=data-r17&amp;hw=cl&amp;test=json&amp;l=zii4u4-1&amp;f=18y68-0-4fti4g-0-4fti4g-0-0-4zsow-0">Web Framework Benchmarks</a>
+(source code is on
+<a href="https://github.com/TechEmpower/FrameworkBenchmarks">github/TechEmpower</a>.
+The example for <a href="https://github.com/encode/starlette-example">Starlette</a> is quite simple
+and easier to read than any big documentation.
+<a href="https://github.com/squeaky-pl/japronto">japronto</a> seems a bit risky
+even though it is very promising. One last <a href="https://github.com/jonashaag/bjoern">bjoern</a>.
+Another <a href="https://github.com/waghanza/http-benchmark">benchmark</a>.
+</p>
+
+</body>
+</html>
