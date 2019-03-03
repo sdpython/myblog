@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Sprint scikit-learn</title>
+<meta content="python, scikit-learn" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+J'ai vécu mon premier
+<a href="https://github.com/scikit-learn/scikit-learn/wiki/Upcoming-events">sprint scikit-learn</a>.
+J'avais posté au préalable une issue
+<a href="https://github.com/scikit-learn/scikit-learn/issues/13173">Faster PolynomialFeatures</a>
+à laquelle j'ai proposé une solution 
+<a href="https://github.com/scikit-learn/scikit-learn/pull/13290">Fixes #13173, implements faster polynomial features for dense matrices</a>.
+Je recommande l'aventure à tous ceux qui souhaitent comprendre
+comment on construit une librairie de machine learning qui plaise
+au plus grande nombre.
+J'y ai croisé des chercheurs venus de tous horizons,
+des contributeurs de <i>scikit-learn</i>, venus pour réfléchir
+sur les prochains grands défis de la librairie que je résumérais par :
+<i>Comment répondre à de nouveaux usages tout en conservant
+la simplicité du design actuel ?</i>.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Un des sujets abordés était la possibilité de nommer les
+variables (ou features) tout au long d'un pipeline.
+Aujourd'hui, un modèle de <i>scikit-learn</i> accepte
+une entrée (une matrice) et retourne une matrice <i>numpy</i>.
+On peut représenter un pipeline en image comme ceci
+<a href="http://www.xavierdupre.fr/app/mlinsights/helpsphinx/notebooks/visualize_pipeline.html#complex-pipeline">Column Transformer with Mixed Types</a>.
+La sémantique actuelle de <i>scikit--learn</i> ne permet
+pas de tout représenter dans un pipeline unique. C'est pourtant souhaitable car
+plus lisible et plus facile à maintenir.
+Il n'existe pas une solution unique pour ce problème et prend part
+à cette réflexion est enrichissant.
+</p>
+<p>
+<i>scikit-learn</i> a évolué pour gérer les multiples contributions et cela
+a abouti à un ensemble de pratiques qui permettent de gérer ce traffic
+sans diminuer la fiabilité de la librairie.
+Je vous encourage à lire quelques pull request qui illustrent ce dialogue
+permanent. Ma pull request n'a pas encore été acceptée, il est possible
+qu'elle soit rejetée. Elle propose un gain de performance sur un
+algorithme pas aussi populaire que d'autres tout en accroissant la complexité
+du code. J'ai passé quelques heures à exécuter des benchmarks pour comparer
+les différentes implémentations :
+<a href="http://www.xavierdupre.fr/app/_benchmarks/helpsphinx/scikit-learn/PR13290.html">Benchmark - PR13290 - Faster Polynomial Feature</a>.
+</p>
+<p>
+Cette pull request me renvoie également à la façon dont je gère les revues
+de code sur les projets dont je suis un des auteurs. Je ne prête pas beaucoup 
+d'attention au style. J'écris souvent <tt>for n in range...</tt> mais on préfère parfois 
+<tt>for n_obs in range...</tt>. Je lis tellement de code d'étudiants que je me rends 
+compte que le style m'importe peu. Il ne me gêne pas dans la compréhension. 
+Je fais surtout attention à l'efficacité de ce qui est écrit. Je fais donc rarement 
+de commentaires sur le styles et beaucoup plus sur l'algo. Le design et donc un peu 
+le style est pourtant ce qui a fait le succès de la librairie scikit-learn. Mes premières 
+revues de code datent de 2007 époque où je rejoignais Yahoo. J'avoue qu'elles furent 
+difficiles car moi qui avait toujours codé un peu seul ou entouré de codeurs 
+qui se souciaient peu du style, lire les commentaires sur les espaces en trop me 
+laissaient complètement dubitatif voire intrusif. Je ne m'étais jamais soucié du style 
+avant, un espace devant une parenthèse était aussi invisible que la neige à Bordeaux. 
+Le code marchait, je ne voyais que cela. Heureusement qu'il y a des outils pour corriger 
+le style sinon je ne coderais plus. Imaginez qu'un prof passe l'essentiel du temps à 
+commenter les fautes d'orthographes sans parler du contenu. Non pas que je ne sois 
+pas capable d'apprendre un style mais plutôt que pour des autodidactes en programmation 
+comme moi, le style parfait n'existe pas. J'ai vu de nombreux élèves se repérer dans des 
+milliers de ligne bien à eux avec une aisance incroyable. Certains développeurs refusent 
+de lire le code d'un autre s'il ne respecte pas un certain style. Je sais que je ne peux 
+pas bosser avec eux. Ils me rendent fous. C'est aussi un moyen de me ralentir, 
+il m'est arrivé d'écrire quelques milliers de lignes de code par semaine. Les relire prend 
+du temps. Je ne sais pas pourquoi je vous raconte tout ça. Chaque projet open source a 
+sa propre culture. Sur scikit-Learn, le style est géré automatiquement sur un test unitaire. 
+Il impose <i>pep8</i>. Pour les curieux, il ne gère que les modifications et pas l'ensemble 
+du code qui ne suit pas le même style partout. Les discussions ont donc trait au contenu, 
+sur l'efficacité et la meilleure façon d'exprimer une idée abstraite. Les décisions sont prises 
+de façons démocratiques et prennent en compte l'intérêt ou la difficulté pour tous les 
+utilisateurs y compris ceux qui font leurs premiers pas en <i>python</i>.
+</p>
+<p>
+Je vous laisse. J'ai une idée pour les arbres de décision.
+</p>
+
+</body>
+</html>
