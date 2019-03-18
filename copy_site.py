@@ -23,12 +23,15 @@ with warnings.catch_warnings():
     warnings.simplefilter('ignore', DeprecationWarning)
     import keyring
 
-loginame = keyring.get_password("ftp_list_modules", os.environ["COMPUTERNAME"] + "login")
-password = keyring.get_password("ftp_list_modules", os.environ["COMPUTERNAME"] + "password")  
-googleid = keyring.get_password("web", os.environ["COMPUTERNAME"] + "google")
 this = os.path.abspath(os.path.dirname(__file__))
-destination = os.path.normpath(os.path.join(this, "../../_data/site"))
-ftp_site = keyring.get_password("web", "_automation,user")
+destination = os.path.normpath(os.path.join(this, "build/site"))
+if not os.path.exists(os.makedirs(destination)):
+    os.makedirs(destination)
+
+googleid = keyring.get_password("web", "_automation,google")
+loginame = keyring.get_password("web", "_automation,user")
+password = keyring.get_password("web", "_automation,pwd")
+ftp_site = keyring.get_password("web", "_automation,ftp")
 
 
 def copy_site() :
@@ -45,68 +48,71 @@ def copy_site_cwd() :
     Publishes the blog.
     """    
     fLOG(OutputPrint = True)
-        
-    cpf = CopyFileForFtp("copyDates.txt", specificTrigger = True)
-    cpf.copy_file_ext (".", "html", "blog/documents", doFTP = False)
+
+    cpf = CopyFileForFtp("copyDates.txt", specificTrigger=True)
+    cpf.copy_file_ext(".", "html", "blog/documents", doFTP=False)
 
     # process the blogs
-    
-    modify_all_posts(exclude = lambda f : False)
+
+    modify_all_posts(exclude=lambda f: False)
     file_build_rss(this, os.path.join(destination, "blog", "xdbrss.xml"))
-    res = file_all_keywords(exclude = lambda f : False)
+    res = file_all_keywords(exclude=lambda f: False)
 
     # add blog files to upload
-    
-    cpf.copy_file_ext ("blog/giflatex", "gif", os.path.join(destination, "blog/giflatex"))
-    cpf.copy_file_ext ("blog/documents", "pdf", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext ("blog/documents", "gif", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext ("blog/documents", "xlsx", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext ("blog/documents", "xlsm", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext ("blog/documents", "png", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext ("blog/documents", "jpg", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext ("blog/documents", "html", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext ("blog/documents", "zip", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext ("blog/documents", "tsv", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext ("blog/documents", "js", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext ("blog/documents", "json", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext ("blog/documents", "css", os.path.join(destination, "blog/documents"))
+
+    cpf.copy_file_ext("blog/giflatex", "gif", os.path.join(destination, "blog/giflatex"))
+    cpf.copy_file_ext("blog/documents", "pdf", os.path.join(destination, "blog/documents"))
+    cpf.copy_file_ext("blog/documents", "gif", os.path.join(destination, "blog/documents"))
+    cpf.copy_file_ext("blog/documents", "xlsx", os.path.join(destination, "blog/documents"))
+    cpf.copy_file_ext("blog/documents", "xlsm", os.path.join(destination, "blog/documents"))
+    cpf.copy_file_ext("blog/documents", "png", os.path.join(destination, "blog/documents"))
+    cpf.copy_file_ext("blog/documents", "jpg", os.path.join(destination, "blog/documents"))
+    cpf.copy_file_ext("blog/documents", "html", os.path.join(destination, "blog/documents"))
+    cpf.copy_file_ext("blog/documents", "zip", os.path.join(destination, "blog/documents"))
+    cpf.copy_file_ext("blog/documents", "tsv", os.path.join(destination, "blog/documents"))
+    cpf.copy_file_ext("blog/documents", "js", os.path.join(destination, "blog/documents"))
+    cpf.copy_file_ext("blog/documents", "json", os.path.join(destination, "blog/documents"))
+    cpf.copy_file_ext("blog/documents", "css", os.path.join(destination, "blog/documents"))
     cpf.copy_file_contains ("blog/documents", "study", os.path.join(destination, "blog/documents"))
 
     # process keywords
-    
-    add = build_process_all_pages(res, frequence_keywords = 2, siteFolder=os.path.join(destination, "blog"))
-    
-    cpf.copy_file_contains ("blog/notebooks", ".html", os.path.join(destination, "blog/notebooks"), doFTP = False)
-    cpf.copy_file_contains ("blog/notebooks", ".ipynb", os.path.join(destination, "blog/notebooks"), doFTP = False)
-        
+
+    add = build_process_all_pages(res, frequence_keywords=2,
+                                  siteFolder=os.path.join(destination, "blog"))
+
+    cpf.copy_file_contains("blog/notebooks", ".html", os.path.join(destination, "blog/notebooks"),
+                           doFTP=False)
+    cpf.copy_file_contains("blog/notebooks", ".ipynb", os.path.join(destination, "blog/notebooks"),
+                           doFTP=False)
+
     # update copyDates and copiedFiles
 
-    for file in add :
+    for file in add:
         if "copy_site." not in file:
-            cpf.add_if_modified (file)
-            
+            cpf.add_if_modified(file)
+
     nbcopyfile = 0
-    for _,reason in sorted(cpf.modifiedFile) : 
-        if not "copy_site" in _ :
+    for _, reason in sorted(cpf.modifiedFile) : 
+        if not "copy_site" in _:
             nbcopyfile += 1
-            print ("*",_, reason)
+            print("*",_, reason)
     print("number of files to copy:", nbcopyfile)
-            
+
     # do not update this
     forbid = []
 
     if len(cpf.modifiedFile) > 0 :
-        
+
         # checking that username is not in the file
         nbch = 0
         usernames = [os.environ["USERNAME"].lower()]
-        for file, reason in sorted(cpf.modifiedFile) :
+        for file, reason in sorted(cpf.modifiedFile):
             ext = os.path.splitext(file)[-1] 
             
-            if ext in [".log", ".doctree"] :
+            if ext in [".log", ".doctree"]:
                 print("skipping ", file)
                 continue
-            
+
             if os.stat(file).st_size < 2**25 and ext.lower() not in \
                     [".mp3", ".zip", ".gif", ".dll", ".exe", ".msi", 
                      ".eot", ".ttf", ".woff", ".mp4",
@@ -156,16 +162,16 @@ def copy_site_cwd() :
                             if substr in contentu :
                                 contentu = contentu.replace(substr,reps)
                                 modif += 1
-                    
+
                     content = contentu.lower()
                     if modif > 0 :
                         if encoding is None :
-                            with open(file, "w") as f : 
+                            with open(file, "w") as f:
                                 f.write(contentu)
                         else :
-                            with open(file, "w", encoding=encoding) as f : 
+                            with open(file, "w", encoding=encoding) as f:
                                 f.write(contentu)
-                        
+
                     nbch += 1
                     if username != "xavie" and username in content:
                         print("-- alias {0} was found in [lower] {1}".format(username, os.path.abspath(file)))
@@ -177,16 +183,16 @@ def copy_site_cwd() :
                             if username in l :
                                 print("    {0} was found in line {1} : {2}".format(username, i,lu.strip("\r\n")))
                                 nbf += 1
-                                if nbf > 2 : 
+                                if nbf > 2:
                                     print("    ...")
                                     break
                         forbid.append(file)
-                        
+
         print("number of checked files:", nbch)
-        
+
         issues = []
         processed = []
-        
+
         print("loginame", loginame)
         print("password", password)
         ftp = TransferFTP(ftp_site, loginame, password, fLOG = print)  
@@ -199,12 +205,12 @@ def copy_site_cwd() :
                 return 0
             else :
                 return os.stat(name).st_size
-        
+
         allfiles = [(sizef(file),file, reason) for file, reason in cpf.modifiedFile]
         allfiles.sort()
-        
+
         for siz, file, reason in allfiles:
-            
+
             skip = False
             for _ in forbid :
                 if _ in file :
@@ -213,48 +219,48 @@ def copy_site_cwd() :
                     break
             if skip :
                 continue
-            
-            if "copy_site" in file :
+
+            if "copy_site" in file:
                 skip = True
-            
+
             if skip or os.path.isdir(file):
                 fLOG(" ** skipping (2)", file)
                 continue 
-                
+
             temp = os.path.split(file)
             d = temp[0]
             if file.startswith(destination):
                 d = temp[0].replace(destination, "")
             path = "www/htdocs"
-            
+
             if len(d) > 0 :
                 path += "/" + d.replace("\\", "/")
-                
+
             ftp_dest = os.path.split(file)[-1]
             r = ftp.transfer (file, path, ftp_dest)
             print("[upload]", file, "to", "/".join([path, ftp_dest]), " -- ", reason)
-                
-            if r : 
+
+            if r: 
                 processed.append(file)
                 cpf.update_copied_file(file)
                 cpf.save_dates(checkfile=processed)
-                
+
             nbproc += 1
-            if nbproc % 20 == 0 or siz > 2**25 :
+            if nbproc % 20 == 0 or siz > 2**25:
                 fLOG("******* processed", nbproc, "/", len(cpf.modifiedFile), " size", siz)
-        
+
         try :
             ftp.close()
         except :
             print ("unable to close FTP connection using ftp.close")
-            
+
         for file in issues :
             print ("ISSUES",file)
-            
+
     html = os.listdir(".")
     for f in html :
         if ".html" in f : os.remove(f)
-        
+
 if __name__ == "__main__":
     copy_site()
     
