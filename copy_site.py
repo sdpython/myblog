@@ -25,13 +25,21 @@ with warnings.catch_warnings():
 
 this = os.path.abspath(os.path.dirname(__file__))
 destination = os.path.normpath(os.path.join(this, "build/site"))
-if not os.path.exists(os.makedirs(destination)):
+if not os.path.exists(destination):
     os.makedirs(destination)
+destination_blog = os.path.normpath(os.path.join(this, "build/site/blog"))
+if not os.path.exists(destination_blog):
+    os.makedirs(destination_blog)
 
 googleid = keyring.get_password("web", "_automation,google")
 loginame = keyring.get_password("web", "_automation,user")
 password = keyring.get_password("web", "_automation,pwd")
 ftp_site = keyring.get_password("web", "_automation,ftp")
+
+hidden = [loginame, password, ftp_site, googleid, ]
+for i, hid in enumerate(hidden):
+    if hid is None:
+        raise ValueError("One value is None: {}".format(i))
 
 
 def copy_site() :
@@ -42,6 +50,7 @@ def copy_site() :
     os.chdir(p)
     copy_site_cwd()
     os.chdir(cwd)
+
 
 def copy_site_cwd() :
     """
@@ -74,6 +83,7 @@ def copy_site_cwd() :
     cpf.copy_file_ext("blog/documents", "json", os.path.join(destination, "blog/documents"))
     cpf.copy_file_ext("blog/documents", "css", os.path.join(destination, "blog/documents"))
     cpf.copy_file_contains ("blog/documents", "study", os.path.join(destination, "blog/documents"))
+    cpf.copy_file_ext("blog/javascript", "gif", os.path.join(destination, "blog/javascript"))
 
     # process keywords
 
@@ -147,7 +157,7 @@ def copy_site_cwd() :
                     # ####################################
                     modif = 0
                     for username in usernames :
-                        for substr,reps in [("c-3a-5c" + username,              "c-3a-5cxxx"),
+                        for substr, reps in [("c-3a-5c" + username,            "c-3a-5cxxx"),
                                     (r"c:\%s\__home_\_data" % username,         "root"),
                                     (r"C:\%s\__home_\_data" % username,         "root"),
                                     (r"C:\Users\%s\AppData\Local" % username,   "uroot"),
@@ -158,9 +168,9 @@ def copy_site_cwd() :
                                     ("username Directory Reference",            "Directory Reference"),
                                     #(username,                             "XXXX"),
                                     ("__GOOGLEID__",                            googleid)
-                                    ] :
-                            if substr in contentu :
-                                contentu = contentu.replace(substr,reps)
+                                    ]:
+                            if substr in contentu and reps is not None:
+                                contentu = contentu.replace(substr, reps)
                                 modif += 1
 
                     content = contentu.lower()
