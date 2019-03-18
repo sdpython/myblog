@@ -115,7 +115,8 @@ def copy_site_cwd() :
 
         # checking that username is not in the file
         nbch = 0
-        usernames = [os.environ["USERNAME"].lower()]
+        usernames = [os.environ.get("USERNAME", "unknown-user").lower(),
+                     os.environ.get("USER", "unknown-user").lower()]
         for file, reason in sorted(cpf.modifiedFile):
             ext = os.path.splitext(file)[-1] 
             
