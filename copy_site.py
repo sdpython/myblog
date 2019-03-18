@@ -28,8 +28,7 @@ password = keyring.get_password("ftp_list_modules", os.environ["COMPUTERNAME"] +
 googleid = keyring.get_password("web", os.environ["COMPUTERNAME"] + "google")
 this = os.path.abspath(os.path.dirname(__file__))
 destination = os.path.normpath(os.path.join(this, "../../_data/site"))
-ftp_site = keyring.get_password("web", os.environ["COMPUTERNAME"] + "ftp")
-
+ftp_site = keyring.get_password("web", "_automation,user")
 
 
 def copy_site() :
