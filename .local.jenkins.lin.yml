@@ -13,4 +13,4 @@ install:
   - $PYINT -c "from pip._internal import main;main([\"freeze\"])"
 
 script:
-  - { CMD: "$PYINT -u copy_site.py", NAME: "BLOG" }
+  - { CMD: "$PYINT -u copy_site.py", NAME: "BLOG", CLEAN: "0" }
