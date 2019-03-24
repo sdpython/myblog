@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Ecran blanc pour les notebooks, panique à bord</title>
+<meta content="python, notebook" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+J'ai passé la nuit à coder un truc et que je lorsque je veux montrer que
+le code est plus rapide, j'ouvre un server de notebook pour
+me retrouver avec un écran blanc. Mon premier réflexe est 
+d'essayer pas mal de navigateur pour avoir toujours
+le même résultat. Un écran blanc. Merde, merde, merde !
+Le bug pour lequel vous n'aimez pas la programmation.
+Mon premier réflexe fut de réinstaller mon python
+en intégralité, comme sur windows, quand ça merde,
+on reboote.
+</p>
+<p>
+Evidemment, après une heure d'installation, toujours la même chose.
+Il faut deviner le package qui ne tourne pas rond. Quelques recherches
+plus loin, je tombe sur cette issue
+<a href="https://github.com/ContinuumIO/anaconda-issues/issues/10735">while launching jupyter notebook</a>
+ou celle-ci
+<a href="https://github.com/jupyter/notebook/issues/4469">Jupyter Notebook - Blank Screen - after pip install jupyter</a>.
+C'est le genre de problème qui n'apparaissait que sous Windows,
+allez savoir pourquoi. Bref, la solution proposée par le premier
+a marché. L'erreur survient quand on installe le module
+<tt>notebook>=5.7.6</tt>.
+</p>
+<p>
+J'ai réinstallé mon python pour rien. Merde.
+</p>
+
+</body>
+</html>
