@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Determines close leaves in a decision tree</title>
+<meta content="python, scikit-learn, machne learning" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+That's a problem I had in mind yesterday. When scikit-learn builds a decision tree,
+we might want to say which classes share a border with another one, which I translated
+by which couples of leaves of a decision tree share a border.
+The final node determines which feature to use to split between two leaves and two classes.
+What can we say about two leaves far away in the tree structure? Do they share a border?
+We could use the training data to build a kind of Voronoï diagram for points and group
+cells which belong to the same leave. What if we do not have the training data?
+</p>
+<p>
+My answer is implemented somewhere on my website.
+This question was something I was looking into to imagine a
+way to build a continuous piecewise linear regression with at least two features...
+which is impossible but still finding close leaves seemed a good
+algorithmic problem.
+</p>
+
+</body>
+</html>
