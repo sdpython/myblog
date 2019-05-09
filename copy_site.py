@@ -69,6 +69,7 @@ def copy_site_cwd() :
 
     # add blog files to upload
 
+    cpf.copy_file_ext("blog", "xml", os.path.join(destination, "blog"))
     cpf.copy_file_ext("blog/giflatex", "gif", os.path.join(destination, "blog/giflatex"))
     cpf.copy_file_ext("blog/documents", "pdf", os.path.join(destination, "blog/documents"))
     cpf.copy_file_ext("blog/documents", "gif", os.path.join(destination, "blog/documents"))
