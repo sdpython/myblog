@@ -39,7 +39,8 @@ ftp_site = keyring.get_password("web", "_automation,ftp")
 hidden = [loginame, password, ftp_site, googleid, ]
 for i, hid in enumerate(hidden):
     if hid is None:
-        raise ValueError("One value is None: {}".format(i))
+        #raise ValueError("One value is None: {}".format(i))
+        pass
 
 
 def copy_site() :
@@ -59,7 +60,7 @@ def copy_site_cwd() :
     fLOG(OutputPrint = True)
 
     cpf = CopyFileForFtp("copyDates.txt", specificTrigger=True)
-    cpf.copy_file_ext(".", "html", "blog/documents", doFTP=False)
+    # cpf.copy_file_ext("blog/documents", "html", "blog/documents", doFTP=False)
 
     # process the blogs
 
@@ -69,11 +70,13 @@ def copy_site_cwd() :
 
     # add blog files to upload
 
-    cpf.copy_file_ext("blog", "xml", os.path.join(destination, "blog"))
+    # cpf.copy_file_ext("build/site/blogagg", "xml", os.path.join(destination, "blogagg"))
+    # cpf.copy_file_ext("build/site/blogagg", "html", os.path.join(destination, "blogagg"))
+    # cpf.copy_file_ext("build/site/blog/blog", "xml", os.path.join(destination, "blog"))
     cpf.copy_file_ext("blog/giflatex", "gif", os.path.join(destination, "blog/giflatex"))
     cpf.copy_file_ext("blog/documents", "pdf", os.path.join(destination, "blog/documents"))
     cpf.copy_file_ext("blog/documents", "gif", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext("blog/documents", "xlsx", os.path.join(destination, "blog/documents"))
+    # cpf.copy_file_ext("blog/documents", "xlsx", os.path.join(destination, "blog/documents"))
     cpf.copy_file_ext("blog/documents", "xlsm", os.path.join(destination, "blog/documents"))
     cpf.copy_file_ext("blog/documents", "png", os.path.join(destination, "blog/documents"))
     cpf.copy_file_ext("blog/documents", "jpg", os.path.join(destination, "blog/documents"))
@@ -91,9 +94,11 @@ def copy_site_cwd() :
     add = build_process_all_pages(res, frequence_keywords=2,
                                   siteFolder=os.path.join(destination, "blog"))
 
-    cpf.copy_file_contains("blog/notebooks", ".html", os.path.join(destination, "blog/notebooks"),
+    cpf.copy_file_contains("build/site/blog/blog/notebooks", ".html",
+                           os.path.join(destination, "blog/notebooks"),
                            doFTP=False)
-    cpf.copy_file_contains("blog/notebooks", ".ipynb", os.path.join(destination, "blog/notebooks"),
+    cpf.copy_file_contains("build/site/blog/blog/notebooks", ".ipynb",
+                           os.path.join(destination, "blog/notebooks"),
                            doFTP=False)
 
     # update copyDates and copiedFiles
@@ -273,6 +278,8 @@ def copy_site_cwd() :
     for f in html :
         if ".html" in f : os.remove(f)
 
+
 if __name__ == "__main__":
+    from aggregation_blog import collect_blogs
+    collect_blogs(fLOG=fLOG)
     copy_site()
-    
