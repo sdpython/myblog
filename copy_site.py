@@ -83,7 +83,7 @@ def copy_site_cwd() :
     cpf.copy_file_ext("blog/documents", "js", os.path.join(destination, "blog/documents"))
     cpf.copy_file_ext("blog/documents", "json", os.path.join(destination, "blog/documents"))
     cpf.copy_file_ext("blog/documents", "css", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_contains ("blog/documents", "study", os.path.join(destination, "blog/documents"))
+    cpf.copy_file_contains("blog/documents", "study", os.path.join(destination, "blog/documents"))
     cpf.copy_file_ext("blog/javascript", "gif", os.path.join(destination, "blog/javascript"))
 
     # process keywords
@@ -106,7 +106,7 @@ def copy_site_cwd() :
     for _, reason in sorted(cpf.modifiedFile) : 
         if not "copy_site" in _:
             nbcopyfile += 1
-            print("*",_, reason)
+            print("*", _, reason)
     print("number of files to copy:", nbcopyfile)
 
     # do not update this
@@ -185,15 +185,15 @@ def copy_site_cwd() :
                                 f.write(contentu)
 
                     nbch += 1
-                    if username != "xavie" and username in content:
+                    if username != "xavie" and username != 'jenkins' and username in content:
                         print("-- alias {0} was found in [lower] {1}".format(username, os.path.abspath(file)))
                         lines = content.split("\n")
                         linesuu = contentu.split("\n")
                         nbf = 0
-                        for i,l__ in enumerate(zip(lines,linesuu)):
-                            l,lu = l__
+                        for i, l__ in enumerate(zip(lines, linesuu)):
+                            l, lu = l__
                             if username in l :
-                                print("    {0} was found in line {1} : {2}".format(username, i,lu.strip("\r\n")))
+                                print("    {0} was found in line {1} : {2}".format(username, i, lu.strip("\r\n")))
                                 nbf += 1
                                 if nbf > 2:
                                     print("    ...")
@@ -207,18 +207,18 @@ def copy_site_cwd() :
 
         print("loginame", loginame)
         print("password", password)
-        ftp = TransferFTP(ftp_site, loginame, password, fLOG = print)  
+        ftp = TransferFTP(ftp_site, loginame, password, fLOG=print)  
         nbproc = 0
 
         # on trie par taille pour faire les plus gros en dernier
         def sizef(name):
             ext = os.path.splitext(name)[-1]
-            if ext in [".html", ".js", ".png", ".css", ".ico", ".py", ".ipynb"] :
+            if ext in [".html", ".js", ".png", ".css", ".ico", ".py", ".ipynb", ".xml"] :
                 return 0
             else :
                 return os.stat(name).st_size
 
-        allfiles = [(sizef(file),file, reason) for file, reason in cpf.modifiedFile]
+        allfiles = [(sizef(file), file, reason) for file, reason in cpf.modifiedFile]
         allfiles.sort()
 
         for siz, file, reason in allfiles:
