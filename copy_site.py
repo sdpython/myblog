@@ -73,7 +73,8 @@ def copy_site_cwd() :
     for ext in ['xls', 'pdf', 'xlsm', 'png', 'jpg', '7z', 'tsv', 'js', 'json', 'txt', 'gif']:
         print("blog/documents/*.%s" % ext)
         cpf.copy_file_ext("blog/documents", ext, os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext("blog/javascript", "gif", os.path.join(destination, "blog/javascript"))
+    cpf.copy_file_ext("blog/javascript", "js", os.path.join(destination, "blog/javascript"))
+    cpf.copy_file_ext("blog/javascript", "css", os.path.join(destination, "blog/javascript"))
 
     # process keywords
 
