@@ -69,24 +69,10 @@ def copy_site_cwd() :
     res = file_all_keywords(exclude=lambda f: False)
 
     # add blog files to upload
-
-    # cpf.copy_file_ext("build/site/blogagg", "xml", os.path.join(destination, "blogagg"))
-    # cpf.copy_file_ext("build/site/blogagg", "html", os.path.join(destination, "blogagg"))
-    # cpf.copy_file_ext("build/site/blog/blog", "xml", os.path.join(destination, "blog"))
     cpf.copy_file_ext("blog/giflatex", "gif", os.path.join(destination, "blog/giflatex"))
-    cpf.copy_file_ext("blog/documents", "pdf", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext("blog/documents", "gif", os.path.join(destination, "blog/documents"))
-    # cpf.copy_file_ext("blog/documents", "xlsx", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext("blog/documents", "xlsm", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext("blog/documents", "png", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext("blog/documents", "jpg", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext("blog/documents", "html", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext("blog/documents", "zip", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext("blog/documents", "tsv", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext("blog/documents", "js", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext("blog/documents", "json", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext("blog/documents", "css", os.path.join(destination, "blog/documents"))
-    cpf.copy_file_contains("blog/documents", "study", os.path.join(destination, "blog/documents"))
+    for ext in ['xls', 'pdf', 'xlsm', 'png', 'jpg', 'zip', 'tsv', 'js', 'json', 'txt', 'gif']:
+        print("blog/documents/*.%s" % ext)
+        cpf.copy_file_ext("blog/documents", ext, os.path.join(destination, "blog/documents"))
     cpf.copy_file_ext("blog/javascript", "gif", os.path.join(destination, "blog/javascript"))
 
     # process keywords
