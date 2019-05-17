@@ -70,7 +70,7 @@ def copy_site_cwd() :
 
     # add blog files to upload
     cpf.copy_file_ext("blog/giflatex", "gif", os.path.join(destination, "blog/giflatex"))
-    for ext in ['xls', 'pdf', 'xlsm', 'png', 'jpg', 'zip', 'tsv', 'js', 'json', 'txt', 'gif']:
+    for ext in ['xls', 'pdf', 'xlsm', 'png', 'jpg', '7z', 'tsv', 'js', 'json', 'txt', 'gif']:
         print("blog/documents/*.%s" % ext)
         cpf.copy_file_ext("blog/documents", ext, os.path.join(destination, "blog/documents"))
     cpf.copy_file_ext("blog/javascript", "gif", os.path.join(destination, "blog/javascript"))
