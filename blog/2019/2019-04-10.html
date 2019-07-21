@@ -10,6 +10,8 @@
 </head>
 <body>
 
+<!-- SUMMARY BEGINS -->
+
 <p>
 A linear regression is a solved problem: it finds <i>B</i> which minimizes
 the problem <i>|y - (A + XB)|</i>. The solution is known:
@@ -17,6 +19,20 @@ the problem <i>|y - (A + XB)|</i>. The solution is known:
 <a href="https://en.wikipedia.org/wiki/Ordinary_least_squares#Matrix/vector_formulation">Ordinary least squares</a>).
 Can we compute the solution without any matrix inverse, only with matrix products and additions?
 My solution is somewhere on my github account...
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+For curious people, the implementation is in function
+<tt><a href="https://github.com/sdpython/mlstatpy/blob/master/src/mlstatpy/ml/matrices.py#L86">
+linear_regression</a></tt> and some proof written in French in a chapter
+related to piecewise linear regression:
+<a href="http://www.xavierdupre.fr/app/mlstatpy/helpsphinx/c_ml/piecewise.html#synthese-mathematique">
+Régression linéaire par morceaux</a>. It could be much faster with
+a C++ version which I did not have time to do.
+It is much slower than <i>numpy</i>.
 </p>
 
 </body>
