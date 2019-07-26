@@ -1,0 +1,14 @@
+
+language: python
+
+python:
+  - { PATH: "{{replace(Python37, '\\', '\\\\')}}", VERSION: 3.7, DIST: std }
+  
+virtualenv:
+  - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
+  
+install:
+  - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper pyensae pymmails pymyinstall pyrsslocal ensae_teaching_cs --extra-index-url=https://pypi.python.org/simple/
+
+script:
+  - { CMD: "python -u copy_site.py", NAME: "BLOG", CLEAN: "0" }
