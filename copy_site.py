@@ -32,14 +32,26 @@ if not os.path.exists(destination_blog):
     os.makedirs(destination_blog)
 
 googleid = keyring.get_password("web", "_automation,google")
-loginame = keyring.get_password("web", "_automation,user")
-password = keyring.get_password("web", "_automation,pwd")
-ftp_site = keyring.get_password("web", "_automation,ftp")
+
+
+if "1" is sys.argv:
+    loginame = keyring.get_password("web", "_automation,user")
+    password = keyring.get_password("web", "_automation,pwd")
+    ftp_site = keyring.get_password("web", "_automation,ftp")
+    ftps = 'FTP'
+elif "2" is sys.argv:
+    loginame = keyring.get_password("web", "_automation2,user")
+    password = keyring.get_password("web", "_automation2,pwd")
+    ftp_site = keyring.get_password("web", "_automation2,ftp")
+    ftps = 'SFTP'
+else:
+    raise ValueError("Missing options in {}.".format(sys.argv))
+
 
 hidden = [loginame, password, ftp_site, googleid, ]
 for i, hid in enumerate(hidden):
     if hid is None:
-        #raise ValueError("One value is None: {}".format(i))
+        # raise ValueError("One value is None: {}".format(i))
         pass
 
 
@@ -178,14 +190,16 @@ def copy_site_cwd() :
 
                     nbch += 1
                     if username != "xavie" and username != 'jenkins' and username in content:
-                        print("-- alias {0} was found in [lower] {1}".format(username, os.path.abspath(file)))
+                        print("-- alias {0} was found in [lower] {1}".format(
+                            username, os.path.abspath(file)))
                         lines = content.split("\n")
                         linesuu = contentu.split("\n")
                         nbf = 0
                         for i, l__ in enumerate(zip(lines, linesuu)):
                             l, lu = l__
                             if username in l :
-                                print("    {0} was found in line {1} : {2}".format(username, i, lu.strip("\r\n")))
+                                print("    {0} was found in line {1} : {2}".format(
+                                    username, i, lu.strip("\r\n")))
                                 nbf += 1
                                 if nbf > 2:
                                     print("    ...")
@@ -199,7 +213,7 @@ def copy_site_cwd() :
 
         print("loginame", loginame)
         print("password", password)
-        ftp = TransferFTP(ftp_site, loginame, password, fLOG=print)  
+        ftp = TransferFTP(ftp_site, loginame, password, fLOG=print, sftp=sftp)  
         nbproc = 0
 
         # on trie par taille pour faire les plus gros en dernier
