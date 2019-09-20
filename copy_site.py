@@ -89,6 +89,8 @@ def copy_site_cwd() :
         cpf.copy_file_ext("blog/documents", ext, os.path.join(destination, "blog/documents"))
     cpf.copy_file_ext("blog/javascript", "js", os.path.join(destination, "blog/javascript"))
     cpf.copy_file_ext("blog/javascript", "css", os.path.join(destination, "blog/javascript"))
+    cpf.copy_file_ext("blog/", "css", os.path.join(destination, "blog/"))
+    cpf.copy_file_ext("blog/", "js", os.path.join(destination, "blog/"))
 
     # process keywords
 
