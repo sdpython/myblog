@@ -34,12 +34,12 @@ if not os.path.exists(destination_blog):
 googleid = keyring.get_password("web", "_automation,google")
 
 
-if "1" is sys.argv:
+if "1" in sys.argv:
     loginame = keyring.get_password("web", "_automation,user")
     password = keyring.get_password("web", "_automation,pwd")
     ftp_site = keyring.get_password("web", "_automation,ftp")
     ftps = 'FTP'
-elif "2" is sys.argv:
+elif "2" in sys.argv:
     loginame = keyring.get_password("web", "_automation2,user")
     password = keyring.get_password("web", "_automation2,pwd")
     ftp_site = keyring.get_password("web", "_automation2,ftp")
