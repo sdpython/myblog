@@ -39,11 +39,13 @@ if "1" in sys.argv:
     password = keyring.get_password("web", "_automation,pwd")
     ftp_site = keyring.get_password("web", "_automation,ftp")
     ftps = 'FTP'
+    path0 = "www/htdocs"
 elif "2" in sys.argv:
     loginame = keyring.get_password("web", "_automation2,user")
     password = keyring.get_password("web", "_automation2,pwd")
     ftp_site = keyring.get_password("web", "_automation2,ftp")
     ftps = 'SFTP'
+    path0 = "/home/ftpuser/ftp/web"
 else:
     raise ValueError("Missing options in {}.".format(sys.argv))
 
@@ -249,7 +251,7 @@ def copy_site_cwd() :
             d = temp[0]
             if file.startswith(destination):
                 d = temp[0].replace(destination, "")
-            path = "www/htdocs"
+            path = path0
 
             if len(d) > 0 :
                 path += "/" + d.replace("\\", "/")
@@ -270,10 +272,10 @@ def copy_site_cwd() :
         try :
             ftp.close()
         except :
-            print ("unable to close FTP connection using ftp.close")
+            print("unable to close FTP connection using ftp.close")
 
         for file in issues :
-            print ("ISSUES",file)
+            print("ISSUES",file)
 
     html = os.listdir(".")
     for f in html :
