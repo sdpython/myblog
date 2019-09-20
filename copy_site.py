@@ -93,10 +93,10 @@ def copy_site_cwd() :
     add = build_process_all_pages(res, frequence_keywords=2,
                                   siteFolder=os.path.join(destination, "blog"))
 
-    cpf.copy_file_contains("build/site/blog/notebooks", ".html",
+    cpf.copy_file_contains("blog/notebooks", ".html",
                            os.path.join(destination, "blog/notebooks"),
                            doFTP=False)
-    cpf.copy_file_contains("build/site/blog/notebooks", ".ipynb",
+    cpf.copy_file_contains("blog/notebooks", ".ipynb",
                            os.path.join(destination, "blog/notebooks"),
                            doFTP=False)
 
