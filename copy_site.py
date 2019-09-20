@@ -213,7 +213,7 @@ def copy_site_cwd() :
 
         print("loginame", loginame)
         print("password", password)
-        ftp = TransferFTP(ftp_site, loginame, password, fLOG=print, sftp=sftp)  
+        ftp = TransferFTP(ftp_site, loginame, password, fLOG=print, ftps=ftps)  
         nbproc = 0
 
         # on trie par taille pour faire les plus gros en dernier
