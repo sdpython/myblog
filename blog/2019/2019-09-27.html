@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Petit plaisir de professeur</title>
+<meta content="python, programmation, enseignement" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+C'est un petit plaisir de professeur : arriver en cours et exposer
+ce qu'on sait déjà mais sans vraiment l'avoir vérifié de ses propres mains :
+la <a href="régression Lasso permet de sélectionner les variables">
+https://fr.wikipedia.org/wiki/Lasso_(statistiques)</a>.
+Et puis finalement, le jour où on le dit, je n'étais pas plus convaincu
+que les étudiants en face de moi. Pourquoi ça marche avec cette norme
+et pas la norme L2 ? Bref, devant le silence d'un cours 20 minutes avant la pause
+déjeuner, après 2h30 de cours magistral, je me suis pris d'envie de
+calculer un gradient. Et là, en voyant la formule, l'intuition, je comprends
+qu'il y a une impossibilité car le gradient ne s'annule pas autour d'un point
+en particulier contrairement à la régression L2. En gros, si le gradient est mal
+foutu, il ne peut pas exister de solution autour. J'ai un peu de mal
+à partager cette intuition et j'ai laissés les étudiants avec un début
+de phrase pas faux mais pas suffisamment complet pour être tout-à-fait
+vrai. Je me suis dit qu'il fallait compléter la preuve :
+<a href="http://www.xavierdupre.fr/app/mlstatpy/helpsphinx/c_ml/l1l2.html">
+Normalisation des coefficients</a>. La preuve n'est pas valable
+dans tous les cas mais l'idée suffit juste d'être poussée un peu plus loin.
+L'idée est développée un peu plus dans
+<a href="https://freakonometrics.hypotheses.org/58240">
+Regularization and Penalized Regression</a> (Arthur Charpentier).
+</p>
+
+</body>
+</html>
