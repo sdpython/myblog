@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Quelques essais de benchmarks</title>
+<meta content="python, scikit-learn, benchmarks" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<p>
+J'ai découvert ou plutôt on m'a fait découvrir le benchmark officiel de <i>scikit-learn</i>
+<a href="https://github.com/jeremiedbb/scikit-learn_benchmarks">scikit-learn_benchmarks</a>
+que je fais tourner dans une version augmentée 
+<a href="https://github.com/sdpython/scikit-learn_benchmarks">
+scikit-learn_benchmarks + ONNX</a> et dont je publie les résultats
+<a href="http://www.xavierdupre.fr/app/_benchmarks/helpsphinx/sklbench_results/index.html">
+scikit-learn_benchmarks + ONNX rendered</a>. Il a quelques sautes d'humeur car je fais
+tourner plein de choses sur la même machine.
+</p>
+<p>
+Ensuite, je me suis amusé à créer un benchmark automatique pour tous les
+modèles de <i>scikit-learn</i> toujours en utilisant le module
+<a href="https://github.com/airspeed-velocity/asv/">asv</a>.
+Le premier <a href="http://www.xavierdupre.fr/app/mlprodict_bench/helpsphinx/index.html">
+scikit-learn + asv + one model of each type</a> teste un patron pour chaque type de modèle.
+Le code est
+<a href="https://github.com/sdpython/mlprodict/tree/master/mlprodict/asv_benchmark">
+mlprodict/mlprodict/asv_benchmark</a> et se lance avec 
+<a href="https://github.com/sdpython/mlprodict/blob/master/bin/run_asv.sh">run_asv.sh</a>.
+Le second reprend ce patron et l'applique à deux modèles linéaires
+<a href="http://www.xavierdupre.fr/app/mlprodict_bench2/helpsphinx/index.html">
+scikit-learn + asv + linear models</a>. Le code de ce benchmark est
+<a href="https://github.com/sdpython/mlprodict/tree/master/benches">mlprodict/benches</a>
+et le script qui permet de le lancer :
+<a href="https://github.com/sdpython/mlprodict/blob/master/bin/run_asv2.sh">run_asv2.sh</a>.
+Le dernier étend cet essai à tous les modèles de <i>scikit-learn</i> (dernière version).
+<a href="https://github.com/sdpython/asv-sklearn">
+scikit-learn predict + ONNX</a> et dont je publie les résultats
+<a href="http://www.xavierdupre.fr/app/_benchmarks/helpsphinx/sklbench_results_predict/index.html">
+scikit-learn_benchmarks + ONNX rendered</a>.
+</p>
+<p>
+Bien qu'il soit enregistré dans github, ce dernier benchmark est généré automatiquement
+avec la ligne de commande <tt>python -m mlprodict asv_bench --help</tt>
+du module <a href="http://www.xavierdupre.fr/app/mlprodict/helpsphinx/index.html">
+mlprodict</a>.
+</p>
+
+</body>
+</html>
