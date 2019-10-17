@@ -8,9 +8,9 @@ virtualenv:
   - path: {{ospathjoin(root_path, pickname("$NAME_JENKINS", project_name + "_$VERSION_$DIST_$NAME"), "_venv")}}
   
 install:
-  - $PYINT -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper pyensae pymmails pymyinstall pyrsslocal ensae_teaching_cs --extra-index-url=https://pypi.python.org/simple/\".split())"
+  - $PYINT -m pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper pyensae pymmails pymyinstall pyrsslocal ensae_teaching_cs --extra-index-url=https://pypi.python.org/simple/
   - $PYINT --version
-  - $PYINT -c "from pip._internal import main;main([\"freeze\"])"
+  - $PYINT -m pip freeze
 
 script:
   #- { CMD: "$PYINT -u copy_site.py 1", NAME: "BLOG_1", CLEAN: "0" }
