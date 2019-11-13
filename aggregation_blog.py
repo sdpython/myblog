@@ -13,7 +13,8 @@ def collect_blogs(url="http://www.xavierdupre.fr/",
              "http://lesenfantscodaient.fr/_downloads/rss.xml"]
     for mod in get_teaching_modules():
         if mod in {'_benchmarks', 'machinelearningext',
-                   'code_beatrix', 'myblog'}:
+                   'code_beatrix', 'myblog', 'csharpy',
+                   'csharpyml'}:
             continue
         links.append(url + "/app/{}/helpsphinx/_downloads/rss.xml".format(mod))
     
