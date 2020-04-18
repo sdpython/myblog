@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Détours scientifiques</title>
+<meta content="économie, coronavirus, sciences" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Aujourd'hui, on dépense. Mais qui paye ? Pour le moment, c'est
+enregistré comme de la dette publique, c'est-à-dire un emprunt
+fait aux générations futures. C'est si comme les enfants
+donnaient de l'argent à leurs parents pour réparer leurs bêtises :
+<a href="http://variances.eu/?p=4882">
+APRÈS LE CORONA-CHOC, COMMENT GÉRER LA DETTE PUBLIQUE ?</a>
+</p>
+<p>
+Le site suivant propose des simulations visuelle pour comprendre
+comment l'épidémie se propage et l'impact des gestes barrières :
+<a href="https://covprehension.org/">. La page
+<a href="https://covprehension.org/resources/">
+ressources</a> contient plein de d'articles intéressants,
+comme la page de l'Institut Pasteur :
+<a href="https://www.pasteur.fr/fr/centre-medical/fiches-maladies/maladie-covid-19-nouveau-coronavirus">
+MALADIE COVID-19 (NOUVEAU CORONAVIRUS)</a>.
+Le laboratoire <a href="">EPIcx lab (INSERM)</a>
+publie des papiers de recherche comme celui-ci
+<a href="https://www.epicx-lab.com/uploads/9/6/9/4/9694133/inserm-covid-19_report_lockdown_idf-20200412.pdf">
+Expected impact of lockdown in Île-de-France and possible exit strategies</a>.
+D'autres articles mènet à ce projet qui étudie la propagation">
+des maladies au sein d'un hôpital :
+<a href="https://sites.cnam.fr/sphinx/">Sphinx Project</a>,
+une liste de sujets de recherche liés à l'épidémie :
+<a href="https://www.epicx-lab.com/research.html#sphinx">
+Research Activities</a>, un papier sur l'approche suivi
+<a href="https://arxiv.org/abs/2003.12347">
+Mobile phone data and COVID-19: Missing an opportunity?</a>.
+Un autre article dans le genre : 
+<a href="https://journals.aps.org/prx/pdf/10.1103/PhysRevX.5.021005">
+Analytical Computation of the Epidemic Threshold on Temporal Networks</a>.
+Je n'ai pas vu d'autres articles que celui-ci qui explique comment
+modéliser une épidémie :
+<a href="https://blogs.mediapart.fr/bluejuliette/blog/220320/modeliser-la-diffusion-du-covid-19-1">
+Modéliser la diffusion du covid-19 ? (1)</a>,
+<a href="https://blogs.mediapart.fr/bluejuliette/blog/240320/modeliser-la-diffusion-du-covid-19-2">
+Modéliser la diffusion du covid-19 ? (2)</a>.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Un peu de code...
+<a href="https://github.com/metalcorebear/COVID-Agent-Based-Model">
+COVID Infection Model</a> (il s'appuie sur <a href="https://pypi.org/project/Mesa/">Mesa</a>).
+<a href="https://github.com/eugenio-valdano/threshold">
+Computing the Epidemic Threshold on Temporal Networks</a>,
+modèle SIR pour le COVID :
+<a href="http://webpopix.org/covidix19.html">
+Modelling some COVID-19 data</a>,
+le code de l'Imperial College
+<a href="https://github.com/ImperialCollegeLondon/covid19model">
+covid19model</a>. Il existe plein de package python sur le covid
+<a href="https://pypi.org/search/?q=covid">PyPi COVID</a>.
+En voici quelques-uns :
+<a href="https://ahmednafies.github.io/covid/">Covid</a>.
+Des outils pour modéliser l'épidémie :
+<a href="https://pypi.org/project/covid-modeling/">
+COVID_modeling</a>, le fichier <a href="https://github.com/josephsdavid/COVID_modeling/blob/master/comodels/sir.py">
+sir.py</a> montre comment écrire un modèle SIR.
+Celui-ci est plus complet mais plus touffu
+<a href="https://github.com/pydemic/covid-19">Covid-19</a>,
+un site qui recense de nombreuses sources de données :
+<a href="https://github.com/binarynightowl/covid19_python">COVID19-Data</a>,
+un modèle fait par Arthur Charpentier
+<a href="https://freakonometrics.hypotheses.org/60514">MODELING PANDEMICS (3)</a>,
+une autre étude par Nicoals Chopin 
+<a href="https://statisfaction.wordpress.com/2020/04/12/a-quick-preliminary-study-of-covid-death-under-reporting-in-france/">
+A quick, preliminary study of COVID death under-reporting in France</a>,
+un model développé pour une autre épidémie
+<a href="https://github.com/gabriel-turinici/covid19/blob/master/sliadr_model_v11_HK_G_Turinici.ipynb">
+Propagation of the SARS-CoV-2 coronavirus</a>.
+</p>
+<p>
+Des données agrégées par département :
+<a href="https://www.data.gouv.fr/fr/datasets/donnees-des-urgences-hospitalieres-et-de-sos-medecins-relatives-a-lepidemie-de-covid-19/">
+Données des urgences hospitalières et de SOS médecins relatives à l'épidémie de COVID-19</a>.
+Un dernier site <a href="https://maladiecoronavirus.fr/">
+Vous pensez avoir été exposé au Coronavirus COVID-19 et avez des symptômes ?</a>
+</p>
+<p>
+Un dernier article 
+<a href="https://arxiv.org/abs/2004.02209">Optimal, near-optimal, and robust epidemic control</a>
+et son code <a href="https://github.com/dylanhmorris/optimal-sir-intervention">
+optimal-sir-intervention</a>.
+Enfin :
+<a href="https://github.com/StephaneCanu/covid_AI_resources/blob/master/GDR_ISIS_Covid_IA_2.pdf">
+Panorama des recherches sur le COVID</a>
+</p>
+<p>
+<a href="https://www.ea-reperes.com/wp-content/uploads/2020/03/PredictedFrenchHospitNeeds-EHESP-20200316.pdf">
+COVID-19: Forecasting short term hospital needs in France</a>, le code
+<a href="https://github.com/PascalCrepey/HospiCoV">HospiCoV</a>,
+un bout de code à venir <a href="https://github.com/aresio/COVID-19-ICU">COVID-19-ICU</a>.
+quelques autres bout de code <a href="https://github.com/MarcLavielle/covidix">covidix</a>,
+un site qui a été créé pour récupérer des informations en temps réel sur les hôpitaux :
+<a href="https://icubam.github.io/">Open-Source software to monitor ICU beds availability during the Covid-19 outbreak in France</a>,
+un chat bot sur le COVID <a href="https://www.covidbot.fr/">covidbot.fr</a>.
+</p>
+<p>
+Je termine par un volet économique. Je vous conseille de regarder les débats
+parlementaire sur la loi de finance :
+<a href="http://videos.assemblee-nationale.fr/video.8952570_5e995215151d9.1ere-seance--loi-de-finances-rectificative-pour-2020-17-avril-2020">
+1ère séance : Loi de finances rectificative pour 2020</a>, notammant la question
+sur les nationalisations à 3h43 (M. Coquerel), le rapporteur de la commission précise
+que cela est prévu mais que le choix des entreprises relève du gouvernement,
+et la réponse liminaire d'Olivier Dussopt à propos de Luxfer
+à ce sujet : "Désolé, je ne connais pas le sujet, je transmettrai la question au ministre."
+Pour rappel : <a href="https://www.lamontagne.fr/clermont-ferrand-63000/actualites/l-etat-refuse-la-nationalisation-de-l-entreprise-luxfer-de-gerzat-puy-de-dome-pour-fabriquer-des-bouteilles-d-oxygene-medical_13772937/">
+L'Etat refuse la nationalisation de l'entreprise Luxfer de Gerzat (Puy-de-Dôme) pour fabriquer des bouteilles d'oxygène médical</a>.
+C'est tout de même étrange, très étrange de ne pas être au courant.
+Cela ressemble à une façon polie de dire non.
+Et sinon, le discours de Mélenchon sur la dette publique est assez pédagogique
+(0h47 - motion de rejet).
+</p>
+
+</body>
+</html>
