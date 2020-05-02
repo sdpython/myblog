@@ -48,7 +48,7 @@ elif "2" in sys.argv:
     path0 = "/home/ftpuser/ftp/web"
 else:
     skip = True
-    raise ValueError("Missing options in {}.".format(sys.argv))
+    print(ValueError("Missing options in {}.".format(sys.argv)))
 
 if not skip:
     hidden = [loginame, password, ftp_site, googleid, ]
@@ -123,7 +123,7 @@ def copy_site_cwd() :
             print("[xml*]", file)
             rss += 1
     if rss == 0:
-        raise FileNotFoundError("Unable to find any rss file.")
+        print("######### Unable to find any rss file.")
 
     # other files to copy
     cpf.copy_file_contains("blog/notebooks", ".html",
