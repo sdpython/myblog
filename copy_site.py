@@ -105,12 +105,18 @@ def copy_site_cwd() :
                                   siteFolder=os.path.join(destination, "blog"))
 
     # checking
+    rss = 0
     for a in add:
-        if "xml" in str(a):
+        if "xml" in str(a) or 'rss' in str(a):
             print("[xml-]", a)
+        if 'rss' in str(a):
+            rss += 1
+            
     for file, reason in sorted(cpf.modifiedFile):
-        if "xml" in str(file):
+        if "xml" in str(file) or 'rss' in str(file):
             print("[xml*]", file)
+        if 'rss' in str(a):
+            rss += 1
 
     # other files to copy
     cpf.copy_file_contains("blog/notebooks", ".html",
