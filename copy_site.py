@@ -111,7 +111,7 @@ def copy_site_cwd() :
             rss += 1
             
     for file, reason in sorted(cpf.modifiedFile):
-        if ".xml" in str(file).
+        if ".xml" in str(file):
             print("[xml*]", file)
             rss += 1
     if rss == 0:
