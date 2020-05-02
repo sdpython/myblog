@@ -104,6 +104,15 @@ def copy_site_cwd() :
     add = build_process_all_pages(res, frequence_keywords=2,
                                   siteFolder=os.path.join(destination, "blog"))
 
+    # checking
+    for a in add:
+        if "xml" in str(a):
+            print("[xml-]", a)
+    for file, reason in sorted(cpf.modifiedFile):
+        if "xml" in str(file):
+            print("[xml*]", file)
+
+    # other files to copy
     cpf.copy_file_contains("blog/notebooks", ".html",
                            os.path.join(destination, "blog/notebooks"),
                            doFTP=False)
