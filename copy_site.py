@@ -90,9 +90,6 @@ def copy_site_cwd() :
     cpf.copy_file_ext("blog/javascript", "js", os.path.join(destination, "blog/javascript"))
     cpf.copy_file_ext("blog/javascript", "css", os.path.join(destination, "blog/javascript"))
     cpf.copy_file_ext("blog/", "css", os.path.join(destination, "blog/"))
-    cpf.copy_file_ext("build/blog/blogagg", "html", os.path.join(destination, "blogagg"))
-    cpf.copy_file_ext("build/blog/blogagg", "rss", os.path.join(destination, "blogagg"))
-    cpf.copy_file_ext("site/blog/", "rss", os.path.join(destination, "blog"))
 
     # process keywords
 
@@ -213,6 +210,9 @@ def copy_site_cwd() :
                         forbid.append(file)
 
         print("number of checked files:", nbch)
+        #cpf.copy_file_ext("build/blog/blogagg", "html", os.path.join(destination, "blogagg"))
+        #cpf.copy_file_ext("build/blog/blogagg", "rss", os.path.join(destination, "blogagg"))
+        #cpf.copy_file_ext("site/blog/", "rss", os.path.join(destination, "blog"))
 
         issues = []
         processed = []
