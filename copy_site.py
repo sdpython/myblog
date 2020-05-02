@@ -117,6 +117,8 @@ def copy_site_cwd() :
             print("[xml*]", file)
         if 'rss' in str(a):
             rss += 1
+    if rss == 0:
+        raise FileNotFoundError("Unable to find any rss file.")
 
     # other files to copy
     cpf.copy_file_contains("blog/notebooks", ".html",
