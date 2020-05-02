@@ -33,7 +33,7 @@ if not os.path.exists(destination_blog):
 
 googleid = keyring.get_password("web", "_automation,google")
 
-
+skip = False
 if "1" in sys.argv:
     loginame = keyring.get_password("web", "_automation,user")
     password = keyring.get_password("web", "_automation,pwd")
@@ -47,14 +47,15 @@ elif "2" in sys.argv:
     ftps = 'SFTP'
     path0 = "/home/ftpuser/ftp/web"
 else:
+    skip = True
     raise ValueError("Missing options in {}.".format(sys.argv))
 
-
-hidden = [loginame, password, ftp_site, googleid, ]
-for i, hid in enumerate(hidden):
-    if hid is None:
-        # raise ValueError("One value is None: {}".format(i))
-        pass
+if not skip:
+    hidden = [loginame, password, ftp_site, googleid, ]
+    for i, hid in enumerate(hidden):
+        if hid is None:
+            # raise ValueError("One value is None: {}".format(i))
+            pass
 
 
 def copy_site() :
@@ -95,14 +96,20 @@ def copy_site_cwd() :
         if not os.path.exists(fd):
             raise FileNotFoundError("Unable to find '{}' from '{}'.".format(
                 fd, os.path.abspath(os.path.dirname(__file__))))
-    cpf.copy_file_ext("build/site/blog/", "xml", os.path.join(destination, "blog"))
-    cpf.copy_file_ext("build/blog/blogagg", "html", os.path.join(destination, "blogagg"))
-    cpf.copy_file_ext("build/blog/blogagg", "rss", os.path.join(destination, "blogagg"))
+    print("#####################################################")
+    newadd = []
+    newadd.extend(cpf.copy_file_ext("build/site/blog/", "xml", os.path.join(destination, "blog")))
+    newadd.extend(cpf.copy_file_ext("build/blog/blogagg", "html", os.path.join(destination, "blogagg")))
+    newadd.extend(cpf.copy_file_ext("build/blog/blogagg", "rss", os.path.join(destination, "blogagg")))
+    print("    +rss:{}".format("\n    +rss:".join(newadd)))
+    print("#####################################################")
 
     # process keywords
 
+    print("#####################################################")
     add = build_process_all_pages(res, frequence_keywords=2,
                                   siteFolder=os.path.join(destination, "blog"))
+    print("#####################################################")
 
     # checking
     rss = 0
