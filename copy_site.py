@@ -95,7 +95,7 @@ def copy_site_cwd() :
         if not os.path.exists(fd):
             raise FileNotFoundError("Unable to find '{}' from '{}'.".format(
                 fd, os.path.abspath(os.path.dirname(__file__))))
-    cpf.copy_file_ext("build/site/blog/", "rss", os.path.join(destination, "blog"))
+    cpf.copy_file_ext("build/site/blog/", "xml", os.path.join(destination, "blog"))
     cpf.copy_file_ext("build/blog/blogagg", "html", os.path.join(destination, "blogagg"))
     cpf.copy_file_ext("build/blog/blogagg", "rss", os.path.join(destination, "blogagg"))
 
