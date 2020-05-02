@@ -91,11 +91,11 @@ def copy_site_cwd() :
     cpf.copy_file_ext("blog/javascript", "css", os.path.join(destination, "blog/javascript"))
     cpf.copy_file_ext("blog/", "css", os.path.join(destination, "blog/"))
     
-    for fd in ["site/blog", "build/blog/blogagg"]:
+    for fd in ["build/site/blog", "build/blog/blogagg"]:
         if not os.path.exists(fd):
             raise FileNotFoundError("Unable to find '{}' from '{}'.".format(
                 fd, os.path.abspath(os.path.dirname(__file__))))
-    cpf.copy_file_ext("site/blog/", "rss", os.path.join(destination, "blog"))
+    cpf.copy_file_ext("build/site/blog/", "rss", os.path.join(destination, "blog"))
     cpf.copy_file_ext("build/blog/blogagg", "html", os.path.join(destination, "blogagg"))
     cpf.copy_file_ext("build/blog/blogagg", "rss", os.path.join(destination, "blogagg"))
 
