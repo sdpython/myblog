@@ -9,7 +9,7 @@ def collect_blogs(url="http://www.xavierdupre.fr/",
                   dest="build/blog/blogagg",
                   fLOG=print):
     year = datetime.now().year - 2
-    links = [url + "blog/xdbrss.xml",
+    links = [# url + "blog/xdbrss.xml",
              "http://lesenfantscodaient.fr/_downloads/rss.xml"]
     for mod in get_teaching_modules():
         if mod in {'_benchmarks', 'machinelearningext',
