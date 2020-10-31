@@ -30,6 +30,9 @@ if not os.path.exists(destination):
 destination_blog = os.path.normpath(os.path.join(this, "build/site/blog"))
 if not os.path.exists(destination_blog):
     os.makedirs(destination_blog)
+destination_rss = os.path.normpath(os.path.join(this))
+if not os.path.exists(destination_rss):
+    os.makedirs(destination_rss)
 
 googleid = keyring.get_password("web", "_automation,google")
 
@@ -98,10 +101,10 @@ def copy_site_cwd() :
                 fd, os.path.abspath(os.path.dirname(__file__))))
     print("#####################################################")
     newadd = []
-    newadd.extend(cpf.copy_file_ext("build/site/blog/", "xml", os.path.join(destination, "blog")))
-    newadd.extend(cpf.copy_file_ext("build/site/blog/", "xml", destination))
-    newadd.extend(cpf.copy_file_ext("build/blog/blogagg", "html", os.path.join(destination, "blogagg")))
-    newadd.extend(cpf.copy_file_ext("build/blog/blogagg", "rss", os.path.join(destination, "blogagg")))
+    newadd.extend(cpf.copy_file_ext("build/site/blog/", "xml", os.path.join(destination_rss, "blog")))
+    newadd.extend(cpf.copy_file_ext("build/site/blog/", "xml", destination_rss))
+    newadd.extend(cpf.copy_file_ext("build/blog/blogagg", "html", os.path.join(destination_rss, "blogagg")))
+    newadd.extend(cpf.copy_file_ext("build/blog/blogagg", "rss", os.path.join(destination_rss, "blogagg")))
     print("    +rss:{}".format("\n    +rss:".join(newadd)))
     print("#####################################################")
 

@@ -22,7 +22,7 @@ def collect_blogs(url="http://www.xavierdupre.fr/",
         os.makedirs(dest)
     
     out_html = os.path.join(dest, "index.html")
-    out_rss = os.path.join(dest, "index_agg.rss")
+    out_rss = os.path.join(dest, "index_agg_rss.xml")
     
     compile_rss_blogs(links, url + "blogagg/index.html",
                       'Aggregation of blog posts published on <a href='
