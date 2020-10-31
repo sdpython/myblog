@@ -30,7 +30,7 @@ if not os.path.exists(destination):
 destination_blog = os.path.normpath(os.path.join(this, "build/site/blog"))
 if not os.path.exists(destination_blog):
     os.makedirs(destination_blog)
-destination_rss = os.path.normpath(os.path.join(this))
+destination_rss = os.path.normpath(os.path.join(this, "blog"))
 if not os.path.exists(destination_rss):
     os.makedirs(destination_rss)
 
@@ -83,7 +83,7 @@ def copy_site_cwd() :
     # process the blogs
 
     modify_all_posts(exclude=lambda f: False)
-    file_build_rss(this, os.path.join(destination, "blog", "xdbrss.xml"))
+    file_build_rss(this, os.path.join(destination_rss, "xdbrss.xml"))
     res = file_all_keywords(exclude=lambda f: False)
 
     # add blog files to upload
