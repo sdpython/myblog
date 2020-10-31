@@ -254,8 +254,7 @@ def copy_site_cwd() :
             ext = os.path.splitext(name)[-1]
             if ext in [".html", ".js", ".png", ".css", ".ico", ".py", ".ipynb", ".xml"] :
                 return 0
-            else :
-                return os.stat(name).st_size
+            return os.stat(name).st_size
 
         allfiles = [(sizef(file), file, reason) for file, reason in cpf.modifiedFile]
         allfiles.sort()
