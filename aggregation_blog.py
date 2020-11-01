@@ -6,7 +6,7 @@ from pyrsslocal.cli import compile_rss_blogs
 
 
 def collect_blogs(url="http://www.xavierdupre.fr/",
-                  dest="build/blog/blogagg",
+                  dest="blog/blogagg",
                   fLOG=print):
     year = datetime.now().year - 2
     links = [# url + "blog/xdbrss.xml",
