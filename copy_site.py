@@ -105,8 +105,8 @@ def copy_site_cwd() :
                 fd, os.path.abspath(os.path.dirname(__file__))))
     print("#####################################################")
     newadd = []
-    newadd.extend(cpf.copy_file_ext("site/blog/", "xml", os.path.join(destination_rss, "blog")))
-    newadd.extend(cpf.copy_file_ext("site/blog/", "xml", destination_rss))
+    newadd.extend(cpf.copy_file_ext("blog/", "xml", os.path.join(destination_rss, "blog")))
+    newadd.extend(cpf.copy_file_ext("blog/", "xml", destination_rss))
     newadd.extend(cpf.copy_file_ext("blog/blogagg", "html", os.path.join(destination_rss, "blogagg")))
     newadd.extend(cpf.copy_file_ext("blog/blogagg", "rss", os.path.join(destination_rss, "blogagg")))
     print("    +rss:{}".format("\n    +rss:".join(newadd)))
