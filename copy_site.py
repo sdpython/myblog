@@ -33,6 +33,10 @@ if not os.path.exists(destination_blog):
 destination_rss = os.path.normpath(os.path.join(this, "blog"))
 if not os.path.exists(destination_rss):
     os.makedirs(destination_rss)
+if not os.path.exists(os.path.join(destination_rss, "blog")):
+    os.makedirs(os.path.join(destination_rss, "blog"))
+if not os.path.exists(os.path.join(destination_rss, "blogagg")):
+    os.makedirs(os.path.join(destination_rss, "blogagg"))
 
 googleid = keyring.get_password("web", "_automation,google")
 
