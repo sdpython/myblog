@@ -60,6 +60,14 @@ if not skip:
             # raise ValueError("One value is None: {}".format(i))
             pass
 
+if loginame is None:
+    raise RuntimeError("login is missing.")
+if password is None:
+    raise RuntimeError("password is missing.")
+if ftp_site is None:
+    raise RuntimeError("ftp_site is missing.")
+if googleid is None:
+    raise RuntimeError("googleid is missing.")
 
 def copy_site() :
     """
