@@ -34,7 +34,7 @@ if not os.path.exists(os.path.join(destination_rss, "blog")):
 if not os.path.exists(os.path.join(destination_rss, "blogagg")):
     os.makedirs(os.path.join(destination_rss, "blogagg"))
 
-googleid = keyring.get_password("web", "_automation,google")
+googleid = get_password("web", "_automation,google")
 
 skip = False
 if "1" in sys.argv:
