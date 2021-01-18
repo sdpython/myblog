@@ -15,13 +15,9 @@ import shutil, os, glob, re, datetime, sys
 from pyquickhelper.loghelper import fLOG
 fLOG(OutputPrint = True)
 from pyquickhelper.filehelper import TransferFTP, explore_folder, synchronize_folder
+from pyquickhelper.loghelper import get_password
 from ensae_teaching_cs.homeblog import CopyFileForFtp, py_to_html_folder, modify_all_posts
 from ensae_teaching_cs.homeblog import file_build_rss, file_all_keywords, build_process_all_pages
-
-import warnings
-with warnings.catch_warnings():
-    warnings.simplefilter('ignore', DeprecationWarning)
-    import keyring
 
 this = os.path.abspath(os.path.dirname(__file__))
 destination = os.path.normpath(os.path.join(this, "build/site"))
@@ -42,15 +38,15 @@ googleid = keyring.get_password("web", "_automation,google")
 
 skip = False
 if "1" in sys.argv:
-    loginame = keyring.get_password("web", "_automation,user")
-    password = keyring.get_password("web", "_automation,pwd")
-    ftp_site = keyring.get_password("web", "_automation,ftp")
+    loginame = get_password("web", "_automation,user")
+    password = get_password("web", "_automation,pwd")
+    ftp_site = get_password("web", "_automation,ftp")
     ftps = 'FTP'
     path0 = "www/htdocs"
 elif "2" in sys.argv:
-    loginame = keyring.get_password("web", "_automation2,user")
-    password = keyring.get_password("web", "_automation2,pwd")
-    ftp_site = keyring.get_password("web", "_automation2,ftp")
+    loginame = get_password("web", "_automation2,user")
+    password = get_password("web", "_automation2,pwd")
+    ftp_site = get_password("web", "_automation2,ftp")
     ftps = 'SFTP'
     path0 = "/home/ftpuser/ftp/web"
 else:
