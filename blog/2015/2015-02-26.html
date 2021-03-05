@@ -16,12 +16,12 @@ API and it is quite simple to use its features with your own model.
 It just needs to be embbeded into a class which implements
 the methods <i>fit</i>, <i>predict</i>, <i>decision_function</i>, <i>score</i>.
 I wrote a simple model (kNN) which follows those guidelines:
-<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/ensae_teaching_cs/ml/sklearn_example_classifier.html?highlight=knn#ensae_teaching_cs.ml.sklearn_example_classifier.SkCustomKnn">SkCustomKnn</a>.
+<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx/ensae_teaching_cs/ml/sklearn_example_classifier.html?highlight=knn#ensae_teaching_cs.ml.sklearn_example_classifier.SkCustomKnn">SkCustomKnn</a>.
 A last method is needed for the cross validation scenario. This one needs 
 to clone the machine learned model. It just calls the constructor
 with proper parameters. To do so, it needs to get a copy of those.
 That is the purpose of method 
-<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/ensae_teaching_cs/ml/sklearn_base_learner.html#ensae_teaching_cs.ml.sklearn_base_learner.SkBaseLearner.get_params">get_params</a>.
+<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx/ensae_teaching_cs/ml/sklearn_base_learner.html#ensae_teaching_cs.ml.sklearn_base_learner.SkBaseLearner.get_params">get_params</a>.
 You are all set.
 </p>
 
