@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Le pari du président en un graphique et Covid long</title>
+<meta content="économie, covid, long" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+S'il fallait résumer le pari du président en un graphique, c'est celui-ci :
+<img src="documents/covidpasteur202102.png" width="500px"/>.
+Il est extrait du rapport <a href="https://modelisation-covid19.pasteur.fr/variant/RapportInstitutPasteur_variants_8fevrier2021.pdf">
+Impact de différents types de confinements et stratégies de sortie sur l'épidémie de COVID-19 dans le contexte
+d'émergence du variant VOC et de la vaccination en France</a> (page 7) écrit le 8 février.
+Le président a choisi la courbe rouge, couvre-feu + vaccination,
+tandis que les médecins souhaitaient la courbe violette, confinement 4 semaines + vaccinations.
+D'après CovidTracker, nous sommes à 2000 admissions à l'hôpital quotidiennes :
+<a href="https://covidtracker.fr/covidtracker-france/">
+CovidTracker - France</a> ce qui correspond à peu près aux prédictions du modèles.
+Toujours selon ce modèle, sans confinement, ce nombre aurait triplé. Avec le confinement
+décidé il y a quelques jours, il va continuer à augmenter pendant quelques semaines,
+au moins deux car la majorité des personnes arrivant à l'hôpital ont déjà été contaminées.
+</p>
+
+<p>
+Si vous souhaitez jouer avec les données, deux notebooks que j'ai préparés
+pour mes enseignements :
+<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/notebooks/2020_pandas.html">
+Tech - manipulation de données avec pandas</a>,
+<a href="http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/notebooks/2020_covid.html">
+Algo - simulation COVID</a>.
+</p>
+
+<p>
+Une bonne raison de se faire vacciner est d'éviter le covid long :
+<a href="https://www.lci.fr/sante/coronavirus-400-000-francais-vont-avoir-un-covid-long-d-ou-vient-ce-chiffre-2180811.html">
+"400.000 Français vont avoir un Covid long" : d'où vient ce chiffre ?</a>.
+Même s'il reste bénin dans la majorité des cas, environ 10% des gens atteint du covid
+développeront un covid long. Il tent à disparaître au bout de plusieurs mois
+<a href="https://www.mediapart.fr/journal/france/030421/l-hotel-dieu-patients-et-medecins-tentent-de-percer-les-mysteres-du-covid-long">
+A l’Hôtel-Dieu, patients et médecins tentent de percer les mystères du Covid long</a>
+mais le chemin jusqu'à la guérison est éreintant. Si je comprends, certains neurones sont
+touchés et la rééducation a pour objectif d'entraîner d'autres neurones inutilisés à faire
+la même tâche. Pour en savoir plus sur le sujet, la page de l'INSERM est exhaustive :
+<a href="https://www.inserm.fr/information-en-sante/dossiers-information/coronavirus-sars-cov-et-mers-cov">
+Coronavirus et Covid-19 - Du simple rhume au syndrome respiratoire aigu sévère</a>.
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+On commence à avoir des explications des problèmes de thrombose
+<a href="https://www.lefigaro.fr/sciences/une-piste-pour-expliquer-les-thromboses-rares-liees-au-vaccin-d-astrazeneca-20210402">
+Une piste pour expliquer les thromboses rares liées au vaccin d’AstraZeneca</a>
+pour le vaccin AstraZeneca renommé en Vaxzevria :
+<a href="https://www.marianne.net/societe/sante/un-nouveau-nom-pour-le-vaccin-astrazeneca-on-ne-change-pas-ce-quon-vend-en-repeignant-la-facade-du-magasin">
+Un nouveau nom pour le vaccin AstraZeneca : "On ne change pas ce qu’on vend en repeignant la façade du magasin"</a>.
+Certes le rapport bénéfice/risque plaide en faveur du vaccin si celui-ci était la seule option :
+<a href="https://www.lemonde.fr/planete/article/2021/03/28/vaccins-anti-covid-le-rapport-benefice-risque-reste-favorable-car-il-s-agit-d-evenements-exceptionnels-alors-que-le-benefice-est-avere-et-majeur_6074777_3244.html">
+Vaccins AstraZeneca : « Le rapport bénéfice/risque reste favorable, car il s’agit d’événements exceptionnels, alors que le bénéfice est avéré et majeur »</a>.
+Mais si vous avez deux options et que l'une d'entre elles est moins risquée, que choisissez-vous ?
+<a href="https://www.lemonde.fr/planete/article/2021/04/03/vaccin-d-astrazeneca-sept-personnes-mortes-de-thromboses-sur-30-cas-identifies-au-royaume-uni_6075480_3244.html">
+Vaccin d’AstraZeneca : sept personnes mortes de thromboses sur trente cas identifiés au Royaume-Uni</a>.
+Et donc il y a peu de candidats pour le vaccin AstraZeneca sur
+<a href="https://www.covidliste.com/">covidliste</a>, un site sur lequel
+on s'inscrit pour être appelé s'il reste des doses d'un vaccin sur le point d'être périmées.
+Site créé entre autres par Martin Daniel que j'ai croisé quelques fois à de meetups
+organisés par <a href="https://dataforgood.fr/">DataForGood</a>. Et pour compléter l'histoire,
+c'est grâce à eux que j'ai réussi à obtenir des données de la Croix-Rouge pour le 
+<a href="https://www.ensae.org/fr/news/video-hackathon-ensae-microsoft-croix-rouge-635">
+premier hackathon de l'ENSAE</a> en 2016. Série toujours en cours
+<a href="https://www.ensae.fr/event/statup-ensae-hackathon/">
+STATUP ENSAE | HACKATHON</a>.
+Pour en revenir à AstraZeneca, plus de transparence serait sans doute la bienvenue comme 
+la probabilité de développer une thrombose selon l'âge et le sexe. Cette probabilité
+est plus élevée sur les jeunes femmes. Sinon, la méfiance s'installe :
+<a href="https://france3-regions.francetvinfo.fr/hauts-de-france/pas-calais/calais/calais-plus-de-500-doses-de-vaccins-astrazeneca-inutilisees-faute-de-volontaires-2029855.html">
+Calais : plus de 500 doses de vaccins AstraZeneca inutilisées faute de volontaires</a>.
+En l'occurence, je rejoins les propos développés lors de cette émission :
+<a href="https://www.franceinter.fr/emissions/une-semaine-en-france/une-semaine-en-france-02-avril-2021">
+Irène Frachon, pneumologue au coeur du scandale du Mediator</a>, les mensonges à répétition
+et la faiblesse des sanctions dans ce type d'affaire n'est pas matière à redonner confiance
+dans les laboratoires pharmaceutiques qui aiment tout particulièrement
+les maladies incurables très répandues dans la population comme le diabète :
+<a href="https://www.arte.tv/fr/videos/080158-000-A/diabete-une-addition-salee/">
+Diabète, une addition salée</a>.
+</p>
+<p>
+Le gouvernement a choisi de confiner quatre semaines.
+Deux ou trois auraient sans doute suffi il y a six semaines, au moment des vacances de février.
+<a href="https://www.lci.fr/sante/covid-19-confinement-strict-en-fevrier-cet-avis-du-conseil-scientifique-que-l-executif-a-prefere-ecarter-2179249.html">
+Un confinement strict en février : cet avis du Conseil scientifique que l'exécutif a écarté</a>.
+Tous les modèles épidémiologistes prédisaient un emballement en mars. En temps que citoyen,
+je regrette que les projections des modèles ne soient pas accessibles.
+Seules les commentaires le sont. Le médecins défilaient le matin à la radio pour dire qu'il fallait
+confiner, les politiques le soir pour dire qu'il fallait attendre. Voici les projections faites
+par Pasteur le 29 janvier. En page 5, leurs recommandations, très claires : reconfiner, tester, isoler :
+<a href="https://solidarites-sante.gouv.fr/IMG/pdf/note_eclairage_variants_modelisation_29_janvier_2021.pdf">
+Note d’éclairage du 29 janvier 2021 POINT DE SITUATION SUR LES VARIANTS MODELISATIONS PERSPECTIVES POUR LE MOIS DE MARS</a>.
+Le 8 février, l'Institut Paster publiait ce rapport 
+<a href="https://modelisation-covid19.pasteur.fr/variant/RapportInstitutPasteur_variants_8fevrier2021.pdf">
+Impact de différents types de confinements et stratégies de sortie sur l'épidémie de COVID-19 dans le contexte
+d'émergence du variant VOC et de la vaccination en France</a>.
+Page 17, un graphique qu'on retrouve sur cette page
+<a href="https://modelisation-covid19.pasteur.fr/realtime-analysis/impact-variant/">
+RETOUR SUR LES MODÉLISATIONS RÉALISÉES CES TROIS DERNIERS MOIS POUR ÉVALUER L’IMPACT DES VARIANTS ET DES VACCINS SUR LA PANDÉMIE COVID-19</a>.
+</p>
+<p>
+D'autres pages intéressantes sur le site de Pasteur :
+<a href="https://www.pasteur.fr/fr/espace-presse/documents-presse/modelisations-epidemie-sars-cov-2-covid-19-institut-pasteur-met-ligne-nouvel-espace-dedie-pasteurfr">
+MODÉLISATIONS DE L’ÉPIDÉMIE DE SARS-COV-2 / COVID-19 : L’INSTITUT PASTEUR MET EN LIGNE UN NOUVEL ESPACE DÉDIÉ SUR PASTEUR.FR</a>
+<a href="https://modelisation-covid19.pasteur.fr/realtime-analysis/hospital/">
+PROJECTION À COURT TERME DES BESOINS HOSPITALIERS POUR LES PATIENTS COVID-19</a>
+<a href="https://modelisation-covid19.pasteur.fr/realtime-analysis/impact-variant/">
+RETOUR SUR LES MODÉLISATIONS RÉALISÉES CES TROIS DERNIERS MOIS POUR ÉVALUER L’IMPACT DES VARIANTS ET DES VACCINS SUR LA PANDÉMIE COVID-19</a>.
+</p>
+
+</body>
+</html>
