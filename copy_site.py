@@ -1,4 +1,4 @@
-#coding:utf-8
+# coding:utf-8
 """
 <!-- SUMMARY BEGINS -->
 <!-- SUMMARY ENDS -->
@@ -11,9 +11,14 @@ I(s) =  \frac{ X(s,t) }{ \sum_{t=10am}^{4pm} X(s,t) }
 
 
 """
-import shutil, os, glob, re, datetime, sys
+import shutil
+import os
+import glob
+import re
+import datetime
+import sys
 from pyquickhelper.loghelper import fLOG
-fLOG(OutputPrint = True)
+fLOG(OutputPrint=True)
 from pyquickhelper.filehelper import TransferFTP, explore_folder, synchronize_folder
 from pyquickhelper.loghelper import get_password
 from ensae_teaching_cs.homeblog import CopyFileForFtp, py_to_html_folder, modify_all_posts
@@ -69,7 +74,8 @@ if ftp_site is None:
 if googleid is None:
     raise RuntimeError("googleid is missing.")
 
-def copy_site() :
+
+def copy_site():
     """
     """
     cwd = os.getcwd()
@@ -79,11 +85,11 @@ def copy_site() :
     os.chdir(cwd)
 
 
-def copy_site_cwd() :
+def copy_site_cwd():
     """
     Publishes the blog.
-    """    
-    fLOG(OutputPrint = True)
+    """
+    fLOG(OutputPrint=True)
 
     cpf = CopyFileForFtp("copyDates.txt", specificTrigger=True)
     # cpf.copy_file_ext("blog/documents", "html", "blog/documents", doFTP=False)
@@ -95,24 +101,31 @@ def copy_site_cwd() :
     res = file_all_keywords(exclude=lambda f: False)
 
     # add blog files to upload
-    cpf.copy_file_ext("blog/giflatex", "gif", os.path.join(destination, "blog/giflatex"))
+    cpf.copy_file_ext("blog/giflatex", "gif",
+                      os.path.join(destination, "blog/giflatex"))
     for ext in ['xls', 'pdf', 'xlsm', 'png', 'jpg', '7z', 'tsv', 'js', 'json', 'txt', 'gif']:
         print("blog/documents/*.%s" % ext)
-        cpf.copy_file_ext("blog/documents", ext, os.path.join(destination, "blog/documents"))
-    cpf.copy_file_ext("blog/javascript", "js", os.path.join(destination, "blog/javascript"))
-    cpf.copy_file_ext("blog/javascript", "css", os.path.join(destination, "blog/javascript"))
+        cpf.copy_file_ext("blog/documents", ext,
+                          os.path.join(destination, "blog/documents"))
+    cpf.copy_file_ext("blog/javascript", "js",
+                      os.path.join(destination, "blog/javascript"))
+    cpf.copy_file_ext("blog/javascript", "css",
+                      os.path.join(destination, "blog/javascript"))
     cpf.copy_file_ext("blog/", "css", os.path.join(destination, "blog/"))
-    
-    for fd in ["build/site/blog"]:  #, "build/blog/blogagg"]:
+
+    for fd in ["build/site/blog"]:  # , "build/blog/blogagg"]:
         if not os.path.exists(fd):
             raise FileNotFoundError("Unable to find '{}' from '{}'.".format(
                 fd, os.path.abspath(os.path.dirname(__file__))))
     print("#####################################################")
     newadd = []
-    newadd.extend(cpf.copy_file_ext("blog/", "xml", os.path.join(destination_rss, "blog")))
+    newadd.extend(cpf.copy_file_ext("blog/", "xml",
+                  os.path.join(destination_rss, "blog")))
     newadd.extend(cpf.copy_file_ext("blog/", "xml", destination_rss))
-    newadd.extend(cpf.copy_file_ext("blog/blogagg", "html", os.path.join(destination_rss, "blogagg")))
-    newadd.extend(cpf.copy_file_ext("blog/blogagg", "xml", os.path.join(destination_rss, "blogagg")))
+    newadd.extend(cpf.copy_file_ext("blog/blogagg", "html",
+                  os.path.join(destination_rss, "blogagg")))
+    newadd.extend(cpf.copy_file_ext("blog/blogagg", "xml",
+                  os.path.join(destination_rss, "blogagg")))
     print("    +rss:{}".format("\n    +rss:".join(newadd)))
     print("#####################################################")
 
@@ -128,7 +141,7 @@ def copy_site_cwd() :
     for a in add:
         if ".xml" in str(a):
             rss += 1
-            
+
     for file, reason in sorted(cpf.modifiedFile):
         if ".xml" in str(file):
             print("[xml*]", file)
@@ -151,7 +164,7 @@ def copy_site_cwd() :
             cpf.add_if_modified(file)
 
     nbcopyfile = 0
-    for _, reason in sorted(cpf.modifiedFile) : 
+    for _, reason in sorted(cpf.modifiedFile):
         if not "copy_site" in _:
             nbcopyfile += 1
             print("*", _, reason)
@@ -160,75 +173,82 @@ def copy_site_cwd() :
     # do not update this
     forbid = []
 
-    if len(cpf.modifiedFile) > 0 :
+    if len(cpf.modifiedFile) > 0:
 
         # checking that username is not in the file
         nbch = 0
         usernames = [os.environ.get("USERNAME", "unknown-user").lower(),
                      os.environ.get("USER", "unknown-user").lower()]
         for file, reason in sorted(cpf.modifiedFile):
-            ext = os.path.splitext(file)[-1] 
-            
+            ext = os.path.splitext(file)[-1]
+
             if ext in [".log", ".doctree"]:
                 print("skipping ", file)
                 continue
 
             if os.stat(file).st_size < 2**25 and ext.lower() not in \
-                    [".mp3", ".zip", ".gif", ".dll", ".exe", ".msi", 
+                    [".mp3", ".zip", ".gif", ".dll", ".exe", ".msi",
                      ".eot", ".ttf", ".woff", ".mp4",
                      ".xlsx", ".7z", ".avi", ".xlsm",
-                     ".gz", ".inv", ".pdf", ".png", ".jpg", ".jpeg"] :
-                content  = None
+                     ".gz", ".inv", ".pdf", ".png", ".jpg", ".jpeg"]:
+                content = None
                 contentu = None
                 encoding = None
-                try :
-                    with open(file, "r") as f: 
+                try:
+                    with open(file, "r") as f:
                         contentu = f.read()
                         content = contentu.lower()
                         encoding = None
                 except UnicodeDecodeError:
                     try:
-                        with open(file, "r", encoding="utf8") as f: 
+                        with open(file, "r", encoding="utf8") as f:
                             contentu = f.read()
                             content = contentu.lower()
                             encoding = "utf8"
-                    except :
+                    except:
                         pass
                 except PermissionError:
                     print("permission error for ", file)
-                        
-                if content == None :
-                    print("unable to check alias in ",file)
-                else :
+
+                if content == None:
+                    print("unable to check alias in ", file)
+                else:
                     # ####################################
                     ###############################################
                     ############ replacements #####################
                     ###############################################
                     # ####################################
                     modif = 0
-                    for username in usernames :
-                        for substr, reps in [("c-3a-5c" + username,            "c-3a-5cxxx"),
-                                    (r"c:\%s\__home_\_data" % username,         "root"),
-                                    (r"C:\%s\__home_\_data" % username,         "root"),
-                                    (r"C:\Users\%s\AppData\Local" % username,   "uroot"),
-                                    ("sr1.dzr323.dza.datazoomr.com",            "hadoop.url"),
-                                    ("c:/%s/__home_/_data/" % username,         "root"),
-                                    ("C:/%s/__home_/_data/" % username,         "root"),
-                                    ("graph for username:",                     "graph:"),
-                                    ("username Directory Reference",            "Directory Reference"),
-                                    #(username,                             "XXXX"),
-                                    ("__GOOGLEID__",                            googleid)
-                                    ]:
+                    for username in usernames:
+                        for substr, reps in [("c-3a-5c" + username, "c-3a-5cxxx"),
+                                             (r"c:\%s\__home_\_data" %
+                                              username, "root"),
+                                             (r"C:\%s\__home_\_data" %
+                                              username, "root"),
+                                             (r"C:\Users\%s\AppData\Local" %
+                                              username, "uroot"),
+                                             ("sr1.dzr323.dza.datazoomr.com",
+                                              "hadoop.url"),
+                                             ("c:/%s/__home_/_data/" %
+                                              username, "root"),
+                                             ("C:/%s/__home_/_data/" %
+                                              username, "root"),
+                                             ("graph for username:", "graph:"),
+                                             ("username Directory Reference",
+                                              "Directory Reference"),
+                                             #(username,                             "XXXX"),
+                                             ("__GOOGLEID__", googleid)
+                                             ]:
                             if substr in contentu and reps is not None:
                                 contentu = contentu.replace(substr, reps)
                                 modif += 1
 
                     content = contentu.lower()
-                    if modif > 0 :
-                        if encoding is None :
+                    if modif > 0:
+                        if encoding is None:
                             with open(file, "w") as f:
                                 f.write(contentu)
-                        else :
+                        else:
                             with open(file, "w", encoding=encoding) as f:
                                 f.write(contentu)
 
@@ -241,7 +261,7 @@ def copy_site_cwd() :
                         nbf = 0
                         for i, l__ in enumerate(zip(lines, linesuu)):
                             l, lu = l__
-                            if username in l :
+                            if username in l:
                                 print("    {0} was found in line {1} : {2}".format(
                                     username, i, lu.strip("\r\n")))
                                 nbf += 1
@@ -257,28 +277,29 @@ def copy_site_cwd() :
 
         print("loginame", loginame)
         print("password", password)
-        ftp = TransferFTP(ftp_site, loginame, password, fLOG=print, ftps=ftps)  
+        ftp = TransferFTP(ftp_site, loginame, password, fLOG=print, ftps=ftps)
         nbproc = 0
 
         # on trie par taille pour faire les plus gros en dernier
         def sizef(name):
             ext = os.path.splitext(name)[-1]
-            if ext in [".html", ".js", ".png", ".css", ".ico", ".py", ".ipynb", ".xml"] :
+            if ext in [".html", ".js", ".png", ".css", ".ico", ".py", ".ipynb", ".xml"]:
                 return 0
             return os.stat(name).st_size
 
-        allfiles = [(sizef(file), file, reason) for file, reason in cpf.modifiedFile]
+        allfiles = [(sizef(file), file, reason)
+                    for file, reason in cpf.modifiedFile]
         allfiles.sort()
 
         for siz, file, reason in allfiles:
 
             skip = False
-            for _ in forbid :
-                if _ in file :
+            for _ in forbid:
+                if _ in file:
                     fLOG(" ** skipping (1)", file)
                     skip = True
                     break
-            if skip :
+            if skip:
                 continue
 
             if "copy_site" in file:
@@ -286,7 +307,7 @@ def copy_site_cwd() :
 
             if skip or os.path.isdir(file):
                 fLOG(" ** skipping (2)", file)
-                continue 
+                continue
 
             temp = os.path.split(file)
             d = temp[0]
@@ -294,33 +315,36 @@ def copy_site_cwd() :
                 d = temp[0].replace(destination, "")
             path = path0
 
-            if len(d) > 0 :
+            if len(d) > 0:
                 path += "/" + d.replace("\\", "/")
 
             ftp_dest = os.path.split(file)[-1]
-            r = ftp.transfer (file, path, ftp_dest)
-            print("[upload]", file, "to", "/".join([path, ftp_dest]), " -- ", reason)
+            r = ftp.transfer(file, path, ftp_dest)
+            print("[upload]", file, "to",
+                  "/".join([path, ftp_dest]), " -- ", reason)
 
-            if r: 
+            if r:
                 processed.append(file)
                 cpf.update_copied_file(file)
                 cpf.save_dates(checkfile=processed)
 
             nbproc += 1
             if nbproc % 20 == 0 or siz > 2**25:
-                fLOG("******* processed", nbproc, "/", len(cpf.modifiedFile), " size", siz)
+                fLOG("******* processed", nbproc, "/",
+                     len(cpf.modifiedFile), " size", siz)
 
-        try :
+        try:
             ftp.close()
-        except :
+        except:
             print("unable to close FTP connection using ftp.close")
 
-        for file in issues :
-            print("ISSUES",file)
+        for file in issues:
+            print("ISSUES", file)
 
     html = os.listdir(".")
-    for f in html :
-        if ".html" in f : os.remove(f)
+    for f in html:
+        if ".html" in f:
+            os.remove(f)
 
 
 if __name__ == "__main__":

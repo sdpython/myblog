@@ -1,4 +1,4 @@
-﻿=========================
+=========================
 My first try with reveals
 =========================
 
@@ -8,7 +8,7 @@ My first try with reveals
 
  .. rv_small::
 
-    Created by `Xavier Dupré <http://www.xavierdupre.fr/blog/2014-02-01_nojs.html>`_ 
+    Created by `Xavier Dupré <http://www.xavierdupre.fr/blog/2014-02-01_nojs.html>`_
 
 .. revealjs:: What's up
 
@@ -31,11 +31,11 @@ My first try with reveals
     .. revealjs:: The second slide comes vertically.
 
         Well, do you remember where you are.
-        
+
     .. revealjs:: The third slide still comes vertically.
 
         I'm lost
-        
+
 .. revealjs::
 
     .. revealjs:: Conlusion
@@ -45,4 +45,3 @@ My first try with reveals
     .. revealjs:: Plus
 
         It is easy to put online.
-        
