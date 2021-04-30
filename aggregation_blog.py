@@ -13,7 +13,7 @@ def collect_blogs(url="http://www.xavierdupre.fr/",
     for mod in get_teaching_modules():
         if mod in {'_benchmarks', 'machinelearningext',
                    'code_beatrix', 'myblog', 'csharpy',
-                   'csharpyml'}:
+                   'csharpyml', 'onnxortext'}:
             continue
         links.append(url + "/app/{}/helpsphinx/_downloads/rss.xml".format(mod))
 
