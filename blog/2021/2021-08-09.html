@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head> 
+<link TYPE="text/css" href="pMenu.css" rel="stylesheet"/>
+<link type="text/css" rel="stylesheet" href="documents/graph_blog_20131130.css" />
+<link type="text/css" rel="stylesheet" href="javascript/d3.js" />
+<title>Petit exercice de probabilité</title>
+<meta content="enseignement, mathématiques" name="keywords" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+</head>
+<body>
+
+<!-- SUMMARY BEGINS -->
+
+<p>
+Petite question de probabilité survenue un jour lors d'un tournoi
+de tennis, au moment des quarts de finale. Les huit joueurs arrivent
+pour jouer leur match. Quelle est la probabilité qu'aucun des quatre premiers
+joueurs arrivés ne puissent jouer ensemble ? Autrement dit, chacun des quatre
+premiers joueurs arrivés est dans un quart différent.
+</p>
+<p>
+Traduit en chaussettes... Dans un tiroir, il y a quatre paires de chaussettes
+de couleurs différentes. Quelle est la probabilité de tirer quatre chaussettes
+de couleurs différentes parmi huit ?
+</p>
+
+<!-- SUMMARY ENDS -->
+<!-- CUT PAGE HERE -->
+
+<p>
+Tout d'abord une petite simulation numérique.
+</p>
+
+<pre class="brush: py">
+import random
+import numpy
+
+truth = (6. / 7.) * (4. / 6) * (2. / 5)
+
+pas_paire = 0
+for tirage in range(0, 200001):
+    zero = numpy.zeros(8)
+    for i in range(0, 4):
+        h = random.randint(0, 7)
+        while zero[h] == 1:
+            h = random.randint(0, 7)
+        zero[h] = 1
+    pairs = zero.reshape((-1, 2)).sum(axis=1)
+    if pairs.max() == 1:
+        pas_paire += 1
+    if tirage % 100000 == 9999:
+        print("tirage=%d p=%f  truth=%f" % (
+            tirage + 1, pas_paire * 1. / (tirage + 1), truth))
+</pre>
+
+<p>
+Qui montre que cette probabilité est de 23%.
+</p>
+
+<pre class="prettyprint">
+tirage=10000 p=0.233700  truth=0.228571
+tirage=110000 p=0.229718  truth=0.228571
+</pre>
+
+<p>
+Mais ce n'est pas une preuve... Pour trouver le résultat, le raisonnement
+est le suivant. Au premier joueur qui arrive, il n'y a pas de paire complète.
+La probabilité est donc de  1. Au second joueur qui arrive, il ne doit pas être
+la seconde chaussettes de la même paire, il y a donc 6 chances sur 7 pour que 
+ce soit le cas. Au troisième joueur qui arrive, il y a 4 chances sur 6 pour
+qu'il n'y ait toujours pas de paire. Au quatrième, il y a 2 chances (les deux
+chaussettes de la seule paire libre) sur 5 (les chaussettes encore disponibles).
+</p>
+
+<img src="documents/chaussettes.png" width="500" />
+
+<p>
+Le résultat est le produit des probabilités : 
+<i>6/7 x 4/6 x 2/5 = (4x2) / (7x5) = 8 / 35 ~ 0.228571</i>.
+</p>
+
+</body>
+</html>
