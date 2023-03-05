@@ -11,9 +11,10 @@ def collect_blogs(url="http://www.xavierdupre.fr/",
     year = datetime.now().year - 2
     links = []
     for mod in get_teaching_modules():
+        mod = mod.split(":")[0]
         if mod in {'_benchmarks', 'machinelearningext',
                    'code_beatrix', 'myblog', 'csharpy',
-                   'csharpyml', 'onnxortext', 'deeponnxcustom'}:
+                   'csharpyml', 'onnxortext', 'mloptonnx'}:
             continue
         links.append(url + "/app/{}/helpsphinx/_downloads/rss.xml".format(mod))
 
